@@ -1,0 +1,80 @@
+from repositories.usuario_repository import UsuarioRepository
+from core.erros import CredenciaisInvalidas, DadosInvalidos, NaoEncontrado
+from core.seguranca import gerar_hash_senha, verificar_senha
+
+
+class UsuarioService:
+    def __init__(self, repository=None):
+        self.repository = repository or UsuarioRepository()
+
+    def _validar_nome(self, nome):
+        nome = nome.strip()
+
+        if not nome:
+            raise DadosInvalidos("O nome não pode ficar vazio.")
+
+        if len(nome) < 3:
+            raise DadosInvalidos("O nome precisa ter pelo menos 3 caracteres.")
+
+        return nome
+
+    def _validar_email(self, email):
+        email = email.strip().lower()
+
+        if not email or "@" not in email:
+            raise DadosInvalidos("Informe um e-mail válido.")
+
+        return email
+
+    def listar_usuarios(self):
+        return self.repository.listar()
+
+    def buscar_usuario(self, usuario_id):
+        usuario = self.repository.buscar_por_id(usuario_id)
+
+        if usuario is None:
+            raise NaoEncontrado("Usuário não encontrado.")
+
+        return usuario
+
+    def criar_usuario(self, nome, email, senha):
+        nome = self._validar_nome(nome)
+        email = self._validar_email(email)
+
+        if self.repository.buscar_por_email(email) is not None:
+            raise DadosInvalidos("Já existe uma conta com esse e-mail.")
+
+        if len(senha) < 6:
+            raise DadosInvalidos("A senha precisa ter pelo menos 6 caracteres.")
+
+        return self.repository.criar(nome, email, gerar_hash_senha(senha))
+
+    def atualizar_usuario(self, usuario_id, nome):
+        usuario = self.repository.buscar_por_id(usuario_id)
+
+        if usuario is None:
+            raise NaoEncontrado("Usuário não encontrado.")
+
+        nome = self._validar_nome(nome)
+
+        return self.repository.atualizar(usuario_id, nome)
+
+    def excluir_usuario(self, usuario_id):
+        usuario = self.repository.buscar_por_id(usuario_id)
+
+        if usuario is None:
+            raise NaoEncontrado("Usuário não encontrado.")
+
+        self.repository.excluir(usuario_id)
+
+    def autenticar(self, nome, senha):
+        usuario = self.repository.buscar_por_nome(nome.strip())
+
+        if (
+            usuario is None
+            or not usuario.senha_hash
+            or not verificar_senha(senha, usuario.senha_hash)
+        ):
+            raise CredenciaisInvalidas("Nome ou senha inválidos.")
+
+        return usuario

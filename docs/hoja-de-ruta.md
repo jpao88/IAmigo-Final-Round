@@ -37,9 +37,9 @@ Define qué se construye antes de escribir código. Se trabaja en el chat del Pr
 
 Deja listo el terreno donde se construye la V1. Desde aquí conviene trabajar en Claude Code, directamente sobre el repositorio.
 
-- [ ] Crear el repositorio nuevo de IAmigo
-- [ ] Copiar la base del backend de IAmigo-Final: arquitectura en capas, autenticación JWT y servicio de IA
-- [ ] Quitar lo específico de TPAC y la versión de consola
+- [x] Crear el repositorio nuevo de IAmigo
+- [x] Copiar la base del backend de IAmigo-Final: arquitectura en capas, autenticación JWT y servicio de IA
+- [x] Quitar lo específico de TPAC y la versión de consola
 - [ ] Crear la base de datos con el modelo cerrado en la Fase 0
 - [ ] Cambiar el login de nombre a correo
 - [ ] Configurar `.env`, `.gitignore`, CORS y los tests que ya existen
