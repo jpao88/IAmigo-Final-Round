@@ -1,7 +1,14 @@
 -- IAmigo V1 · Esquema de la base de datos (MySQL 8)
 -- Generado desde docs/modelo-de-datos.md. Si cambia el modelo, actualizar ambos.
+-- Se puede ejecutar más de una vez: no borra nada y solo crea lo que falta.
 
-CREATE TABLE usuarios (
+CREATE DATABASE IF NOT EXISTS iamigo
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE iamigo;
+
+CREATE TABLE IF NOT EXISTS usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
@@ -13,7 +20,7 @@ CREATE TABLE usuarios (
   CONSTRAINT chk_limite_hoje CHECK (limite_hoje BETWEEN 1 AND 5)
 );
 
-CREATE TABLE tarefas (
+CREATE TABLE IF NOT EXISTS tarefas (
   id INT AUTO_INCREMENT PRIMARY KEY,
   usuario_id INT NOT NULL,
   titulo VARCHAR(200) NOT NULL,
@@ -26,7 +33,7 @@ CREATE TABLE tarefas (
   INDEX idx_tarefas_usuario_data (usuario_id, data_planejada)
 );
 
-CREATE TABLE passos (
+CREATE TABLE IF NOT EXISTS passos (
   id INT AUTO_INCREMENT PRIMARY KEY,
   tarefa_id INT NOT NULL,
   texto VARCHAR(255) NOT NULL,
@@ -42,7 +49,7 @@ CREATE TABLE passos (
   INDEX idx_passos_tarefa_ordem (tarefa_id, ordem)
 );
 
-CREATE TABLE fechamentos_dia (
+CREATE TABLE IF NOT EXISTS fechamentos_dia (
   id INT AUTO_INCREMENT PRIMARY KEY,
   usuario_id INT NOT NULL,
   data DATE NOT NULL,
