@@ -14,12 +14,6 @@ class UsuarioRepositoryFake:
     def listar(self):
         return list(self.usuarios)
 
-    def buscar_por_nome(self, nome):
-        for usuario in self.usuarios:
-            if usuario.nome == nome:
-                return usuario
-        return None
-
     def buscar_por_email(self, email):
         for usuario in self.usuarios:
             if usuario.email == email:
@@ -118,6 +112,41 @@ class TestUsuarioServiceAtualizar(unittest.TestCase):
         atualizado = self.service.atualizar_usuario(usuario.id, "Ana Paula")
 
         self.assertEqual(atualizado.nome, "Ana Paula")
+
+
+class TestUsuarioServiceAutenticar(unittest.TestCase):
+    def setUp(self):
+        self.repository = UsuarioRepositoryFake()
+        self.service = UsuarioService(repository=self.repository)
+        self.ana = self.service.criar_usuario("Ana", "ana@exemplo.com", "segredo1")
+
+    def test_login_com_email_e_senha_corretos(self):
+        usuario = self.service.autenticar("ana@exemplo.com", "segredo1")
+
+        self.assertEqual(usuario.id, self.ana.id)
+
+    def test_email_ignora_maiusculas_e_espacos(self):
+        usuario = self.service.autenticar("  Ana@Exemplo.COM ", "segredo1")
+
+        self.assertEqual(usuario.id, self.ana.id)
+
+    def test_nomes_repetidos_nao_atrapalham_o_login(self):
+        outra_ana = self.service.criar_usuario("Ana", "ana.paula@exemplo.com", "segredo2")
+
+        usuario = self.service.autenticar("ana.paula@exemplo.com", "segredo2")
+
+        self.assertEqual(usuario.id, outra_ana.id)
+
+    def test_senha_errada_e_email_inexistente_tem_a_mesma_mensagem(self):
+        for email, senha in (
+            ("ana@exemplo.com", "errada"),
+            ("ninguem@exemplo.com", "segredo1"),
+        ):
+            with self.subTest(email=email):
+                with self.assertRaises(ValueError) as contexto:
+                    self.service.autenticar(email, senha)
+
+                self.assertEqual(str(contexto.exception), "E-mail ou senha inválidos.")
 
 
 if __name__ == "__main__":

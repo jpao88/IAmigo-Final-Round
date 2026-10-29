@@ -21,7 +21,7 @@ class Resposta(BaseModel, Generic[T]):
 # ---------- Entrada ----------
 
 class Login(BaseModel):
-    nome: str
+    email: str
     senha: str
 
 

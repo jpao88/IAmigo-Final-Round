@@ -74,14 +74,14 @@ class TestTraducaoDeErrosParaHttp(unittest.TestCase):
         self.assertEqual(resposta.status_code, 503)
 
     def test_credenciais_invalidas_vira_401(self):
-        self._falhar_com(CredenciaisInvalidas("Nome ou senha inválidos."))
+        self._falhar_com(CredenciaisInvalidas("E-mail ou senha inválidos."))
 
         resposta = self.cliente.post(
-            "/auth/login", json={"nome": "Ana", "senha": "errada"}
+            "/auth/login", json={"email": "ana@exemplo.com", "senha": "errada"}
         )
 
         self.assertEqual(resposta.status_code, 401)
-        self.assertEqual(resposta.json()["detail"], "Nome ou senha inválidos.")
+        self.assertEqual(resposta.json()["detail"], "E-mail ou senha inválidos.")
 
     def test_erro_inesperado_vira_500_sem_detalhes_internos(self):
         self._falhar_com(ConnectionError("senha do banco: 1234"))

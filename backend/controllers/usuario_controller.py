@@ -27,8 +27,8 @@ class UsuarioController:
     def excluir_perfil(self, usuario_id):
         self.service.excluir_usuario(usuario_id)
 
-    def autenticar(self, nome, senha):
-        usuario = self.service.autenticar(nome, senha)
+    def autenticar(self, email, senha):
+        usuario = self.service.autenticar(email, senha)
         token, expira_em = gerar_token_acesso(usuario.id, usuario.nome)
         return {
             "usuario": usuario,

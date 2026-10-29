@@ -14,5 +14,5 @@ controller = UsuarioController()
 @router.post("/login", response_model=Resposta[Sessao])
 def login(dados: Login):
     return {
-        "dados": controller.autenticar(dados.nome, dados.senha)
+        "dados": controller.autenticar(dados.email, dados.senha)
     }

@@ -10,11 +10,6 @@ class UsuarioRepository:
             comando = select(Usuario).order_by(Usuario.nome)
             return list(session.scalars(comando))
 
-    def buscar_por_nome(self, nome):
-        with SessionLocal() as session:
-            comando = select(Usuario).where(Usuario.nome == nome)
-            return session.scalar(comando)
-
     def buscar_por_email(self, email):
         with SessionLocal() as session:
             comando = select(Usuario).where(Usuario.email == email)

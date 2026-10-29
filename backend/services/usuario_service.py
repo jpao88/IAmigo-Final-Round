@@ -67,14 +67,13 @@ class UsuarioService:
 
         self.repository.excluir(usuario_id)
 
-    def autenticar(self, nome, senha):
-        usuario = self.repository.buscar_por_nome(nome.strip())
+    def autenticar(self, email, senha):
+        # Mesma normalização do cadastro, para "Ana@Exemplo.com " achar "ana@exemplo.com".
+        usuario = self.repository.buscar_por_email(email.strip().lower())
 
-        if (
-            usuario is None
-            or not usuario.senha_hash
-            or not verificar_senha(senha, usuario.senha_hash)
-        ):
-            raise CredenciaisInvalidas("Nome ou senha inválidos.")
+        # Mesma mensagem para e-mail inexistente e senha errada:
+        # não revela quais e-mails têm conta.
+        if usuario is None or not verificar_senha(senha, usuario.senha_hash):
+            raise CredenciaisInvalidas("E-mail ou senha inválidos.")
 
         return usuario

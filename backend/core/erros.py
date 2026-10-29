@@ -17,7 +17,7 @@ class DadosInvalidos(ValueError):
 
 
 class CredenciaisInvalidas(ValueError):
-    """Nome ou senha não conferem."""
+    """E-mail ou senha não conferem."""
 
 
 class FalhaIA(RuntimeError):
