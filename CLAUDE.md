@@ -43,13 +43,9 @@ Actualizar esta sección al terminar cada tarea.
 
 **Fase 1 hecha:** repositorio, base del backend copiada sin TPAC ni consola, base de datos creada desde `database/schema.sql` y login por correo (`POST /auth/login` con `email` y `senha`). El nombre del usuario no es único: solo se usa para el saludo.
 
-**Siguiente tarea: configurar `.env`, CORS y tests.**
-- `backend/.env.example` (se sube) y `backend/.env` (no se sube), con `JWT_SECRET` aleatorio.
-- Agregar `DB_SSL_CA` a `config/settings.py` y `config/database.py`: con ruta, conecta con SSL a Aiven; vacía, sin SSL.
-- Ejecutar `database/schema.sql` en Aiven desde Workbench si todavía no se hizo.
-- Probar de punta a punta: registrarse, iniciar sesión y verificar en MySQL que el usuario quedó con la contraseña en hash.
+**`.env`, CORS y tests hecho:** `backend/.env.example` como plantilla y `backend/.env` completo en la laptop. `DB_SSL_CA` conecta a Aiven con SSL (TLS 1.3) y, si la ruta no existe, avisa al arrancar. CORS se configura con `CORS_ORIGINS`. Las tablas ya están en Aiven y se probó de punta a punta: registro (`POST /usuarios`), login, 401 con contraseña mala y contraseña guardada en hash (`pbkdf2_sha256`). Quedó un usuario de prueba `prueba@iamigo.test` (id 1).
 
-**Después:** estructura del front (JavaScript puro, para celular) y README.
+**Siguiente tarea: estructura del front (JavaScript puro, para celular) y README.**
 
 **Pendientes para recordar:**
 - El backend responde en portugués; el front debe mostrar el error de login en español ("Correo o contraseña incorrectos", H0.2) a partir del status 401.

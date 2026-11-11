@@ -40,6 +40,8 @@ class Settings:
     db_user: str = os.getenv("DB_USER", "root")
     db_password: str = os.getenv("DB_PASSWORD", "")
     db_name: str = os.getenv("DB_NAME", "iamigo")
+    # Caminho do ca.pem (Aiven). Vazio = conexão sem SSL (MySQL local).
+    db_ssl_ca: Optional[str] = os.getenv("DB_SSL_CA") or None
 
     gemini_api_key: Optional[str] = os.getenv("GEMINI_API_KEY") or None
 
