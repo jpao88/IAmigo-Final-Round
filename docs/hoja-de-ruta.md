@@ -8,10 +8,10 @@ IAmigo llega a su V1 en cuatro fases. Cada fase termina en un punto de control: 
 
 ```mermaid
 flowchart LR
-    F0["Fase 0 · Producto<br/>Recorrido, validación y modelo de datos<br/>✅ cumplida"] -->|"Recorrido validado y modelo cerrado"| F1["Fase 1 · Base<br/>Repo, base de datos, login y estructura"]
+    F0["Fase 0 · Producto<br/>Recorrido, validación y modelo de datos<br/>✅ cumplida"] -->|"Recorrido validado y modelo cerrado"| F1["Fase 1 · Base<br/>Repo, base de datos, login y estructura<br/>✅ cumplida"]
     F1 -->|"El repo se levanta con el README"| F2["Fase 2 · V1<br/>5 sprints, una etapa del ciclo cada uno"]
     F2 -->|"Ciclo completo sin ayuda"| F3["Fase 3 · Prueba<br/>Uso real, ajustes y publicación"]
-    style F1 stroke-width:3px
+    style F2 stroke-width:3px
 ```
 
 Las fases van en orden y no tienen fechas todavía: la duración de los sprints se define con el equipo al armar el backlog.
@@ -46,7 +46,7 @@ Deja listo el terreno donde se construye la V1. Desde aquí conviene trabajar en
 - [x] Crear la estructura del front en JavaScript puro, organizada en módulos y pensada para celular
 - [x] Escribir el README con cómo levantar el proyecto
 
-**Punto de control:** una persona del equipo clona el repo, lo levanta siguiendo el README, se registra e inicia sesión.
+**Punto de control:** una persona del equipo clona el repo, lo levanta siguiendo el README, se registra e inicia sesión. ✅ Cumplido el 11 de noviembre de 2026.
 
 ## Fase 2 · Construcción de la V1
 

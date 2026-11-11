@@ -47,7 +47,9 @@ Actualizar esta sección al terminar cada tarea.
 
 **Front y README hechos:** `frontend/` en JavaScript puro con módulos ES, sin compilación (`python -m http.server 5500`). `js/api.js` traduce los errores del backend al español, `js/sessao.js` guarda el token, `js/roteador.js` usa rutas por hash (`#/login`, `#/cadastro`, `#/hoje`) y cada pantalla vive en `js/telas/`. Registro (H0.1), login (H0.2) y cerrar sesión (H0.3) probados por Pablo en el navegador. El `README.md` explica cómo levantar todo.
 
-**Siguiente paso: punto de control de la Fase 1.** Una persona del equipo clona el repo, lo levanta con el README, se registra e inicia sesión. Después viene la Fase 2, Sprint 1 · Capturar.
+**Fase 1 cerrada el 11 de noviembre de 2026:** una compañera del equipo clonó el repo, lo levantó solo con el README, se registró e inició sesión sin problemas. Una segunda persona está haciendo la misma prueba; si encuentra algo, ajustar el README.
+
+**Siguiente tarea: Fase 2, Sprint 1 · Capturar** (Épica 1, H1.1 a H1.4): pantalla de inicio con "¿Qué tienes en la cabeza?", guardar en la Bandeja una tarea por línea y listar la Bandeja.
 
 **Pendientes para recordar:**
 - El backend responde en portugués; el front debe mostrar el error de login en español ("Correo o contraseña incorrectos", H0.2) a partir del status 401.
