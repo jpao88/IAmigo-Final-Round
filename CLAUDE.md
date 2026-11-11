@@ -29,7 +29,27 @@ Antes de proponer o escribir código, consulta lo que corresponda en `docs/`:
 
 ## Entorno
 
-- Se trabaja desde dos computadoras: una personal y una del instituto **sin permisos de administrador**. Todo lo que se instale debe poder hacerse a nivel de usuario.
-- GitHub (`https://github.com/jpao88/IAmigo-Final-Round`) es el punto de sincronización: hacer `git pull` al empezar y `git push` al terminar.
-- `_referencia/` contiene una copia de IAmigo-Final solo para consulta; está en `.gitignore`.
-- Las claves (JWT, Gemini, base de datos) van en `.env`, que nunca se sube.
+- Pablo trabaja en una sola laptop personal, que lleva también al instituto.
+- GitHub (`https://github.com/jpao88/IAmigo-Final-Round`) guarda el código: hacer `git pull` al empezar y `git push` al terminar.
+- Backend en Python con entorno virtual en `backend/.venv` (no se sube). Tests: `.venv\Scripts\python -m unittest discover -s tests` desde `backend/`; no necesitan MySQL.
+- **Base de datos: MySQL en Aiven** (plan Free, North America), la misma desde cualquier lugar. Exige SSL con el certificado `ca.pem` de Aiven, guardado fuera del repositorio. Si el servicio no responde, puede estar apagado por inactividad: se enciende desde el panel de Aiven.
+- **El Wi-Fi del instituto bloquea el puerto de Aiven** (solo deja salir puertos comunes como 80, 443 y 3306). Allí Pablo usa datos móviles.
+- Las claves (JWT, Gemini, base de datos) van en `backend/.env`, que nunca se sube.
+- `_referencia/` (copia de IAmigo-Final) está en `.gitignore`; puede no existir y ya no hace falta.
+
+## Estado actual
+
+Actualizar esta sección al terminar cada tarea.
+
+**Fase 1 hecha:** repositorio, base del backend copiada sin TPAC ni consola, base de datos creada desde `database/schema.sql` y login por correo (`POST /auth/login` con `email` y `senha`). El nombre del usuario no es único: solo se usa para el saludo.
+
+**Siguiente tarea: configurar `.env`, CORS y tests.**
+- `backend/.env.example` (se sube) y `backend/.env` (no se sube), con `JWT_SECRET` aleatorio.
+- Agregar `DB_SSL_CA` a `config/settings.py` y `config/database.py`: con ruta, conecta con SSL a Aiven; vacía, sin SSL.
+- Ejecutar `database/schema.sql` en Aiven desde Workbench si todavía no se hizo.
+- Probar de punta a punta: registrarse, iniciar sesión y verificar en MySQL que el usuario quedó con la contraseña en hash.
+
+**Después:** estructura del front (JavaScript puro, para celular) y README.
+
+**Pendientes para recordar:**
+- El backend responde en portugués; el front debe mostrar el error de login en español ("Correo o contraseña incorrectos", H0.2) a partir del status 401.
