@@ -1,0 +1,154 @@
+/* IAmigo V1 · Estilos base, pensados primero para celular.
+   Princípio "Sem culpa": nenhum vermelho na interface, nem nos erros. */
+
+:root {
+  --fundo: #f6f4ef;
+  --superficie: #ffffff;
+  --texto: #2b2a33;
+  --texto-suave: #6b6977;
+  --borda: #dedad2;
+  --primaria: #4f6df5;
+  --primaria-texto: #ffffff;
+  --primaria-hover: #3f5be0;
+  --aviso-fundo: #fff4d6;
+  --aviso-texto: #6b5210;
+  --foco: #9fb0ff;
+
+  --raio: 14px;
+  --espaco: 16px;
+  --fonte: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #1c1b22;
+    --superficie: #26252e;
+    --texto: #f1f0f5;
+    --texto-suave: #a9a7b5;
+    --borda: #3a3945;
+    --primaria: #8197ff;
+    --primaria-texto: #14131a;
+    --primaria-hover: #9aabff;
+    --aviso-fundo: #3a3220;
+    --aviso-texto: #f3dc9b;
+    --foco: #5b6fd6;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  min-height: 100dvh;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--fonte);
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Uma coluna estreita: no celular ocupa tudo; no computador fica centralizada. */
+.tela {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: calc(var(--espaco) * 2) var(--espaco);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco);
+  min-height: 100dvh;
+}
+
+.marca {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primaria);
+  margin: 0;
+}
+
+h1 {
+  font-size: 1.75rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.subtitulo {
+  color: var(--texto-suave);
+  margin: 0;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco);
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+}
+
+input {
+  font: inherit;
+  font-weight: 400;
+  color: var(--texto);
+  background: var(--superficie);
+  border: 1.5px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 14px 16px;
+  min-height: 52px;
+}
+
+input:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 1px;
+  border-color: var(--primaria);
+}
+
+/* Princípio "Uma coisa por vez": o botão principal é claramente o maior. */
+.botao {
+  font: inherit;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--raio);
+  min-height: 56px;
+  padding: 14px 20px;
+  cursor: pointer;
+  width: 100%;
+  background: var(--primaria);
+  color: var(--primaria-texto);
+}
+
+.botao:hover { background: var(--primaria-hover); }
+.botao:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+.botao:disabled { opacity: 0.6; cursor: wait; }
+
+.botao-secundario {
+  background: transparent;
+  color: var(--primaria);
+  min-height: 44px;
+  font-weight: 600;
+}
+
+.botao-secundario:hover { background: transparent; text-decoration: underline; }
+
+.link {
+  color: var(--primaria);
+  font-weight: 600;
+  text-align: center;
+}
+
+.aviso {
+  background: var(--aviso-fundo);
+  color: var(--aviso-texto);
+  border-radius: var(--raio);
+  padding: 12px 16px;
+  margin: 0;
+}
+
+.aviso:empty { display: none; }
+
+.empurrar-abaixo { margin-top: auto; }

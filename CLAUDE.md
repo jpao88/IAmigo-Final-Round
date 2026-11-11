@@ -45,7 +45,9 @@ Actualizar esta sección al terminar cada tarea.
 
 **`.env`, CORS y tests hecho:** `backend/.env.example` como plantilla y `backend/.env` completo en la laptop. `DB_SSL_CA` conecta a Aiven con SSL (TLS 1.3) y, si la ruta no existe, avisa al arrancar. CORS se configura con `CORS_ORIGINS`. Las tablas ya están en Aiven y se probó de punta a punta: registro (`POST /usuarios`), login, 401 con contraseña mala y contraseña guardada en hash (`pbkdf2_sha256`). Quedó un usuario de prueba `prueba@iamigo.test` (id 1).
 
-**Siguiente tarea: estructura del front (JavaScript puro, para celular) y README.**
+**Front y README hechos:** `frontend/` en JavaScript puro con módulos ES, sin compilación (`python -m http.server 5500`). `js/api.js` traduce los errores del backend al español, `js/sessao.js` guarda el token, `js/roteador.js` usa rutas por hash (`#/login`, `#/cadastro`, `#/hoje`) y cada pantalla vive en `js/telas/`. Registro (H0.1), login (H0.2) y cerrar sesión (H0.3) probados por Pablo en el navegador. El `README.md` explica cómo levantar todo.
+
+**Siguiente paso: punto de control de la Fase 1.** Una persona del equipo clona el repo, lo levanta con el README, se registra e inicia sesión. Después viene la Fase 2, Sprint 1 · Capturar.
 
 **Pendientes para recordar:**
 - El backend responde en portugués; el front debe mostrar el error de login en español ("Correo o contraseña incorrectos", H0.2) a partir del status 401.

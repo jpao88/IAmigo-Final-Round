@@ -42,9 +42,9 @@ Deja listo el terreno donde se construye la V1. Desde aquí conviene trabajar en
 - [x] Quitar lo específico de TPAC y la versión de consola
 - [x] Crear la base de datos con el modelo cerrado en la Fase 0
 - [x] Cambiar el login de nombre a correo
-- [ ] Configurar `.env`, `.gitignore`, CORS y los tests que ya existen
-- [ ] Crear la estructura del front en JavaScript puro, organizada en módulos y pensada para celular
-- [ ] Escribir el README con cómo levantar el proyecto
+- [x] Configurar `.env`, `.gitignore`, CORS y los tests que ya existen
+- [x] Crear la estructura del front en JavaScript puro, organizada en módulos y pensada para celular
+- [x] Escribir el README con cómo levantar el proyecto
 
 **Punto de control:** una persona del equipo clona el repo, lo levanta siguiendo el README, se registra e inicia sesión.
 
