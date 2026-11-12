@@ -66,9 +66,15 @@ Actualizar esta sección al terminar cada tarea.
 - Front: `#/cerrar` y `#/cerrar/AAAAMMDD` (`js/telas/cerrar.js`; el roteador solo acepta números). Hoy muestra "Terminar el día" y, con todo hecho, "¡Completaste todo lo de hoy!"; el modo foco va al resumen si era la última tarea (mira la copia local de Hoy). Hoy pregunta una vez por día por el día pendiente (`iamigo.dia-verificado.<uid>`). `ErroApi.detalhe` guarda la frase original del backend.
 - Primer uso: el registro lleva a `#/bienvenida` (cinco etapas en íconos, "Ya sé cómo funciona" para saltarla) y `#/primera-tarea`; `js/guia.js` recuerda la tarea guiada (`iamigo.guia.<uid>`) y la pantalla de la tarea y el modo foco muestran pistas "2 de 3" / "3 de 3". El primer "Hecho" muestra "¡Así funciona cada día!" y cierra la guía. Hoy manda a la bienvenida a quien tiene `onboarding_concluido = false` y no está en la guía.
 
-**Siguiente tarea: punto de control de la Fase 2**: una persona nueva completa el ciclo entero con una tarea real, sin ayuda. Después, Fase 3 · Prueba real y lanzamiento.
+**Punto de control de la Fase 2: pendiente de Pablo.** Una persona nueva completa el ciclo desde el celular, sin ayuda; la guía está en `docs/prueba-celular.md` (red local con `CORS_ORIGIN_REGEX` y `--host 0.0.0.0`; el front busca el backend en `location.hostname:8000`). Los resultados van a `docs/guion-validacion.md`.
+
+**Fase 3 · Prueba real y lanzamiento** (orden acordado: proteger rutas → publicar → siete principios → prueba de varios días):
+- **Proteger las rutas, revisado el 12 de noviembre de 2026.** Dos barreras: la ruta exige ser el dueño del `{usuario_id}` (`exigir_dono`; solo login y crear cuenta son públicas) y cada service confirma que la tarea o el paso pertenece a esa persona (404 si no). `tests/test_dados_alheios.py` prueba todos los métodos con ids ajenos sin escribir nada; `test_toda_rota_esta_na_matriz` falla si una ruta nueva no está en la matriz de permisos.
+
+**Siguiente tarea: publicar la app** (backend cerca de Aiven, front estático, HTTPS, claves en el hosting, Gemini fuera del plan gratuito).
 
 **Pendientes para recordar:**
+- Al publicar: limitar intentos de login (hoy no hay límite), dejar `CORS_ORIGIN_REGEX` vacío y decidir si `/docs` queda abierto. El token dura 60 min (`JWT_EXPIRA_MINUTOS`): para una app de uso diario conviene más tiempo o renovarlo.
 - Desde la laptop cada consulta a Aiven tarda ~420 ms y un pedido hace varias (pre-ping, token, consulta, rollback): la Bandeja tarda ~3 s. El front lo disimula. Se resuelve en la Fase 3 publicando el backend en la misma región que Aiven; Pablo prefirió no quitar `pool_pre_ping`.
 - Gemini en plan gratuito: límites bajos y Google puede usar lo enviado (títulos de tareas). Antes de publicar (Fase 3), pasar a plan pago u otro proveedor; Pablo tiene una clave paga de Kimi como alternativa.
 - Para la Fase 3 (revisión de los siete principios): juntar el tiempo total con Ahora en Hoy y un retoque visual general (menos bordes, más aire).

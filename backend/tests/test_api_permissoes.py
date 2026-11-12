@@ -1,10 +1,13 @@
 """Matriz de permissões (H0.4 do backlog) e formatos da API."""
+import re
 import unittest
 from datetime import date, datetime
 from types import SimpleNamespace
 
+from fastapi.routing import APIRoute
 from fastapi.testclient import TestClient
 
+import api.rotas_auth as rotas_auth
 import api.rotas_dias as rotas_dias
 import api.rotas_tarefas as rotas_tarefas
 import api.rotas_usuarios as rotas_usuarios
@@ -137,6 +140,13 @@ class TestMatrizDePermissoes(BaseApi):
          {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
         ("put", "/usuarios/1/onboarding", None,
          {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("delete", "/usuarios/1", None, {"DONO": 204, "OUTRO": 403, "ADMIN": 204}),
+        ("post", "/usuarios/1/tarefas", {"titulo": "Estudar"},
+         {"DONO": 201, "OUTRO": 403, "ADMIN": 403}),
+        ("get", "/usuarios/1/tarefas/10", None, {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("delete", "/usuarios/1/tarefas/10", None, {"DONO": 204, "OUTRO": 403, "ADMIN": 403}),
+        ("patch", "/usuarios/1/tarefas/10/passos/100", None,
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
     ]
 
     def test_matriz(self):
@@ -149,6 +159,34 @@ class TestMatrizDePermissoes(BaseApi):
                     kwargs = {"json": corpo} if corpo is not None else {}
                     resposta = getattr(self.cliente, metodo)(rota, **kwargs)
                     self.assertEqual(resposta.status_code, status_esperado)
+
+    # Rotas abertas de propósito: criar conta e entrar.
+    PUBLICAS = {("POST", "/usuarios"), ("POST", "/auth/login")}
+
+    def test_toda_rota_esta_na_matriz(self):
+        """Uma rota nova sem caso na matriz faz este teste falhar.
+
+        Cada caso é atribuído à primeira rota que o atende, na mesma ordem
+        em que o FastAPI procura (assim /tarefas/hoje não conta como /tarefas/{id}).
+        """
+        rotas = [
+            (metodo, rota.path, re.compile(re.sub(r"\{[^}]+\}", "[^/]+", rota.path) + "$"))
+            for modulo in (rotas_usuarios, rotas_tarefas, rotas_auth, rotas_dias)
+            for rota in modulo.router.routes
+            if isinstance(rota, APIRoute)
+            for metodo in rota.methods
+        ]
+
+        cobertas = set()
+        for metodo, caminho, _, _ in self.CASOS:
+            caminho = caminho.split("?")[0]
+            for metodo_rota, modelo, padrao in rotas:
+                if metodo_rota == metodo.upper() and padrao.match(caminho):
+                    cobertas.add((metodo_rota, modelo))
+                    break
+
+        faltam = {(m, modelo) for m, modelo, _ in rotas} - cobertas - self.PUBLICAS
+        self.assertEqual(faltam, set(), "Adicione estas rotas à matriz de permissões.")
 
     def test_sem_token_recebe_401(self):
         for rota in ("/usuarios", "/usuarios/1", "/usuarios/1/tarefas"):

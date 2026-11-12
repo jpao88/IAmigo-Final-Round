@@ -93,7 +93,7 @@ Comprueba que la app funciona en la vida diaria de las personas, no solo en una 
 - [ ] Recoger lo que funcionó, lo que confundió y lo que dejaron de usar
 - [ ] Corregir los problemas más graves
 - [ ] Revisar los siete principios de diseño pantalla por pantalla
-- [ ] Proteger las rutas de tareas y pasos para que nadie vea datos ajenos
+- [x] Proteger las rutas de tareas y pasos para que nadie vea datos ajenos (revisado el 12 de noviembre de 2026)
 - [ ] Publicar la app en un hosting accesible desde el celular
 
 **Punto de control:** se cumple el criterio de éxito del recorrido con personas que no participaron en el desarrollo.
