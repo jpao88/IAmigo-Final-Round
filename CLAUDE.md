@@ -76,7 +76,9 @@ Actualizar esta sección al terminar cada tarea.
 
 - **IA:** Pablo decidió seguir con Gemini (12 de noviembre de 2026). Mientras solo la use él, plan gratuito; antes de que la usen otras personas, activar la facturación en Google AI Studio (misma clave y modelo, sin cambios de código) para que Google no use los títulos de las tareas. Kimi queda como alternativa.
 
-**Siguiente tarea:** revisar los respaldos de Aiven en el plan Free. Después, revisar los siete principios pantalla por pantalla y la prueba de varios días.
+- **Respaldos, revisado el 12 de noviembre de 2026.** Aiven confirmado en plan Free (1 CPU, 1 GB RAM, 1 GB de disco; el aviso de "trial" es publicidad para servicios pagos). Hace copias completas automáticas en `do-sfo2` con registros de cambios (restaurar = **Fork service**); no hace copias mientras está apagado por inactividad. Respaldo propio: `backend/scripts/exportar_dados.py` exporta `usuarios`, `tarefas`, `passos` y `fechamentos_dia` a JSON en `RESPALDOS_DIR` o `~/IAmigo-respaldos` (fuera del repo: tiene datos personales). Correrlo semanalmente durante la prueba y antes de cambios grandes.
+
+**Siguiente tarea:** revisar los siete principios de diseño pantalla por pantalla (incluye juntar el tiempo total con Ahora y el retoque visual: menos bordes, más aire). Después, la prueba de varios días con las personas de la validación.
 
 **Pendientes para recordar:**
 - Al publicar: limitar intentos de login (hoy no hay límite), dejar `CORS_ORIGIN_REGEX` vacío y decidir si `/docs` queda abierto. El token dura 60 min (`JWT_EXPIRA_MINUTOS`): para una app de uso diario conviene más tiempo o renovarlo.

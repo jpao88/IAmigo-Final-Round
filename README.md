@@ -114,6 +114,16 @@ Cada `git push` a `main` vuelve a publicar.
 
 Si la app publicada no puede conectarse a la base, revisa en Aiven que el servicio esté encendido y que no tenga una lista de IPs permitidas que deje fuera a DigitalOcean.
 
+## 7. Respaldos
+
+Aiven hace copias automáticas (pestaña **Backups** del servicio; se restaura con **Fork service**). Además hay un respaldo propio que guarda cuentas, tareas, pasos y cierres de día en un archivo JSON. Desde `backend/`:
+
+```
+.venv\Scripts\python scripts\exportar_dados.py
+```
+
+El archivo queda en `RESPALDOS_DIR` del `.env` o, si no está, en `~/IAmigo-respaldos`. Tiene datos personales (nombres, correos): nunca va al repositorio ni se comparte. Conviene correrlo una vez por semana y antes de cambios grandes en la base.
+
 ## Convenciones
 
 - El código y la base de datos usan nombres en portugués: `tarefas`, `passos`, `data_planejada`…
