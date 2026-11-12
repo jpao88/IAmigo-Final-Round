@@ -31,9 +31,11 @@ const MENSAGEM_GENERICA = "Algo salió mal. Intenta otra vez.";
 const MENSAGEM_SEM_CONEXAO = "No pudimos conectar. Intenta otra vez.";
 
 export class ErroApi extends Error {
-  constructor(status, mensagem) {
+  // detalhe: a frase original do backend, para a tela reconhecer o erro.
+  constructor(status, mensagem, detalhe = null) {
     super(mensagem);
     this.status = status;
+    this.detalhe = detalhe;
   }
 }
 
@@ -92,7 +94,7 @@ export async function requisitar(metodo, caminho, corpo, { autenticar = true } =
     aoPerderSessao();
   }
 
-  throw new ErroApi(resposta.status, traduzir(resposta.status, conteudo?.detail));
+  throw new ErroApi(resposta.status, traduzir(resposta.status, conteudo?.detail), conteudo?.detail ?? null);
 }
 
 // ---- Autenticação (Épica 0) ----
@@ -148,8 +150,9 @@ export function listarHoje() {
 }
 
 // H3.1 ("+ Hoy", uma) e H3.2 (várias): entram no fim do dia, respeitando o limite.
-export function planejarHoje(ids) {
-  return requisitar("POST", `${rotaTarefas()}/hoje`, { ids, data: dataLocal() });
+// H5.2 "Hacerla mañana" usa a mesma rota com outra data.
+export function planejarHoje(ids, data = dataLocal()) {
+  return requisitar("POST", `${rotaTarefas()}/hoje`, { ids, data });
 }
 
 // H3.4: todas as pendentes de hoje, na ordem nova.
@@ -159,6 +162,11 @@ export function reordenarHoje(ids) {
 
 export function tirarDeHoje(tarefaId) {
   return requisitar("DELETE", `${rotaTarefas()}/${tarefaId}/hoje`);
+}
+
+// H6.3: a guia do primeiro uso não volta a aparecer.
+export function concluirOnboarding() {
+  return requisitar("PUT", `/usuarios/${obterUsuario().id}/onboarding`);
 }
 
 // H3.5: de 1 a 5.
@@ -226,4 +234,26 @@ export async function dividirPasso(tarefaId, passoId) {
     }
     throw erro;
   }
+}
+
+// ---- Cerrar el día (Épica 5) ----
+
+function rotaDias() {
+  return `/usuarios/${obterUsuario().id}/dias`;
+}
+
+// H5.1 e H5.2: { passos_concluidos, tarefas_concluidas, concluidas, pendentes, fechado }.
+export function obterResumoDia(data) {
+  return requisitar("GET", `${rotaDias()}/${data}`);
+}
+
+// H5.3: fechar de novo não cria um segundo fechamento.
+export function fecharDia(data) {
+  return requisitar("POST", `${rotaDias()}/${data}/fechar`);
+}
+
+// H5.4: o último dia com plano que ficou sem fechar, ou null.
+export async function obterDiaPendente() {
+  const resposta = await requisitar("GET", `${rotaDias()}/pendente?hoje=${dataLocal()}`);
+  return resposta?.data ?? null;
 }

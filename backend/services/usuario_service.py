@@ -68,6 +68,15 @@ class UsuarioService:
 
         return self.repository.atualizar_limite_hoje(usuario_id, limite_hoje)
 
+    def concluir_onboarding(self, usuario_id):
+        """H6.3: a guia do primeiro uso aparece uma vez só."""
+        usuario = self.buscar_usuario(usuario_id)
+
+        if usuario.onboarding_concluido:
+            return usuario
+
+        return self.repository.concluir_onboarding(usuario_id)
+
     def excluir_usuario(self, usuario_id):
         usuario = self.repository.buscar_por_id(usuario_id)
 

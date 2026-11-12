@@ -2,7 +2,7 @@
 
 import { cadastrar, entrar } from "../api.js";
 import { comBotaoOcupado, criarElemento } from "../html.js";
-import { navegar, TELA_INICIAL } from "../roteador.js";
+import { navegar } from "../roteador.js";
 import { salvarSessao } from "../sessao.js";
 
 export function telaCadastro(raiz) {
@@ -61,7 +61,8 @@ export function telaCadastro(raiz) {
         return entrar(email, senha);
       });
       salvarSessao(sessao);
-      navegar(TELA_INICIAL);
+      // H6.1: conta nova começa pela bienvenida.
+      navegar("/bienvenida");
     } catch (erro) {
       aviso.textContent = erro.message;
     }

@@ -9,10 +9,12 @@ import {
   concluirPasso, concluirTarefa, dividirPasso, listarPassos, obterTarefa,
 } from "../api.js";
 import { lerFoco, limparFoco, salvarFoco } from "../foco-estado.js";
+import { tarefaDaGuia, terminarGuia } from "../guia.js";
 import { criarElemento } from "../html.js";
 import { tituloEmCache } from "../lista-bandeja.js";
 import { navegar } from "../roteador.js";
 import { alternarSom, somLigado, somPasso, somTarefa } from "../som.js";
+import { lerCacheHoje } from "./hoje.js";
 
 const MINUTO = 60 * 1000;
 const MINUTOS_SEM_PASSOS = 10;
@@ -40,6 +42,7 @@ export function telaFoco(raiz, { id: tarefaId }) {
     </header>
 
     <p class="titulo-foco subtitulo"></p>
+    <p class="guia" role="status" hidden>3 de 3 · Haz solo este paso y toca «Hecho» al terminar.</p>
 
     <section class="foco" aria-live="polite">
       <p class="rotulo-foco">Tu paso ahora</p>
@@ -71,6 +74,7 @@ export function telaFoco(raiz, { id: tarefaId }) {
       <div class="celebracao-icone" aria-hidden="true">✓</div>
       <p class="celebracao-texto"></p>
       <p class="celebracao-detalhe subtitulo"></p>
+      <button class="botao celebracao-seguir" type="button" hidden>Seguir</button>
     </div>
 
     <section class="foco-fim" hidden>
@@ -95,6 +99,12 @@ export function telaFoco(raiz, { id: tarefaId }) {
   const celebracaoDetalhe = raiz.querySelector(".celebracao-detalhe");
   const focoFim = raiz.querySelector(".foco-fim");
   const botaoSom = raiz.querySelector(".botao-som");
+  const guia = raiz.querySelector(".guia");
+  const botaoSeguir = raiz.querySelector(".celebracao-seguir");
+
+  // H6.2: primeira tarefa guiada; o primeiro "Hecho" encerra a guia (H6.3).
+  let emGuia = tarefaDaGuia() === tarefaId;
+  guia.hidden = !emGuia;
 
   function desenharBotaoSom() {
     const ligado = somLigado();
@@ -252,6 +262,26 @@ export function telaFoco(raiz, { id: tarefaId }) {
     await esperar(duracao);
   }
 
+  // Com um botão, a celebração espera a pessoa (há uma frase para ler).
+  function esperarToque() {
+    botaoSeguir.hidden = false;
+    botaoSeguir.focus();
+    return new Promise((resolver) => {
+      botaoSeguir.addEventListener("click", () => {
+        botaoSeguir.hidden = true;
+        resolver();
+      }, { once: true });
+    });
+  }
+
+  // H5: se era a última tarefa pendente de Hoy, vai direto ao resumo do dia.
+  function destinoDepoisDaTarefa() {
+    const doDia = lerCacheHoje();
+    if (!doDia?.some((tarefa) => tarefa.id === tarefaId)) return "/hoje";
+    const outrasPendentes = doDia.some((tarefa) => tarefa.id !== tarefaId && !tarefa.concluida);
+    return outrasPendentes ? "/hoje" : "/cerrar";
+  }
+
   async function hecho() {
     if (ocupado || !atual) return;
     ocupado = true;
@@ -270,11 +300,20 @@ export function telaFoco(raiz, { id: tarefaId }) {
       const [resultado] = await Promise.all([pedido, celebrar(frase, "", 1200)]);
       passo.concluido = true;
 
+      // H6.2 e H6.3: o primeiro passo da tarefa guiada fecha a guia com uma frase.
+      if (emGuia) {
+        emGuia = false;
+        guia.hidden = true;
+        terminarGuia();
+        await celebrar("¡Así funciona cada día!", "Anota, divide, elige y hazlo, un paso a la vez.", 0);
+        await esperarToque();
+      }
+
       if (resultado.tarefa_concluida) {
         limparFoco();
         somTarefa();
         await celebrar("¡Terminaste!", titulo, 2200);
-        navegar("/hoje");
+        navegar(destinoDepoisDaTarefa());
         return;
       }
 

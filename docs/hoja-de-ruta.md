@@ -77,11 +77,11 @@ Cada sprint entrega una etapa del ciclo funcionando de punta a punta: endpoint, 
 - [x] Celebración breve por paso y tarea concluida al terminar el último
 - [x] Retomar donde quedó al volver a la app
 
-**Sprint 5 · Cerrar el día y primer uso**
+**Sprint 5 · Cerrar el día y primer uso** ✅ 12 de noviembre de 2026
 
-- [ ] Resumen del día y lo pendiente con "Hacerla mañana" o "Guardarla sin fecha"
-- [ ] Resumen al abrir la app si el día anterior no se cerró
-- [ ] Registro, bienvenida y primera tarea guiada
+- [x] Resumen del día y lo pendiente con "Hacerla mañana" o "Guardarla sin fecha"
+- [x] Resumen al abrir la app si el día anterior no se cerró
+- [x] Registro, bienvenida y primera tarea guiada
 
 **Punto de control:** una persona nueva completa el ciclo entero con una tarea real, sin ayuda.
 

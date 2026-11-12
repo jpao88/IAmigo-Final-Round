@@ -27,6 +27,9 @@ class UsuarioController:
     def alterar_limite_hoje(self, usuario_id, limite_hoje):
         return self.service.alterar_limite_hoje(usuario_id, limite_hoje)
 
+    def concluir_onboarding(self, usuario_id):
+        return self.service.concluir_onboarding(usuario_id)
+
     def excluir_perfil(self, usuario_id):
         self.service.excluir_usuario(usuario_id)
 

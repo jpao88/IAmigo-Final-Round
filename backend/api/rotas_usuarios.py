@@ -81,3 +81,15 @@ def alterar_limite_hoje(usuario_id: int, dados: NovoLimiteHoje):
     return {
         "dados": controller.alterar_limite_hoje(usuario_id, dados.limite_hoje)
     }
+
+
+# H6.3: terminou a primeira tarefa guiada (ou pulou a guia).
+@router.put(
+    "/{usuario_id}/onboarding",
+    response_model=Resposta[UsuarioPublico],
+    dependencies=[Depends(exigir_dono)]
+)
+def concluir_onboarding(usuario_id: int):
+    return {
+        "dados": controller.concluir_onboarding(usuario_id)
+    }

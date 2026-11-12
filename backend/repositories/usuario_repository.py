@@ -48,6 +48,13 @@ class UsuarioRepository:
             session.commit()
             return usuario
 
+    def concluir_onboarding(self, usuario_id):
+        with SessionLocal() as session:
+            usuario = session.get(Usuario, usuario_id)
+            usuario.onboarding_concluido = True
+            session.commit()
+            return usuario
+
     def excluir(self, usuario_id):
         with SessionLocal() as session:
             comando = select(Usuario).where(Usuario.id == usuario_id)

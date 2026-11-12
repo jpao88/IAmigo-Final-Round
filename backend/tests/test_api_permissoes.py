@@ -1,10 +1,11 @@
 """Matriz de permissões (H0.4 do backlog) e formatos da API."""
 import unittest
-from datetime import datetime
+from datetime import date, datetime
 from types import SimpleNamespace
 
 from fastapi.testclient import TestClient
 
+import api.rotas_dias as rotas_dias
 import api.rotas_tarefas as rotas_tarefas
 import api.rotas_usuarios as rotas_usuarios
 from api.dependencias import obter_usuario_autenticado
@@ -42,13 +43,22 @@ class ServiceFake:
                 return [SimpleNamespace(**vars(TAREFA), minutos_restantes=25)]
             if nome in ("listar_tarefas", "listar_bandeja", "criar_varias", "planejar_para_hoje"):
                 return [TAREFA]
+            if nome == "resumo":
+                return {
+                    "data": date(2026, 11, 12), "passos_concluidos": 3, "tarefas_concluidas": 1,
+                    "concluidas": [TAREFA], "pendentes": [], "fechado": False,
+                }
+            if nome == "dia_pendente":
+                return date(2026, 11, 11)
+            if nome == "fechar":
+                return None
             if nome == "concluir_passo":
                 return {"passo": PASSO, "tarefa_concluida": False}
             if nome in ("listar_passos", "gerar_passos", "reordenar_passos", "dividir_passo"):
                 return [PASSO]
             if "passo" in nome:
                 return PASSO
-            if "usuario" in nome or "limite" in nome:
+            if "usuario" in nome or "limite" in nome or "onboarding" in nome:
                 return USUARIO
             return TAREFA
         return metodo
@@ -59,7 +69,9 @@ class BaseApi(unittest.TestCase):
         self.originais = (
             rotas_tarefas.controller.service,
             rotas_usuarios.controller.service,
+            rotas_dias.controller.service,
         )
+        rotas_dias.controller.service = ServiceFake()
         rotas_tarefas.controller.service = ServiceFake()
         rotas_usuarios.controller.service = ServiceFake()
         self.cliente = TestClient(app)
@@ -69,6 +81,7 @@ class BaseApi(unittest.TestCase):
         (
             rotas_tarefas.controller.service,
             rotas_usuarios.controller.service,
+            rotas_dias.controller.service,
         ) = self.originais
 
     def como(self, usuario):
@@ -115,6 +128,14 @@ class TestMatrizDePermissoes(BaseApi):
         ("post", "/usuarios/1/tarefas/10/passos/100/dividir", None,
          {"DONO": 201, "OUTRO": 403, "ADMIN": 403}),
         ("post", "/usuarios/1/tarefas/10/concluir", None,
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("get", "/usuarios/1/dias/2026-11-12", None,
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("post", "/usuarios/1/dias/2026-11-12/fechar", None,
+         {"DONO": 204, "OUTRO": 403, "ADMIN": 403}),
+        ("get", "/usuarios/1/dias/pendente?hoje=2026-11-12", None,
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("put", "/usuarios/1/onboarding", None,
          {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
     ]
 

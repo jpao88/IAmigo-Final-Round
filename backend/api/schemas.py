@@ -120,3 +120,18 @@ class ConclusaoPasso(BaseModel):
     # H4.2: tarefa_concluida = era o último passo; o front celebra a tarefa inteira.
     passo: PassoSaida
     tarefa_concluida: bool
+
+
+class ResumoDia(BaseModel):
+    # H5.1: só o que se conseguiu; H5.2: as pendentes, para decidir uma a uma.
+    data: date
+    passos_concluidos: int
+    tarefas_concluidas: int
+    concluidas: List[TarefaSaida]
+    pendentes: List[TarefaSaida]
+    fechado: bool
+
+
+class DiaPendente(BaseModel):
+    # H5.4: o último dia com tarefas que não foi fechado, ou null.
+    data: Optional[date]

@@ -8,6 +8,7 @@ from core.erros import CredenciaisInvalidas, DadosInvalidos, FalhaIA, NaoEncontr
 from api.rotas_usuarios import router as usuarios_router
 from api.rotas_tarefas import router as tarefas_router
 from api.rotas_auth import router as auth_router
+from api.rotas_dias import router as dias_router
 
 app = FastAPI(
     title="IAmigo API",
@@ -53,6 +54,7 @@ def falha_tecnica(request: Request, erro: Exception):
 app.include_router(usuarios_router)
 app.include_router(tarefas_router)
 app.include_router(auth_router)
+app.include_router(dias_router)
 
 
 @app.get("/")

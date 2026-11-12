@@ -78,6 +78,14 @@ class TarefaRepository:
             )
             return list(session.scalars(comando))
 
+    def ultima_data_planejada_antes(self, usuario_id, data):
+        """O dia mais recente antes de `data` que teve tarefas em Hoje (ou None)."""
+        with SessionLocal() as session:
+            comando = select(func.max(Tarefa.data_planejada)).where(
+                Tarefa.usuario_id == usuario_id, Tarefa.data_planejada < data
+            )
+            return session.scalar(comando)
+
     def listar_por_ids(self, usuario_id, ids):
         with SessionLocal() as session:
             comando = select(Tarefa).where(

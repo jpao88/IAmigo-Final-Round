@@ -8,11 +8,13 @@
 // Como as outras telas: abre com a cópia local, atualiza em silêncio, e cada
 // mudança aparece na hora; se o servidor recusar, volta e mostra um aviso.
 
-import { dataLocal, listarHoje, reordenarHoje, tirarDeHoje } from "../api.js";
+import { dataLocal, listarHoje, obterDiaPendente, reordenarHoje, tirarDeHoje } from "../api.js";
 import { cabecalho, navegacao } from "../componentes.js";
 import { criarElemento } from "../html.js";
 import { lerFoco, limparFoco } from "../foco-estado.js";
+import { precisaDaGuia, tarefaDaGuia } from "../guia.js";
 import { criarListaBandeja } from "../lista-bandeja.js";
+import { navegar } from "../roteador.js";
 import { obterUsuario } from "../sessao.js";
 import { desenharBarraTempo, formatarTempoTotal } from "../tempo.js";
 
@@ -32,6 +34,11 @@ function lerCache() {
   }
 }
 
+// O modo foco usa para saber se a tarefa terminada era a última do dia.
+export function lerCacheHoje() {
+  return lerCache();
+}
+
 function salvarCache(tarefas) {
   try {
     localStorage.setItem(chaveCache(), JSON.stringify({ data: dataLocal(), tarefas }));
@@ -40,7 +47,40 @@ function salvarCache(tarefas) {
   }
 }
 
+// ---- H5.4: o dia anterior ficou sem fechar? Pergunta uma vez por dia. ----
+
+function chaveDiaVerificado() {
+  return `iamigo.dia-verificado.${obterUsuario().id}`;
+}
+
+async function verificarDiaPendente(aindaNaTela) {
+  try {
+    if (localStorage.getItem(chaveDiaVerificado()) === dataLocal()) return;
+  } catch {
+    // Sem armazenamento: pergunta sempre.
+  }
+
+  try {
+    const pendente = await obterDiaPendente();
+    try {
+      localStorage.setItem(chaveDiaVerificado(), dataLocal());
+    } catch {
+      // Nada a fazer.
+    }
+    // "2026-11-11" → "#/cerrar/20261111" (o roteador só aceita números).
+    if (pendente && aindaNaTela()) navegar(`/cerrar/${pendente.replaceAll("-", "")}`);
+  } catch {
+    // Sem conexão: tenta na próxima vez.
+  }
+}
+
 export function telaHoje(raiz) {
+  // H6.1: conta nova (ou que não terminou a guia) começa pela bienvenida.
+  if (precisaDaGuia() && tarefaDaGuia() === null) {
+    navegar("/bienvenida");
+    return;
+  }
+
   raiz.append(cabecalho(), criarElemento(`
     <div class="titulo-com-acao">
       <h1>Hoy</h1>
@@ -76,7 +116,13 @@ export function telaHoje(raiz) {
     <p class="confirmacao" role="status"></p>
     <p class="aviso" role="alert"></p>
 
+    <section class="dia-completo" hidden>
+      <h2>¡Completaste todo lo de hoy!</h2>
+      <a class="botao" href="#/cerrar">Terminar el día</a>
+    </section>
+
     <a class="botao" href="#/elegir" data-acao="elegir">Elegir tareas para hoy</a>
+    <a class="link-secundario" href="#/cerrar" data-acao="cerrar" hidden>Terminar el día</a>
 
     <section class="hecho" aria-labelledby="titulo-hecho" hidden>
       <h2 id="titulo-hecho">Ya hiciste hoy</h2>
@@ -98,6 +144,8 @@ export function telaHoje(raiz) {
   const botaoElegir = raiz.querySelector('[data-acao="elegir"]');
   const secaoHecho = raiz.querySelector(".hecho");
   const listaHecho = raiz.querySelector(".lista-hecho");
+  const diaCompleto = raiz.querySelector(".dia-completo");
+  const linkCerrar = raiz.querySelector('[data-acao="cerrar"]');
 
   // As tarefas do dia como estão no servidor, na ordem.
   let tarefas = [];
@@ -174,9 +222,13 @@ export function telaHoje(raiz) {
 
     // H3.6: dia sem plano não fica vazio; "Elegir" vira a ação principal.
     // Com plano, vira um link discreto: o maior da tela é sempre "Ahora".
-    diaVazio.hidden = temPlano;
-    botaoElegir.className = temPlano ? "link-secundario" : "botao";
-    botaoElegir.textContent = temPlano ? "Elegir más tareas" : "Elegir tareas para hoy";
+    // H5: com tudo feito, a ação principal passa a ser fechar o dia.
+    const tudoFeito = !temPlano && concluidas.length > 0;
+    diaVazio.hidden = temPlano || tudoFeito;
+    diaCompleto.hidden = !tudoFeito;
+    linkCerrar.hidden = !temPlano;
+    botaoElegir.className = temPlano || tudoFeito ? "link-secundario" : "botao";
+    botaoElegir.textContent = temPlano || tudoFeito ? "Elegir más tareas" : "Elegir tareas para hoy";
 
     const total = lista.reduce((soma, tarefa) => soma + tarefa.minutos_restantes, 0);
     tempoTotal.hidden = !temPlano;
@@ -309,4 +361,5 @@ export function telaHoje(raiz) {
 
   carregar();
   bandeja.carregar();
+  verificarDiaPendente(() => raiz.contains(diaVazio));
 }

@@ -6,8 +6,9 @@
 
 import {
   adicionarPasso, editarPasso, excluirPasso, gerarPassos,
-  listarPassos, obterTarefa, reordenarPassos,
+  listarPassos, obterTarefa, planejarHoje, reordenarPassos,
 } from "../api.js";
+import { tarefaDaGuia } from "../guia.js";
 import { criarElemento } from "../html.js";
 import { tituloEmCache } from "../lista-bandeja.js";
 import { navegar, TELA_INICIAL } from "../roteador.js";
@@ -19,7 +20,10 @@ export function telaTarefa(raiz, { id: tarefaId }) {
   raiz.append(criarElemento(`
     <header class="cabecalho">
       <button class="botao-texto" type="button" data-acao="voltar">← Volver</button>
+      <p class="subtitulo guia-etapa" hidden></p>
     </header>
+
+    <p class="guia" role="status" hidden></p>
 
     <h1 class="titulo-tarefa"></h1>
 
@@ -53,6 +57,7 @@ export function telaTarefa(raiz, { id: tarefaId }) {
     </form>
 
     <button class="botao" type="button" data-acao="listo" hidden>Listo</button>
+    <button class="botao" type="button" data-acao="guia-empezar" hidden>Ponerla en Hoy y empezar</button>
   `));
 
   const titulo = raiz.querySelector(".titulo-tarefa");
@@ -65,6 +70,12 @@ export function telaTarefa(raiz, { id: tarefaId }) {
   const lista = raiz.querySelector(".lista-passos");
   const formNovo = raiz.querySelector(".novo-passo");
   const botaoListo = raiz.querySelector('[data-acao="listo"]');
+  const guiaEtapa = raiz.querySelector(".guia-etapa");
+  const guia = raiz.querySelector(".guia");
+  const botaoGuia = raiz.querySelector('[data-acao="guia-empezar"]');
+
+  // H6.2: esta é a primeira tarefa guiada?
+  const emGuia = tarefaDaGuia() === tarefaId;
 
   // Os passos como estão guardados no servidor (só os visíveis, na ordem).
   let passos = [];
@@ -138,7 +149,39 @@ export function telaTarefa(raiz, { id: tarefaId }) {
 
     lista.replaceChildren(...passos.map(itemDoPasso));
     desenharTempo();
+    desenharGuia(temPassos);
   }
+
+  // ---- H6.2: dicas da primeira tarefa guiada ----
+
+  function desenharGuia(temPassos) {
+    if (!emGuia) return;
+
+    guiaEtapa.hidden = false;
+    guia.hidden = false;
+    guiaEtapa.textContent = "2 de 3";
+    guia.textContent = temPassos
+      ? "¡Listo! Ajusta los pasos si quieres. Después, ponla en Hoy y haz el primero."
+      : "Ahora toca «Que IAmigo lo divida»: la parte en pasos pequeños.";
+    botaoListo.hidden = true;
+    botaoGuia.hidden = !temPassos;
+  }
+
+  botaoGuia.addEventListener("click", async () => {
+    avisar("");
+    botaoGuia.disabled = true;
+    try {
+      await planejarHoje([tarefaId]);
+    } catch (erro) {
+      // Se já estava em Hoy, segue igual; outro erro, avisa.
+      if (erro.detalhe !== "Essa tarefa já está em Hoje ou foi concluída.") {
+        avisar(erro.message);
+        botaoGuia.disabled = false;
+        return;
+      }
+    }
+    navegar(`/foco/${tarefaId}`);
+  });
 
   async function recarregarPassos() {
     const todos = await listarPassos(tarefaId);
