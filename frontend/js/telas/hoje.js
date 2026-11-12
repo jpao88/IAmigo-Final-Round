@@ -11,6 +11,7 @@
 import { dataLocal, listarHoje, reordenarHoje, tirarDeHoje } from "../api.js";
 import { cabecalho, navegacao } from "../componentes.js";
 import { criarElemento } from "../html.js";
+import { lerFoco, limparFoco } from "../foco-estado.js";
 import { criarListaBandeja } from "../lista-bandeja.js";
 import { obterUsuario } from "../sessao.js";
 import { desenharBarraTempo, formatarTempoTotal } from "../tempo.js";
@@ -45,6 +46,15 @@ export function telaHoje(raiz) {
       <h1>Hoy</h1>
       <button class="botao-texto" type="button" data-acao="ordenar" aria-pressed="false" hidden>Ordenar</button>
     </div>
+
+    <section class="retomar" aria-labelledby="titulo-retomar" hidden>
+      <h2 id="titulo-retomar">¿Seguimos donde quedaste?</h2>
+      <p class="retomar-passo"></p>
+      <div class="retomar-acoes">
+        <a class="botao" data-acao="seguir">Seguir</a>
+        <button class="botao-texto" type="button" data-acao="ahora-no">Ahora no</button>
+      </div>
+    </section>
 
     <div class="tempo-total" hidden>
       <p class="tempo-texto"></p>
@@ -124,6 +134,16 @@ export function telaHoje(raiz) {
     link.textContent = tarefa.titulo;
     item.querySelector(".minutos-dia").textContent = `${tarefa.minutos_restantes} min`;
 
+    // H4.1: "Empezar" abre o modo foco; é a ação principal de Hoy.
+    if (indice === 0) {
+      const empezar = document.createElement("a");
+      empezar.className = "botao botao-empezar";
+      empezar.href = `#/foco/${tarefa.id}`;
+      empezar.textContent = "Empezar";
+      empezar.setAttribute("aria-label", `Empezar: ${tarefa.titulo}`);
+      item.querySelector(".passo-acoes").before(empezar);
+    }
+
     const subir = item.querySelector('[data-acao="subir"]');
     const descer = item.querySelector('[data-acao="descer"]');
     subir.disabled = indice === 0;
@@ -171,17 +191,43 @@ export function telaHoje(raiz) {
     secaoHecho.hidden = concluidas.length === 0;
   }
 
+  // ---- H4.6: retomar o modo foco ----
+
+  const secaoRetomar = raiz.querySelector(".retomar");
+
+  function desenharRetomar() {
+    const foco = lerFoco();
+    const tarefa = foco && tarefas.find((t) => t.id === foco.tarefaId);
+
+    // Se a tarefa já foi concluída (ex.: em outra aba), não há o que retomar.
+    if (tarefa?.concluida) limparFoco();
+
+    const mostrar = Boolean(foco) && !tarefa?.concluida;
+    secaoRetomar.hidden = !mostrar;
+    if (!mostrar) return;
+
+    secaoRetomar.querySelector(".retomar-passo").textContent = foco.passoTexto;
+    secaoRetomar.querySelector('[data-acao="seguir"]').href = `#/foco/${foco.tarefaId}`;
+  }
+
+  secaoRetomar.querySelector('[data-acao="ahora-no"]').addEventListener("click", () => {
+    limparFoco();
+    secaoRetomar.hidden = true;
+  });
+
   async function carregar() {
     const copia = lerCache();
     if (copia) {
       tarefas = copia;
       desenhar();
     }
+    desenharRetomar();
 
     try {
       tarefas = await listarHoje();
       salvarCache(tarefas);
       desenhar();
+      desenharRetomar();
     } catch (erro) {
       if (!copia) aviso.textContent = erro.message;
     }

@@ -114,3 +114,9 @@ class Sessao(BaseModel):
 class TarefaDoDia(TarefaSaida):
     # Passos visíveis ainda não concluídos; sem passos, 10 (H3.3: tempo total do dia).
     minutos_restantes: int
+
+
+class ConclusaoPasso(BaseModel):
+    # H4.2: tarefa_concluida = era o último passo; o front celebra a tarefa inteira.
+    passo: PassoSaida
+    tarefa_concluida: bool

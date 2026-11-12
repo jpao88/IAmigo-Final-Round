@@ -4,7 +4,7 @@ from repositories.tarefa_repository import TarefaRepository
 from repositories.usuario_repository import UsuarioRepository
 from repositories.passo_repository import PassoRepository
 from core.erros import DadosInvalidos, LimiteHojeAtingido, NaoEncontrado
-from core.ia_service import gerar_passos_tarefa
+from core.ia_service import dividir_passo, gerar_passos_tarefa
 
 # Mesmo tamanho da coluna tarefas.titulo.
 TAMANHO_MAXIMO_TITULO = 200
@@ -23,12 +23,14 @@ class TarefaService:
         usuario_repository=None,
         passo_repository=None,
         gerador_de_passos=None,
+        divisor_de_passo=None,
     ):
         self.tarefa_repository = tarefa_repository or TarefaRepository()
         self.usuario_repository = usuario_repository or UsuarioRepository()
         self.passo_repository = passo_repository or PassoRepository()
         # Nos testes, troca-se a IA por uma função falsa.
         self.gerador_de_passos = gerador_de_passos or gerar_passos_tarefa
+        self.divisor_de_passo = divisor_de_passo or dividir_passo
 
     def _garantir_usuario(self, usuario_id):
         if self.usuario_repository.buscar_por_id(usuario_id) is None:
@@ -245,6 +247,48 @@ class TarefaService:
             raise DadosInvalidos("A nova ordem precisa ter todos os passos da tarefa, uma vez cada.")
 
         return self.passo_repository.reordenar(tarefa_id, ids_em_ordem)
+
+    # ---- Modo foco (Épica 4 · Hacer) ----
+
+    def concluir_passo(self, usuario_id, tarefa_id, passo_id):
+        """H4.2: marca o passo; se era o último pendente, a tarefa fica concluída.
+
+        Devolve {"passo": ..., "tarefa_concluida": bool} para o front saber
+        se celebra só o passo ou a tarefa inteira.
+        """
+        passo = self._obter_passo_da_tarefa(usuario_id, tarefa_id, passo_id)
+
+        if passo.substituido:
+            raise DadosInvalidos("Esse passo foi dividido.")
+
+        passo = self.passo_repository.concluir(passo_id)
+
+        faltam = [p for p in self._passos_ativos(tarefa_id) if not p.concluido]
+        if not faltam:
+            self.tarefa_repository.concluir(tarefa_id)
+
+        return {"passo": passo, "tarefa_concluida": not faltam}
+
+    def concluir_tarefa(self, usuario_id, tarefa_id):
+        """Tarefa sem passos: no modo foco é um passo só, e "Hecho" a conclui."""
+        self._obter_tarefa_do_usuario(usuario_id, tarefa_id)
+
+        if any(not p.concluido for p in self._passos_ativos(tarefa_id)):
+            raise DadosInvalidos("A tarefa ainda tem passos pendentes.")
+
+        return self.tarefa_repository.concluir(tarefa_id)
+
+    def dividir_passo(self, usuario_id, tarefa_id, passo_id):
+        """H4.4 "Me atasqué": a IA divide o passo em 2 ou 3 menores, no lugar dele."""
+        passo = self._obter_passo_da_tarefa(usuario_id, tarefa_id, passo_id)
+
+        if passo.concluido or passo.substituido:
+            raise DadosInvalidos("Esse passo não pode ser dividido.")
+
+        tarefa = self.tarefa_repository.buscar_por_id(tarefa_id)
+        novos = self.divisor_de_passo(tarefa.titulo, passo.texto, passo.minutos_estimados)
+
+        return self.passo_repository.dividir(passo_id, novos)
 
     def alternar_status_passo(self, usuario_id, tarefa_id, passo_id):
         self._obter_passo_da_tarefa(usuario_id, tarefa_id, passo_id)

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 
 from config.database import SessionLocal
 from models.passo import Passo
@@ -88,6 +88,42 @@ class PassoRepository:
 
             session.commit()
             return [por_id[passo_id] for passo_id in ids_em_ordem]
+
+    def concluir(self, passo_id):
+        """Marca como concluído (sem desfazer se já estava: um toque duplo em "Hecho" não volta atrás)."""
+        with SessionLocal() as session:
+            passo = session.get(Passo, passo_id)
+            if not passo.concluido:
+                passo.concluido = True
+                passo.concluido_em = datetime.now()
+                session.commit()
+            return passo
+
+    def dividir(self, passo_id, novos):
+        """H4.4: o passo original fica `substituido` (não se apaga) e os novos
+        entram no lugar dele, apontando para ele; os seguintes andam para frente."""
+        with SessionLocal() as session:
+            original = session.get(Passo, passo_id)
+            original.substituido = True
+
+            session.execute(
+                update(Passo)
+                .where(Passo.tarefa_id == original.tarefa_id, Passo.ordem > original.ordem)
+                .values(ordem=Passo.ordem + len(novos))
+            )
+
+            criados = []
+            for deslocamento, novo in enumerate(novos, start=1):
+                passo = self._novo(
+                    original.tarefa_id, novo["texto"], novo["minutos_estimados"],
+                    ordem=original.ordem + deslocamento, gerado_por_ia=True,
+                )
+                passo.passo_origem_id = original.id
+                criados.append(passo)
+
+            session.add_all(criados)
+            session.commit()
+            return criados
 
     def alternar_concluido(self, passo_id):
         with SessionLocal() as session:

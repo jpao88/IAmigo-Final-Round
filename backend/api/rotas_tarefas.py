@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, status
 
 from api.dependencias import exigir_dono
 from api.schemas import (
-    DadosPasso, NovaTarefa, NovasTarefas, OrdemPassos, PassoSaida, Resposta,
+    ConclusaoPasso, DadosPasso, NovaTarefa, NovasTarefas, OrdemPassos, PassoSaida, Resposta,
     TarefaDoDia, TarefasDoDia, TarefaSaida,
 )
 from controllers.tarefa_controller import TarefaController
@@ -84,6 +84,33 @@ def buscar_tarefa(usuario_id: int, tarefa_id: int):
 @router.delete("/{tarefa_id}", status_code=status.HTTP_204_NO_CONTENT)
 def excluir_tarefa(usuario_id: int, tarefa_id: int):
     controller.excluir_tarefa(usuario_id, tarefa_id)
+
+
+# ---- Modo foco (Épica 4) ----
+
+@router.post("/{tarefa_id}/concluir", response_model=Resposta[TarefaSaida])
+def concluir_tarefa(usuario_id: int, tarefa_id: int):
+    return {
+        "dados": controller.concluir_tarefa(usuario_id, tarefa_id)
+    }
+
+
+@router.post("/{tarefa_id}/passos/{passo_id}/concluir", response_model=Resposta[ConclusaoPasso])
+def concluir_passo(usuario_id: int, tarefa_id: int, passo_id: int):
+    return {
+        "dados": controller.concluir_passo(usuario_id, tarefa_id, passo_id)
+    }
+
+
+@router.post(
+    "/{tarefa_id}/passos/{passo_id}/dividir",
+    status_code=status.HTTP_201_CREATED,
+    response_model=Resposta[List[PassoSaida]]
+)
+def dividir_passo(usuario_id: int, tarefa_id: int, passo_id: int):
+    return {
+        "dados": controller.dividir_passo(usuario_id, tarefa_id, passo_id)
+    }
 
 
 @router.delete("/{tarefa_id}/hoje", response_model=Resposta[TarefaSaida])

@@ -151,6 +151,16 @@ class TarefaRepository:
             comando = select(Tarefa).where(Tarefa.id == tarefa_id)
             return session.scalar(comando)
 
+    def concluir(self, tarefa_id):
+        """Marca como concluída (sem desfazer se já estava)."""
+        with SessionLocal() as session:
+            tarefa = session.get(Tarefa, tarefa_id)
+            if not tarefa.concluida:
+                tarefa.concluida = True
+                tarefa.concluida_em = datetime.now()
+                session.commit()
+            return tarefa
+
     def alternar_concluida(self, tarefa_id):
         with SessionLocal() as session:
             comando = select(Tarefa).where(Tarefa.id == tarefa_id)

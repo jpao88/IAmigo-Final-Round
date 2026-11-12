@@ -42,7 +42,9 @@ class ServiceFake:
                 return [SimpleNamespace(**vars(TAREFA), minutos_restantes=25)]
             if nome in ("listar_tarefas", "listar_bandeja", "criar_varias", "planejar_para_hoje"):
                 return [TAREFA]
-            if nome in ("listar_passos", "gerar_passos", "reordenar_passos"):
+            if nome == "concluir_passo":
+                return {"passo": PASSO, "tarefa_concluida": False}
+            if nome in ("listar_passos", "gerar_passos", "reordenar_passos", "dividir_passo"):
                 return [PASSO]
             if "passo" in nome:
                 return PASSO
@@ -107,6 +109,12 @@ class TestMatrizDePermissoes(BaseApi):
         ("delete", "/usuarios/1/tarefas/10/hoje", None,
          {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
         ("put", "/usuarios/1/limite-hoje", {"limite_hoje": 4},
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("post", "/usuarios/1/tarefas/10/passos/100/concluir", None,
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("post", "/usuarios/1/tarefas/10/passos/100/dividir", None,
+         {"DONO": 201, "OUTRO": 403, "ADMIN": 403}),
+        ("post", "/usuarios/1/tarefas/10/concluir", None,
          {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
     ]
 

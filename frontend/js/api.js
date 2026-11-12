@@ -23,6 +23,8 @@ const MENSAGENS = {
   "Essa tarefa já está em Hoje ou foi concluída.": "Esa tarea ya está en Hoy.",
   "Escolha as tarefas, uma vez cada.": "Elige al menos una tarea.",
   "O limite precisa estar entre 1 e 5.": "Elige entre 1 y 5.",
+  "Esse passo foi dividido.": "Ese paso cambió. Sigamos con el siguiente.",
+  "Esse passo não pode ser dividido.": "Ese paso ya no se puede dividir.",
 };
 
 const MENSAGEM_GENERICA = "Algo salió mal. Intenta otra vez.";
@@ -200,4 +202,28 @@ export function reordenarPassos(tarefaId, ids) {
 
 export function excluirPasso(tarefaId, passoId) {
   return requisitar("DELETE", `${rotaPassos(tarefaId)}/${passoId}`);
+}
+
+// ---- Modo foco (Épica 4 · Hacer) ----
+
+// H4.2: devolve { passo, tarefa_concluida }; com o último passo, a tarefa fica concluída.
+export function concluirPasso(tarefaId, passoId) {
+  return requisitar("POST", `${rotaPassos(tarefaId)}/${passoId}/concluir`);
+}
+
+// Tarefa sem passos: no modo foco é um passo só.
+export function concluirTarefa(tarefaId) {
+  return requisitar("POST", `${rotaTarefas()}/${tarefaId}/concluir`);
+}
+
+// H4.4 "Me atasqué": 2 ou 3 passos menores no lugar do travado.
+export async function dividirPasso(tarefaId, passoId) {
+  try {
+    return await requisitar("POST", `${rotaPassos(tarefaId)}/${passoId}/dividir`);
+  } catch (erro) {
+    if (erro.status === 503) {
+      throw new ErroApi(503, "IAmigo no pudo dividirlo ahora. Prueba en un rato.");
+    }
+    throw erro;
+  }
 }

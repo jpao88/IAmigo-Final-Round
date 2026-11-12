@@ -59,6 +59,15 @@ class TarefaController:
     def reordenar_passos(self, usuario_id, tarefa_id, ids_em_ordem):
         return self.service.reordenar_passos(usuario_id, tarefa_id, ids_em_ordem)
 
+    def concluir_passo(self, usuario_id, tarefa_id, passo_id):
+        return self.service.concluir_passo(usuario_id, tarefa_id, passo_id)
+
+    def concluir_tarefa(self, usuario_id, tarefa_id):
+        return self.service.concluir_tarefa(usuario_id, tarefa_id)
+
+    def dividir_passo(self, usuario_id, tarefa_id, passo_id):
+        return self.service.dividir_passo(usuario_id, tarefa_id, passo_id)
+
     def alternar_status_passo(self, usuario_id, tarefa_id, passo_id):
         return self.service.alternar_status_passo(usuario_id, tarefa_id, passo_id)
 

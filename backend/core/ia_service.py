@@ -87,17 +87,7 @@ def gerar_passos_tarefa(titulo_tarefa: str) -> List[dict]:
     )
 
     try:
-        resposta = client.models.generate_content(
-            model=MODELO_GEMINI,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                system_instruction=INSTRUCAO_SISTEMA,
-                temperature=0.3,
-                response_mime_type="application/json",
-                response_schema=list[_PassoIA],
-            ),
-        )
-        passos_brutos = json.loads(resposta.text or "[]")
+        passos_brutos = _pedir_passos(prompt)
     except Exception as erro:
         logger.exception("Falha ao gerar passos no Gemini")
         raise FalhaIA("Não foi possível gerar os passos agora.") from erro
@@ -109,5 +99,55 @@ def gerar_passos_tarefa(titulo_tarefa: str) -> List[dict]:
 
     if not passos:
         raise FalhaIA("A IA não retornou nenhum passo.")
+
+    return passos
+
+
+def _pedir_passos(prompt: str) -> list:
+    """Chama o Gemini pedindo uma lista JSON de {texto, minutos}."""
+    resposta = client.models.generate_content(
+        model=MODELO_GEMINI,
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            system_instruction=INSTRUCAO_SISTEMA,
+            temperature=0.3,
+            response_mime_type="application/json",
+            response_schema=list[_PassoIA],
+        ),
+    )
+    return json.loads(resposta.text or "[]")
+
+
+def dividir_passo(titulo_tarefa: str, texto_passo: str, minutos: int) -> List[dict]:
+    """H4.4 "Me atasqué": divide um passo travado em 2 ou 3 passos menores.
+
+    Devolve [{"texto": ..., "minutos_estimados": ...}, ...]; erro vira FalhaIA (503).
+    """
+    if not client:
+        raise FalhaIA("GEMINI_API_KEY não configurada.")
+
+    prompt = (
+        "La persona se trabó en este paso y no logra empezarlo. "
+        "Divídelo en 2 o 3 pasos más pequeños y concretos, en orden. "
+        "El primero debe ser tan fácil que se pueda empezar ya, en menos de 5 minutos. "
+        f"Entre todos deberían sumar más o menos {minutos} minutos.\n\n"
+        f"Tarea: {json.dumps(titulo_tarefa, ensure_ascii=False)}\n"
+        f"Paso trabado: {json.dumps(texto_passo, ensure_ascii=False)}"
+    )
+
+    try:
+        passos_brutos = _pedir_passos(prompt)
+    except Exception as erro:
+        logger.exception("Falha ao dividir passo no Gemini")
+        raise FalhaIA("Não foi possível dividir o passo agora.") from erro
+
+    if not isinstance(passos_brutos, list):
+        raise FalhaIA("A IA não retornou nenhum passo.")
+
+    passos = _normalizar(p for p in passos_brutos if isinstance(p, dict))[:3]
+
+    # Um passo só não ajuda quem travou: precisa de pelo menos 2.
+    if len(passos) < 2:
+        raise FalhaIA("A IA não retornou passos suficientes.")
 
     return passos

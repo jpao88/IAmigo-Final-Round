@@ -70,12 +70,12 @@ Cada sprint entrega una etapa del ciclo funcionando de punta a punta: endpoint, 
 - [x] Elegir y ordenar tareas desde la Bandeja
 - [x] Mostrar el tiempo total estimado del día
 
-**Sprint 4 · Hacer (modo foco)**
+**Sprint 4 · Hacer (modo foco)** ✅ 12 de noviembre de 2026
 
-- [ ] Pantalla de un paso con temporizador circular
-- [ ] Botones Hecho, +5 minutos, Me atasqué y Pausar
-- [ ] Celebración breve por paso y tarea concluida al terminar el último
-- [ ] Retomar donde quedó al volver a la app
+- [x] Pantalla de un paso con temporizador circular
+- [x] Botones Hecho, +5 minutos, Me atasqué y Pausar
+- [x] Celebración breve por paso y tarea concluida al terminar el último
+- [x] Retomar donde quedó al volver a la app
 
 **Sprint 5 · Cerrar el día y primer uso**
 

@@ -634,3 +634,197 @@ textarea:focus-visible {
 
 .bandeja .ver-tudo { margin-top: 8px; }
 .bandeja { display: flex; flex-direction: column; }
+
+/* ---- Hoy: Empezar e retomar (Épica 4) ---- */
+
+.botao-empezar {
+  grid-column: 1 / -1;
+  width: auto;
+  margin: 4px 0 8px 16px;
+}
+
+.retomar {
+  background: var(--superficie);
+  border: 2px solid var(--primaria);
+  border-radius: var(--raio);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.retomar h2 { font-size: 1.1rem; margin: 0; }
+.retomar-passo { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+
+.retomar-acoes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.retomar-acoes .botao { width: auto; flex: 1; }
+
+/* ---- Modo foco (Épica 4 · Hacer) ---- */
+
+.titulo-foco {
+  margin: -8px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.progresso { margin: 0; font-size: 0.95rem; }
+
+.botao-som { font-size: 1.2rem; line-height: 1; }
+.botao-som[aria-pressed="true"] { opacity: 0.6; }
+
+.foco {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.rotulo-foco {
+  margin: 8px 0 0;
+  color: var(--primaria);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85rem;
+}
+
+/* Princípio "Uma coisa por vez": o passo é o texto maior da app. */
+.passo-foco {
+  margin: 0;
+  font-size: 1.7rem;
+  line-height: 1.25;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.relogio {
+  position: relative;
+  width: min(64vw, 240px);
+  aspect-ratio: 1;
+  margin: 8px 0;
+}
+
+.relogio svg { width: 100%; height: 100%; }
+
+.relogio circle {
+  fill: none;
+  stroke-width: 12;
+}
+
+.relogio-fundo { stroke: var(--borda); }
+
+.relogio-tempo {
+  stroke: var(--primaria);
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 1s linear, stroke 600ms, opacity 300ms;
+}
+
+.relogio-pausado .relogio-tempo { opacity: 0.45; }
+
+/* H4.7: o tempo acabou; sem alarme nem vermelho, o anel fica cheio e calmo. */
+.relogio-acabou .relogio-tempo { opacity: 0.35; }
+
+.relogio-texto {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.acoes-foco {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.botao-hecho {
+  min-height: 64px;
+  font-size: 1.2rem;
+}
+
+.acoes-foco-linha {
+  display: flex;
+  gap: 10px;
+}
+
+.acoes-foco-linha .botao { min-height: 52px; }
+
+/* Com o tempo no fim, "+5 minutos" ganha destaque ao lado de "Hecho". */
+.tempo-acabou [data-acao="mais5"] {
+  border-width: 2px;
+  font-weight: 800;
+}
+
+.acoes-esperando {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.foco-fim {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco);
+  text-align: center;
+}
+
+/* Princípio "Recompensa imediata": celebração breve a cada passo. */
+.celebracao {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  background: color-mix(in srgb, var(--fundo) 94%, transparent);
+}
+
+.celebracao-icone {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: var(--primaria);
+  color: var(--primaria-texto);
+  animation: celebrar 600ms cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+.celebracao-texto {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  animation: aparecer 500ms ease-out;
+}
+
+.celebracao-detalhe { margin: 0; overflow-wrap: anywhere; }
+
+@keyframes celebrar {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celebracao-icone, .celebracao-texto { animation: none; }
+  .relogio-tempo { transition: none; }
+}
