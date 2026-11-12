@@ -1,0 +1,78 @@
+# Publicação na DigitalOcean App Platform (Fase 3).
+# Uma app só, na região de San Francisco (a mesma do MySQL do Aiven):
+#   - "web": o front estático (pasta frontend), em /
+#   - "api": o backend FastAPI (pasta backend), em /api
+# Mesmo domínio para os dois: o navegador não precisa de CORS.
+# As claves NÃO ficam aqui: o painel pede os valores ao criar a app.
+spec:
+  name: iamigo
+  region: sfo
+
+  services:
+    - name: api
+      github:
+        repo: jpao88/IAmigo-Final-Round
+        branch: main
+        deploy_on_push: true
+      source_dir: backend
+      environment_slug: python
+      run_command: uvicorn api_app:app --host 0.0.0.0 --port 8080
+      http_port: 8080
+      instance_count: 1
+      instance_size_slug: apps-s-1vcpu-0.5gb
+      health_check:
+        http_path: /
+      envs:
+        - key: DB_HOST
+          scope: RUN_TIME
+          type: SECRET
+        - key: DB_PORT
+          scope: RUN_TIME
+          type: SECRET
+        - key: DB_USER
+          scope: RUN_TIME
+          type: SECRET
+        - key: DB_PASSWORD
+          scope: RUN_TIME
+          type: SECRET
+        - key: DB_NAME
+          scope: RUN_TIME
+          type: SECRET
+        - key: DB_SSL_CA_PEM
+          scope: RUN_TIME
+          type: SECRET
+        - key: JWT_SECRET
+          scope: RUN_TIME
+          type: SECRET
+        - key: GEMINI_API_KEY
+          scope: RUN_TIME
+          type: SECRET
+        - key: DOCS_ABERTOS
+          scope: RUN_TIME
+          value: "nao"
+        - key: CORS_ORIGINS
+          scope: RUN_TIME
+          value: ""
+
+  static_sites:
+    - name: web
+      github:
+        repo: jpao88/IAmigo-Final-Round
+        branch: main
+        deploy_on_push: true
+      source_dir: frontend
+      index_document: index.html
+
+  ingress:
+    rules:
+      - match:
+          path:
+            prefix: /api
+        component:
+          name: api
+          preserve_path_prefix: false
+      - match:
+          path:
+            prefix: /
+        component:
+          name: web

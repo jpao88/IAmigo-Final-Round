@@ -25,6 +25,7 @@ const MENSAGENS = {
   "O limite precisa estar entre 1 e 5.": "Elige entre 1 y 5.",
   "Esse passo foi dividido.": "Ese paso cambió. Sigamos con el siguiente.",
   "Esse passo não pode ser dividido.": "Ese paso ya no se puede dividir.",
+  "Muitas tentativas. Tente de novo em alguns minutos.": "Muchos intentos seguidos. Espera unos minutos y vuelve a probar.",
 };
 
 const MENSAGEM_GENERICA = "Algo salió mal. Intenta otra vez.";

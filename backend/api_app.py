@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from config.settings import settings
-from core.erros import CredenciaisInvalidas, DadosInvalidos, FalhaIA, NaoEncontrado
+from core.erros import CredenciaisInvalidas, DadosInvalidos, FalhaIA, NaoEncontrado, TentativasDemais
 
 from api.rotas_usuarios import router as usuarios_router
 from api.rotas_tarefas import router as tarefas_router
@@ -13,7 +13,10 @@ from api.rotas_dias import router as dias_router
 app = FastAPI(
     title="IAmigo API",
     description="API do IAmigo V1: organização diária para pessoas com TDAH.",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url="/docs" if settings.docs_abertos else None,
+    redoc_url="/redoc" if settings.docs_abertos else None,
+    openapi_url="/openapi.json" if settings.docs_abertos else None,
 )
 
 app.add_middleware(
@@ -30,6 +33,7 @@ STATUS_POR_ERRO = {
     DadosInvalidos: 422,
     CredenciaisInvalidas: 401,
     FalhaIA: 503,
+    TentativasDemais: 429,
 }
 
 

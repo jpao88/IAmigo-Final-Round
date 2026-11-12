@@ -42,12 +42,18 @@ class Settings:
     db_name: str = os.getenv("DB_NAME", "iamigo")
     # Caminho do ca.pem (Aiven). Vazio = conexão sem SSL (MySQL local).
     db_ssl_ca: Optional[str] = os.getenv("DB_SSL_CA") or None
+    # No hosting não há arquivo: o conteúdo do ca.pem vai numa variável secreta.
+    db_ssl_ca_pem: Optional[str] = os.getenv("DB_SSL_CA_PEM") or None
 
     gemini_api_key: Optional[str] = os.getenv("GEMINI_API_KEY") or None
 
     # Obrigatório para o login da API (core/seguranca.py).
     jwt_secret: Optional[str] = os.getenv("JWT_SECRET") or None
-    jwt_expira_minutos: int = _inteiro("JWT_EXPIRA_MINUTOS", "60")
+    # 30 dias: a app é de uso diário; entrar de novo várias vezes por dia afasta a pessoa.
+    jwt_expira_minutos: int = _inteiro("JWT_EXPIRA_MINUTOS", "43200")
+
+    # Documentação interativa da API (/docs). Publicada, fica fechada.
+    docs_abertos: bool = os.getenv("DOCS_ABERTOS", "sim").strip().lower() in ("sim", "true", "1")
 
     cors_origins: List[str] = field(
         default_factory=lambda: _lista(os.getenv("CORS_ORIGINS", ORIGENS_PADRAO))

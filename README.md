@@ -92,6 +92,28 @@ Desde `backend/`:
 
 No necesitan MySQL ni Gemini.
 
+## 6. Publicar (DigitalOcean)
+
+La app se publica en DigitalOcean App Platform, en la región de San Francisco, la misma del MySQL de Aiven. La configuración está en [`.do/deploy.template.yaml`](.do/deploy.template.yaml):
+
+- **web**: el front estático (`frontend/`), en `/`.
+- **api**: el backend (`backend/`), en `/api`. El front lo detecta solo (`js/config.js`).
+
+Cada `git push` a `main` vuelve a publicar.
+
+**Variables del backend** (se escriben en el panel de DigitalOcean, nunca en el repositorio):
+
+| Variable | Valor |
+| --- | --- |
+| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Los mismos de tu `.env` |
+| `DB_SSL_CA_PEM` | El contenido completo de `ca.pem` (desde `-----BEGIN CERTIFICATE-----` hasta `-----END CERTIFICATE-----`) |
+| `JWT_SECRET` | Uno nuevo, distinto del local: `python -c "import secrets; print(secrets.token_urlsafe(48))"` |
+| `GEMINI_API_KEY` | La clave de la IA |
+| `DOCS_ABERTOS` | `nao` |
+| `CORS_ORIGINS` | Vacío (front y API comparten dominio) |
+
+Si la app publicada no puede conectarse a la base, revisa en Aiven que el servicio esté encendido y que no tenga una lista de IPs permitidas que deje fuera a DigitalOcean.
+
 ## Convenciones
 
 - El código y la base de datos usan nombres en portugués: `tarefas`, `passos`, `data_planejada`…

@@ -24,5 +24,9 @@ class FalhaIA(RuntimeError):
     """O serviço de IA não está configurado ou não respondeu."""
 
 
+class TentativasDemais(ValueError):
+    """Muitos logins errados seguidos para o mesmo e-mail."""
+
+
 class LimiteHojeAtingido(DadosInvalidos):
     """Hoje já tem tantas tarefas pendentes quanto o limite da pessoa."""

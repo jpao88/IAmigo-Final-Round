@@ -1,4 +1,6 @@
 import unittest
+
+from core.limite_login import LimiteDeTentativas
 from types import SimpleNamespace
 
 from services.usuario_service import UsuarioService
@@ -46,7 +48,7 @@ class UsuarioRepositoryFake:
 class TestUsuarioServiceCriar(unittest.TestCase):
     def setUp(self):
         self.repository = UsuarioRepositoryFake()
-        self.service = UsuarioService(repository=self.repository)
+        self.service = UsuarioService(repository=self.repository, limite_login=LimiteDeTentativas())
 
     def test_criar_com_dados_validos(self):
         usuario = self.service.criar_usuario("Ana", "  Ana@Exemplo.com ", "segredo1")
@@ -104,7 +106,7 @@ class TestUsuarioServiceCriar(unittest.TestCase):
 class TestUsuarioServiceAtualizar(unittest.TestCase):
     def setUp(self):
         self.repository = UsuarioRepositoryFake()
-        self.service = UsuarioService(repository=self.repository)
+        self.service = UsuarioService(repository=self.repository, limite_login=LimiteDeTentativas())
 
     def test_atualizar_nome(self):
         usuario = self.service.criar_usuario("Ana", "ana@exemplo.com", "segredo1")
@@ -117,7 +119,7 @@ class TestUsuarioServiceAtualizar(unittest.TestCase):
 class TestUsuarioServiceAutenticar(unittest.TestCase):
     def setUp(self):
         self.repository = UsuarioRepositoryFake()
-        self.service = UsuarioService(repository=self.repository)
+        self.service = UsuarioService(repository=self.repository, limite_login=LimiteDeTentativas())
         self.ana = self.service.criar_usuario("Ana", "ana@exemplo.com", "segredo1")
 
     def test_login_com_email_e_senha_corretos(self):

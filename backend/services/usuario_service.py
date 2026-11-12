@@ -1,11 +1,13 @@
 from repositories.usuario_repository import UsuarioRepository
 from core.erros import CredenciaisInvalidas, DadosInvalidos, NaoEncontrado
+from core.limite_login import LIMITE_LOGIN
 from core.seguranca import gerar_hash_senha, verificar_senha
 
 
 class UsuarioService:
-    def __init__(self, repository=None):
+    def __init__(self, repository=None, limite_login=None):
         self.repository = repository or UsuarioRepository()
+        self.limite_login = limite_login or LIMITE_LOGIN
 
     def _validar_nome(self, nome):
         nome = nome.strip()
@@ -87,11 +89,19 @@ class UsuarioService:
 
     def autenticar(self, email, senha):
         # Mesma normalização do cadastro, para "Ana@Exemplo.com " achar "ana@exemplo.com".
-        usuario = self.repository.buscar_por_email(email.strip().lower())
+        email = email.strip().lower()
+
+        # Fase 3: depois de 5 erros em 15 minutos, esse e-mail espera (vale para
+        # e-mails sem conta também, para não revelar quais existem).
+        self.limite_login.verificar(email)
+
+        usuario = self.repository.buscar_por_email(email)
 
         # Mesma mensagem para e-mail inexistente e senha errada:
         # não revela quais e-mails têm conta.
         if usuario is None or not verificar_senha(senha, usuario.senha_hash):
+            self.limite_login.registrar_falha(email)
             raise CredenciaisInvalidas("E-mail ou senha inválidos.")
 
+        self.limite_login.limpar(email)
         return usuario

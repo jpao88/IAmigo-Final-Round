@@ -1,4 +1,6 @@
 import os
+import re
+import tempfile
 
 from sqlalchemy import URL, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
@@ -17,8 +19,38 @@ DATABASE_URL = URL.create(
 )
 
 
+def _gravar_certificado(conteudo: str) -> str:
+    """Grava o certificado recebido numa variável (DB_SSL_CA_PEM) num arquivo temporário.
+
+    Painéis de hosting às vezes juntam as linhas ou trocam quebras por espaços;
+    por isso o certificado é remontado a partir do bloco base64.
+    """
+    # "\n" escrito como texto (barra + n) também conta como quebra de linha.
+    conteudo = conteudo.replace("\\n", "\n")
+    blocos = re.findall(
+        r"-----BEGIN CERTIFICATE-----(.+?)-----END CERTIFICATE-----", conteudo, re.S
+    )
+    if not blocos:
+        raise RuntimeError("DB_SSL_CA_PEM não contém um certificado (BEGIN/END CERTIFICATE).")
+
+    pem = ""
+    for bloco in blocos:
+        corpo = re.sub(r"\s+", "", bloco)
+        linhas = [corpo[i:i + 64] for i in range(0, len(corpo), 64)]
+        pem += "-----BEGIN CERTIFICATE-----\n" + "\n".join(linhas) + "\n-----END CERTIFICATE-----\n"
+
+    arquivo = tempfile.NamedTemporaryFile("w", suffix=".pem", delete=False, encoding="ascii")
+    with arquivo:
+        arquivo.write(pem)
+    return arquivo.name
+
+
 def _argumentos_ssl() -> dict:
-    """Com DB_SSL_CA, exige SSL e verifica o certificado do servidor (Aiven)."""
+    """Com DB_SSL_CA (arquivo) ou DB_SSL_CA_PEM (conteúdo), exige SSL e verifica
+    o certificado do servidor (Aiven)."""
+    if settings.db_ssl_ca_pem:
+        return {"ssl_ca": _gravar_certificado(settings.db_ssl_ca_pem), "ssl_verify_cert": True}
+
     if not settings.db_ssl_ca:
         return {}
 
