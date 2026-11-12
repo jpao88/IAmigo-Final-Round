@@ -16,7 +16,7 @@ import { precisaDaGuia, tarefaDaGuia } from "../guia.js";
 import { criarListaBandeja } from "../lista-bandeja.js";
 import { navegar } from "../roteador.js";
 import { obterUsuario } from "../sessao.js";
-import { desenharBarraTempo, formatarTempoTotal } from "../tempo.js";
+import { desenharBarraTempo, formatarTempoCurto, formatarTempoTotal } from "../tempo.js";
 
 // ---- Cópia local do dia ----
 
@@ -83,7 +83,7 @@ export function telaHoje(raiz) {
 
   raiz.append(cabecalho(), criarElemento(`
     <div class="titulo-com-acao">
-      <h1>Hoy</h1>
+      <h1>Hoy<span class="tempo-dia" hidden></span></h1>
       <button class="botao-texto" type="button" data-acao="ordenar" aria-pressed="false" hidden>Ordenar</button>
     </div>
 
@@ -96,10 +96,7 @@ export function telaHoje(raiz) {
       </div>
     </section>
 
-    <div class="tempo-total" hidden>
-      <p class="tempo-texto"></p>
-      <div class="barra-tempo" aria-hidden="true"></div>
-    </div>
+    <div class="barra-tempo barra-dia" aria-hidden="true" hidden></div>
 
     <p class="dia-vazio subtitulo" hidden>Elige una cosa de tu Bandeja para empezar.</p>
 
@@ -131,9 +128,8 @@ export function telaHoje(raiz) {
   `));
 
   const botaoOrdenar = raiz.querySelector('[data-acao="ordenar"]');
-  const tempoTotal = raiz.querySelector(".tempo-total");
-  const tempoTexto = raiz.querySelector(".tempo-texto");
-  const barraTempo = raiz.querySelector(".barra-tempo");
+  const tempoDia = raiz.querySelector(".tempo-dia");
+  const barraTempo = raiz.querySelector(".barra-dia");
   const diaVazio = raiz.querySelector(".dia-vazio");
   const secaoAhora = raiz.querySelector(".ahora");
   const secaoDespues = raiz.querySelector(".despues");
@@ -231,8 +227,11 @@ export function telaHoje(raiz) {
     botaoElegir.textContent = temPlano || tudoFeito ? "Elegir más tareas" : "Elegir tareas para hoy";
 
     const total = lista.reduce((soma, tarefa) => soma + tarefa.minutos_restantes, 0);
-    tempoTotal.hidden = !temPlano;
-    tempoTexto.textContent = `${formatarTempoTotal(total)} en total`;
+    // H3.3: o tempo do dia junto ao título, com a barra logo embaixo e Ahora em seguida.
+    tempoDia.hidden = !temPlano;
+    barraTempo.hidden = !temPlano;
+    tempoDia.textContent = ` · ${formatarTempoCurto(total)}`;
+    tempoDia.setAttribute("aria-label", `${formatarTempoTotal(total)} en total`);
     desenharBarraTempo(barraTempo, lista.map((tarefa) => tarefa.minutos_restantes));
 
     listaHecho.replaceChildren(...concluidas.map((tarefa) => {

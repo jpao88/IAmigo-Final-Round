@@ -78,10 +78,11 @@ Actualizar esta sección al terminar cada tarea.
 
 - **Respaldos, revisado el 12 de noviembre de 2026.** Aiven confirmado en plan Free (1 CPU, 1 GB RAM, 1 GB de disco; el aviso de "trial" es publicidad para servicios pagos). Hace copias completas automáticas en `do-sfo2` con registros de cambios (restaurar = **Fork service**); no hace copias mientras está apagado por inactividad. Respaldo propio: `backend/scripts/exportar_dados.py` exporta `usuarios`, `tarefas`, `passos` y `fechamentos_dia` a JSON en `RESPALDOS_DIR` o `~/IAmigo-respaldos` (fuera del repo: tiene datos personales). Correrlo semanalmente durante la prueba y antes de cambios grandes.
 
-**Siguiente tarea:** revisar los siete principios de diseño pantalla por pantalla (incluye juntar el tiempo total con Ahora y el retoque visual: menos bordes, más aire). Después, la prueba de varios días con las personas de la validación.
+- **Siete principios, revisados el 12 de noviembre de 2026** con capturas a 390 px de las 10 pantallas. Cambios: el texto del paso es un `textarea` que crece (antes se cortaba); en la tarea, ↑ ↓ ✕ solo en modo "Ordenar" (como en Hoy); minutos en una pastilla "10 min"; "Me atasqué" con estilo de enlace (`button.link-secundario`); en Hoy el tiempo va junto al título ("Hoy · unos 55 min", `formatarTempoCurto`) con la barra debajo; tarjetas sin borde (solo Ahora lo tiene; Elegir marca con `box-shadow`); `.confirmacao` es un aviso flotante sobre las pestañas y no ocupa espacio.
+
+**Siguiente tarea:** la prueba de varios días con 3 a 5 personas de la validación (antes: activar la facturación de Gemini) y, si no se hizo, el punto de control de la Fase 2 (`docs/prueba-celular.md`; ahora puede hacerse con la URL publicada).
 
 **Pendientes para recordar:**
-- Al publicar: limitar intentos de login (hoy no hay límite), dejar `CORS_ORIGIN_REGEX` vacío y decidir si `/docs` queda abierto. El token dura 60 min (`JWT_EXPIRA_MINUTOS`): para una app de uso diario conviene más tiempo o renovarlo.
-- Desde la laptop cada consulta a Aiven tarda ~420 ms y un pedido hace varias (pre-ping, token, consulta, rollback): la Bandeja tarda ~3 s. El front lo disimula. Se resuelve en la Fase 3 publicando el backend en la misma región que Aiven; Pablo prefirió no quitar `pool_pre_ping`.
+- Desde la laptop cada consulta a Aiven tarda ~420 ms (la Bandeja local ~3 s); publicada responde en ~0,5 s. Pablo prefirió no quitar `pool_pre_ping`.
 - Gemini en plan gratuito: límites bajos y Google puede usar lo enviado (títulos de tareas). Activar la facturación antes de que la usen otras personas (ver Fase 3 · IA).
-- Para la Fase 3 (revisión de los siete principios): juntar el tiempo total con Ahora en Hoy y un retoque visual general (menos bordes, más aire).
+- Aiven Free se apaga si nadie lo usa por un tiempo: si la app publicada no carga datos, encenderlo desde el panel.

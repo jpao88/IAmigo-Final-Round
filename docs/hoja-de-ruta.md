@@ -92,7 +92,7 @@ Comprueba que la app funciona en la vida diaria de las personas, no solo en una 
 - [ ] Volver a las 3 a 5 personas de la validación y pedirles que usen la app durante varios días
 - [ ] Recoger lo que funcionó, lo que confundió y lo que dejaron de usar
 - [ ] Corregir los problemas más graves
-- [ ] Revisar los siete principios de diseño pantalla por pantalla
+- [x] Revisar los siete principios de diseño pantalla por pantalla (12 de noviembre de 2026)
 - [x] Proteger las rutas de tareas y pasos para que nadie vea datos ajenos (revisado el 12 de noviembre de 2026)
 - [x] Publicar la app en un hosting accesible desde el celular (DigitalOcean, 12 de noviembre de 2026)
 

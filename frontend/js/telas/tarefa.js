@@ -38,7 +38,10 @@ export function telaTarefa(raiz, { id: tarefaId }) {
 
     <section class="com-passos" hidden>
       <div class="tempo-total">
-        <p class="tempo-texto"></p>
+        <div class="titulo-com-acao">
+          <p class="tempo-texto"></p>
+          <button class="botao-texto" type="button" data-acao="ordenar" aria-pressed="false">Ordenar</button>
+        </div>
         <div class="barra-tempo" aria-hidden="true"></div>
       </div>
       <ol class="lista-passos"></ol>
@@ -73,6 +76,7 @@ export function telaTarefa(raiz, { id: tarefaId }) {
   const guiaEtapa = raiz.querySelector(".guia-etapa");
   const guia = raiz.querySelector(".guia");
   const botaoGuia = raiz.querySelector('[data-acao="guia-empezar"]');
+  const botaoOrdenar = raiz.querySelector('[data-acao="ordenar"]');
 
   // H6.2: esta é a primeira tarefa guiada?
   const emGuia = tarefaDaGuia() === tarefaId;
@@ -80,6 +84,8 @@ export function telaTarefa(raiz, { id: tarefaId }) {
   // Os passos como estão guardados no servidor (só os visíveis, na ordem).
   let passos = [];
   let modoManual = false;
+  // Como em Hoy: ↑ ↓ e ✕ só aparecem no modo "Ordenar", para a lista ficar leve.
+  let ordenando = false;
 
   titulo.textContent = tituloEmCache(tarefaId) ?? "";
 
@@ -102,13 +108,13 @@ export function telaTarefa(raiz, { id: tarefaId }) {
 
     item.append(criarElemento(`
       <div class="passo-linha">
-        <input class="passo-texto" type="text" maxlength="255" autocomplete="off">
+        <textarea class="passo-texto" rows="1" maxlength="255" autocomplete="off" enterkeyhint="done"></textarea>
         <label class="minutos">
           <input class="passo-minutos" type="number" inputmode="numeric" min="1" max="120">
           <span>min</span>
         </label>
       </div>
-      <div class="passo-acoes">
+      <div class="passo-acoes acoes-ordenar">
         <button class="botao-icone" type="button" data-acao="subir">↑</button>
         <button class="botao-icone" type="button" data-acao="descer">↓</button>
         <button class="botao-icone" type="button" data-acao="apagar">✕</button>
@@ -147,7 +153,13 @@ export function telaTarefa(raiz, { id: tarefaId }) {
     formNovo.hidden = !(temPassos || modoManual);
     botaoListo.hidden = !temPassos;
 
+    if (!temPassos) ordenando = false;
+    botaoOrdenar.textContent = ordenando ? "Listo" : "Ordenar";
+    botaoOrdenar.setAttribute("aria-pressed", String(ordenando));
+    raiz.classList.toggle("ordenando", ordenando);
+
     lista.replaceChildren(...passos.map(itemDoPasso));
+    lista.querySelectorAll(".passo-texto").forEach(ajustarAltura);
     desenharTempo();
     desenharGuia(temPassos);
   }
@@ -182,6 +194,12 @@ export function telaTarefa(raiz, { id: tarefaId }) {
     }
     navegar(`/foco/${tarefaId}`);
   });
+
+  // O campo do passo cresce com o texto: nada fica cortado.
+  function ajustarAltura(campo) {
+    campo.style.height = "auto";
+    campo.style.height = `${campo.scrollHeight}px`;
+  }
 
   async function recarregarPassos() {
     const todos = await listarPassos(tarefaId);
@@ -272,7 +290,8 @@ export function telaTarefa(raiz, { id: tarefaId }) {
     const passo = passos.find((p) => String(p.id) === item.dataset.id);
     if (!passo) return;
 
-    const texto = item.querySelector(".passo-texto").value.trim();
+    // Um passo é uma linha só: quebras coladas viram espaço.
+    const texto = item.querySelector(".passo-texto").value.replace(/\s*\n\s*/g, " ").trim();
     const campoMinutos = item.querySelector(".passo-minutos");
     const minutos = campoMinutos.value === "" ? MINUTOS_PADRAO : Number(campoMinutos.value);
 
@@ -281,7 +300,8 @@ export function telaTarefa(raiz, { id: tarefaId }) {
     if (!texto) {
       // Texto apagado: volta ao anterior. Para tirar o passo, existe o ✕.
       item.querySelector(".passo-texto").value = passo.texto;
-      avisar("Para quitar un paso, usa ✕.");
+      ajustarAltura(item.querySelector(".passo-texto"));
+      avisar("Para quitar un paso, toca Ordenar y luego ✕.");
       return;
     }
 
@@ -346,10 +366,19 @@ export function telaTarefa(raiz, { id: tarefaId }) {
 
   // Enter num passo confirma a edição (no celular fecha o teclado).
   lista.addEventListener("keydown", (evento) => {
-    if (evento.key === "Enter" && evento.target.matches("input")) {
+    if (evento.key === "Enter" && evento.target.matches("input, textarea")) {
       evento.preventDefault();
       evento.target.blur();
     }
+  });
+
+  lista.addEventListener("input", (evento) => {
+    if (evento.target.matches(".passo-texto")) ajustarAltura(evento.target);
+  });
+
+  botaoOrdenar.addEventListener("click", () => {
+    ordenando = !ordenando;
+    desenhar();
   });
 
   lista.addEventListener("click", (evento) => {
