@@ -246,6 +246,154 @@ textarea:focus-visible {
 /* Ainda sendo guardada no servidor: um pouco mais clara, sem bloquear nada. */
 .tarefa-pendente { opacity: 0.6; }
 
+/* A tarefa inteira é tocável e leva ao detalhe. */
+.tarefa:has(.tarefa-link) { padding: 0; }
+
+.tarefa-link {
+  display: block;
+  padding: 14px 16px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--raio);
+}
+
+.tarefa-link:hover { background: var(--fundo); }
+.tarefa-link:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+
+/* ---- Tarefa e passos (Épica 2 · Desmenuzar) ---- */
+
+.titulo-tarefa { overflow-wrap: anywhere; }
+
+.sem-passos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco);
+}
+
+.centro { align-self: center; color: var(--primaria); font-weight: 600; }
+
+.pensando {
+  margin: 0;
+  color: var(--primaria);
+  font-weight: 600;
+  animation: respirar 1.6s ease-in-out infinite;
+}
+
+@keyframes respirar {
+  50% { opacity: 0.45; }
+}
+
+/* Princípio "O tempo se vê": total em texto e uma barra com um pedaço por passo. */
+.tempo-total { display: flex; flex-direction: column; gap: 8px; }
+.tempo-texto { margin: 0; font-weight: 600; }
+
+.barra-tempo {
+  display: flex;
+  gap: 3px;
+  height: 10px;
+}
+
+.barra-tempo span {
+  flex-basis: 0;
+  min-width: 6px;
+  border-radius: 999px;
+  background: var(--primaria);
+}
+
+.barra-tempo span:nth-child(even) { opacity: 0.55; }
+
+.lista-passos {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.passo {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.passo-linha,
+.novo-passo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.novo-passo { flex-direction: row; }
+
+.passo-texto,
+.novo-passo input[name="texto"] {
+  flex: 1;
+  min-width: 0;
+}
+
+.passo-texto {
+  border-color: transparent;
+  background: transparent;
+  min-height: 44px;
+  padding: 8px;
+}
+
+.passo-texto:hover { border-color: var(--borda); }
+
+.minutos {
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  font-weight: 400;
+  color: var(--texto-suave);
+  flex: none;
+}
+
+.minutos input {
+  width: 64px;
+  min-height: 44px;
+  padding: 8px;
+  text-align: center;
+}
+
+.passo-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.botao-icone {
+  font: inherit;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--texto-suave);
+  cursor: pointer;
+}
+
+.botao-icone:hover:not(:disabled) { background: var(--fundo); color: var(--texto); }
+.botao-icone:focus-visible { outline: 3px solid var(--foco); }
+.botao-icone:disabled { opacity: 0.3; cursor: default; }
+
+.passo-pendente { opacity: 0.6; }
+.passo-novo { animation: aparecer 600ms ease-out; }
+
+.rotulo-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .tarefa-nova { animation: none; }
+  .tarefa-nova, .passo-novo, .pensando { animation: none; }
 }

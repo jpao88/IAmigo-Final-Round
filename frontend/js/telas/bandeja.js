@@ -25,6 +25,11 @@ function lerCache() {
   }
 }
 
+// A tela da tarefa usa para mostrar o título na hora, antes do servidor responder.
+export function tituloEmCache(tarefaId) {
+  return lerCache()?.find((tarefa) => tarefa.id === tarefaId)?.titulo ?? null;
+}
+
 function salvarCache(tarefas) {
   try {
     localStorage.setItem(chaveCache(), JSON.stringify(tarefas));
@@ -75,13 +80,27 @@ export function telaBandeja(raiz) {
 
   // ---- Lista ----
 
+  // Guardada: vira um link para a tela da tarefa (Desmenuzar).
+  function marcarComoGuardada(item, id) {
+    item.dataset.id = id;
+    item.classList.remove("tarefa-pendente");
+
+    const link = document.createElement("a");
+    link.className = "tarefa-link";
+    link.href = `#/tarefa/${id}`;
+    link.textContent = item.textContent;
+    item.replaceChildren(link);
+  }
+
   function itemDaTarefa(titulo, { id = null, nova = false } = {}) {
     const item = document.createElement("li");
     item.className = "tarefa";
     if (nova) item.classList.add("tarefa-nova");
-    if (id === null) item.classList.add("tarefa-pendente");
-    else item.dataset.id = id;
     item.textContent = titulo;
+
+    if (id === null) item.classList.add("tarefa-pendente");
+    else marcarComoGuardada(item, id);
+
     return item;
   }
 
@@ -170,10 +189,7 @@ export function telaBandeja(raiz) {
 
     try {
       const criadas = await criarTarefas(linhas);
-      criadas.forEach((tarefa, indice) => {
-        itens[indice].dataset.id = tarefa.id;
-        itens[indice].classList.remove("tarefa-pendente");
-      });
+      criadas.forEach((tarefa, indice) => marcarComoGuardada(itens[indice], tarefa.id));
       recentes.unshift(...criadas);
       salvarCache(tarefasGuardadas());
       confirmar(criadas.length);

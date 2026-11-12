@@ -48,7 +48,13 @@ Actualizar esta sección al terminar cada tarea.
 - Front: `#/bandeja` es la pantalla de inicio ("¿Qué tienes en la cabeza?" con la Bandeja debajo). Enter guarda, Shift+Enter baja de línea. La tarea aparece al instante y se guarda en segundo plano; si falla, el texto vuelve al campo. Al abrir muestra la copia local (`localStorage`) y actualiza en silencio; "Salir" borra esas copias.
 - Hoy (Sprint 3) será otra pantalla; cuando exista, cambiar `TELA_INICIAL` en `js/roteador.js`.
 
-**Siguiente tarea: Sprint 2 · Desmenuzar** (Épica 2, H2.1–H2.4): prompt de la IA con minutos por paso, pantalla de pasos (editar, borrar, agregar y reordenar) y pasos a mano si la IA falla.
+**Sprint 2 · Desmenuzar cerrado el 12 de noviembre de 2026** (H2.1–H2.4):
+- IA: `core/ia_service.py` es el único archivo que conoce el proveedor (Gemini `gemini-2.5-flash`, plan gratuito). Prompt en español, respuesta JSON estructurada (texto + minutos), pasos de 5 a 25 min idealmente; `_normalizar` limpia la respuesta (máx. 7, minutos 1–120 o 10). Tarda ~5 s. Si falla o no hay clave: `FalhaIA` → 503.
+- Backend: `POST .../passos/gerar` (solo si la tarea no tiene pasos), `POST .../passos` (a mano, 10 min si no se indica), `PUT .../passos/{id}` (texto y minutos), `PUT .../passos/ordem` (todos los pasos visibles, en el orden nuevo), `DELETE .../passos/{id}`. Los `substituido` quedan fuera de la ordem. `TarefaService` recibe `gerador_de_passos` para que los tests no llamen a Gemini.
+- Front: `#/tarefa/:id` (`js/telas/tarefa.js`); el roteador acepta parámetros numéricos. Sin pasos: "Que IAmigo lo divida" y "Prefiero escribirlos yo". Con pasos: edición en línea, ↑ ↓ para reordenar, ✕ para borrar, total en texto y barra de tiempo. Todo optimista, como la Bandeja.
+
+**Siguiente tarea: Sprint 3 · Planear hoy** (Épica 3, H3.1–H3.6): pantalla Hoy con Ahora y Después y límite configurable (3 por defecto), "+ Hoy" y "Elegir tareas para hoy" desde la Bandeja, y tiempo total del día. Al crear Hoy, cambiar `TELA_INICIAL` en `js/roteador.js`.
 
 **Pendientes para recordar:**
 - Desde la laptop cada consulta a Aiven tarda ~420 ms y un pedido hace varias (pre-ping, token, consulta, rollback): la Bandeja tarda ~3 s. El front lo disimula. Se resuelve en la Fase 3 publicando el backend en la misma región que Aiven; Pablo prefirió no quitar `pool_pre_ping`.
+- Gemini en plan gratuito: límites bajos y Google puede usar lo enviado (títulos de tareas). Antes de publicar (Fase 3), pasar a plan pago u otro proveedor; Pablo tiene una clave paga de Kimi como alternativa.

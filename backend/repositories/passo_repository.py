@@ -7,12 +7,15 @@ from models.passo import Passo
 
 
 class PassoRepository:
+    """Os passos novos têm todos os campos preenchidos aqui: assim não é preciso
+    reler cada um do banco depois do commit (cada ida ao Aiven custa ~0,4 s)."""
+
     def listar_por_tarefa(self, tarefa_id):
         with SessionLocal() as session:
             comando = (
                 select(Passo)
                 .where(Passo.tarefa_id == tarefa_id)
-                .order_by(Passo.ordem)
+                .order_by(Passo.ordem, Passo.id)
             )
             return list(session.scalars(comando))
 
@@ -20,42 +23,71 @@ class PassoRepository:
         comando = select(func.max(Passo.ordem)).where(Passo.tarefa_id == tarefa_id)
         return (session.scalar(comando) or 0) + 1
 
-    def criar(self, tarefa_id, texto):
+    def _novo(self, tarefa_id, texto, minutos_estimados, ordem, gerado_por_ia):
+        return Passo(
+            tarefa_id=tarefa_id,
+            texto=texto,
+            ordem=ordem,
+            minutos_estimados=minutos_estimados,
+            gerado_por_ia=gerado_por_ia,
+            concluido=False,
+            concluido_em=None,
+            substituido=False,
+            passo_origem_id=None,
+        )
+
+    def criar(self, tarefa_id, texto, minutos_estimados=10):
         with SessionLocal() as session:
-            passo = Passo(
-                tarefa_id=tarefa_id,
-                texto=texto,
-                ordem=self._proxima_ordem(session, tarefa_id)
+            passo = self._novo(
+                tarefa_id, texto, minutos_estimados,
+                ordem=self._proxima_ordem(session, tarefa_id),
+                gerado_por_ia=False,
             )
             session.add(passo)
             session.commit()
-            session.refresh(passo)
             return passo
 
-    def criar_varios(self, tarefa_id, textos, gerado_por_ia=False):
+    def criar_varios(self, tarefa_id, passos, gerado_por_ia=False):
+        """`passos`: [{"texto": ..., "minutos_estimados": ...}], na ordem em que serão feitos."""
         with SessionLocal() as session:
             inicio = self._proxima_ordem(session, tarefa_id)
-            passos = [
-                Passo(
-                    tarefa_id=tarefa_id,
-                    texto=texto,
-                    ordem=indice,
-                    gerado_por_ia=gerado_por_ia
+            novos = [
+                self._novo(
+                    tarefa_id, passo["texto"], passo["minutos_estimados"],
+                    ordem=indice, gerado_por_ia=gerado_por_ia,
                 )
-                for indice, texto in enumerate(textos, start=inicio)
+                for indice, passo in enumerate(passos, start=inicio)
             ]
-            session.add_all(passos)
+            session.add_all(novos)
             session.commit()
-
-            for passo in passos:
-                session.refresh(passo)
-
-            return passos
+            return novos
 
     def buscar_por_id(self, passo_id):
         with SessionLocal() as session:
             comando = select(Passo).where(Passo.id == passo_id)
             return session.scalar(comando)
+
+    def atualizar(self, passo_id, texto, minutos_estimados):
+        with SessionLocal() as session:
+            passo = session.get(Passo, passo_id)
+            passo.texto = texto
+            passo.minutos_estimados = minutos_estimados
+            session.commit()
+            return passo
+
+    def reordenar(self, tarefa_id, ids_em_ordem):
+        """Dá a ordem 1, 2, 3... aos passos, na sequência recebida."""
+        with SessionLocal() as session:
+            comando = select(Passo).where(
+                Passo.tarefa_id == tarefa_id, Passo.id.in_(ids_em_ordem)
+            )
+            por_id = {passo.id: passo for passo in session.scalars(comando)}
+
+            for ordem, passo_id in enumerate(ids_em_ordem, start=1):
+                por_id[passo_id].ordem = ordem
+
+            session.commit()
+            return [por_id[passo_id] for passo_id in ids_em_ordem]
 
     def alternar_concluido(self, passo_id):
         with SessionLocal() as session:

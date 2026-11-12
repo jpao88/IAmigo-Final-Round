@@ -44,6 +44,17 @@ class NovasTarefas(BaseModel):
     titulos: List[str]
 
 
+class DadosPasso(BaseModel):
+    # O service valida o texto (vazio, 255 caracteres) e os minutos (1 a 120; vazio = 10).
+    texto: str
+    minutos_estimados: Optional[int] = None
+
+
+class OrdemPassos(BaseModel):
+    # Todos os passos visíveis da tarefa, na ordem nova.
+    ids: List[int]
+
+
 # ---------- Saída ----------
 
 class SaidaORM(BaseModel):

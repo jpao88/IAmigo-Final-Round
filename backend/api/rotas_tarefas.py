@@ -4,7 +4,9 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, status
 
 from api.dependencias import exigir_dono
-from api.schemas import NovaTarefa, NovasTarefas, PassoSaida, Resposta, TarefaSaida
+from api.schemas import (
+    DadosPasso, NovaTarefa, NovasTarefas, OrdemPassos, PassoSaida, Resposta, TarefaSaida,
+)
 from controllers.tarefa_controller import TarefaController
 
 router = APIRouter(
@@ -79,6 +81,36 @@ def listar_passos(usuario_id: int, tarefa_id: int):
 def gerar_passos(usuario_id: int, tarefa_id: int):
     return {
         "dados": controller.gerar_passos(usuario_id, tarefa_id)
+    }
+
+
+@router.post(
+    "/{tarefa_id}/passos",
+    status_code=status.HTTP_201_CREATED,
+    response_model=Resposta[PassoSaida]
+)
+def adicionar_passo(usuario_id: int, tarefa_id: int, dados: DadosPasso):
+    return {
+        "dados": controller.adicionar_passo(
+            usuario_id, tarefa_id, dados.texto, dados.minutos_estimados
+        )
+    }
+
+
+# /ordem antes de /{passo_id}, para não ser lida como um id.
+@router.put("/{tarefa_id}/passos/ordem", response_model=Resposta[List[PassoSaida]])
+def reordenar_passos(usuario_id: int, tarefa_id: int, dados: OrdemPassos):
+    return {
+        "dados": controller.reordenar_passos(usuario_id, tarefa_id, dados.ids)
+    }
+
+
+@router.put("/{tarefa_id}/passos/{passo_id}", response_model=Resposta[PassoSaida])
+def editar_passo(usuario_id: int, tarefa_id: int, passo_id: int, dados: DadosPasso):
+    return {
+        "dados": controller.editar_passo(
+            usuario_id, tarefa_id, passo_id, dados.texto, dados.minutos_estimados
+        )
     }
 
 

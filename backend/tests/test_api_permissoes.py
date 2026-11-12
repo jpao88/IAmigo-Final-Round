@@ -40,8 +40,10 @@ class ServiceFake:
                 return [USUARIO]
             if nome in ("listar_tarefas", "listar_bandeja", "criar_varias"):
                 return [TAREFA]
-            if nome == "listar_passos":
+            if nome in ("listar_passos", "gerar_passos", "reordenar_passos"):
                 return [PASSO]
+            if "passo" in nome:
+                return PASSO
             if "usuario" in nome:
                 return USUARIO
             return TAREFA
@@ -84,6 +86,16 @@ class TestMatrizDePermissoes(BaseApi):
          {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
         ("post", "/usuarios/1/tarefas/lote", {"titulos": ["Estudar"]},
          {"DONO": 201, "OUTRO": 403, "ADMIN": 403}),
+        ("post", "/usuarios/1/tarefas/10/passos/gerar", None,
+         {"DONO": 201, "OUTRO": 403, "ADMIN": 403}),
+        ("post", "/usuarios/1/tarefas/10/passos", {"texto": "Abrir"},
+         {"DONO": 201, "OUTRO": 403, "ADMIN": 403}),
+        ("put", "/usuarios/1/tarefas/10/passos/100", {"texto": "Abrir", "minutos_estimados": 5},
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("put", "/usuarios/1/tarefas/10/passos/ordem", {"ids": [100]},
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("delete", "/usuarios/1/tarefas/10/passos/100", None,
+         {"DONO": 204, "OUTRO": 403, "ADMIN": 403}),
     ]
 
     def test_matriz(self):

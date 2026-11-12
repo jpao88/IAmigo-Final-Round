@@ -13,6 +13,12 @@ const MENSAGENS = {
   "Escreva pelo menos uma tarefa.": "Escribe algo primero.",
   "Envie no máximo 50 tarefas por vez.": "Son muchas a la vez. Prueba con menos de 50.",
   "Cada tarefa pode ter no máximo 200 caracteres.": "Una línea es muy larga. Acórtala un poco.",
+  "Tarefa não encontrada.": "No encontramos esta tarea.",
+  "Passo não encontrado.": "Ese paso ya no está.",
+  "A tarefa já tem passos.": "Esta tarea ya tiene pasos.",
+  "O texto do passo não pode ficar vazio.": "Escribe el paso primero.",
+  "O passo pode ter no máximo 255 caracteres.": "Ese paso es muy largo. Acórtalo un poco.",
+  "Os minutos precisam estar entre 1 e 120.": "Usa entre 1 y 120 minutos.",
 };
 
 const MENSAGEM_GENERICA = "Algo salió mal. Intenta otra vez.";
@@ -32,6 +38,11 @@ function traduzir(status, detalhe) {
 
   if (status === 422) {
     return "Revisa los datos e intenta otra vez.";
+  }
+
+  // H2.4: a IA falhou ou não está configurada.
+  if (status === 503) {
+    return "IAmigo no pudo ahora. Puedes escribirlos tú.";
   }
 
   return MENSAGEM_GENERICA;
@@ -117,4 +128,46 @@ export function listarBandeja() {
 // H1.1 e H1.2: cada linha vira uma tarefa; o backend ignora as vazias.
 export function criarTarefas(titulos) {
   return requisitar("POST", `${rotaTarefas()}/lote`, { titulos });
+}
+
+export function obterTarefa(tarefaId) {
+  return requisitar("GET", `${rotaTarefas()}/${tarefaId}`);
+}
+
+// ---- Passos (Épica 2 · Desmenuzar) ----
+
+function rotaPassos(tarefaId) {
+  return `${rotaTarefas()}/${tarefaId}/passos`;
+}
+
+export function listarPassos(tarefaId) {
+  return requisitar("GET", rotaPassos(tarefaId));
+}
+
+// H2.1: a IA sugere de 3 a 7 passos com minutos.
+export function gerarPassos(tarefaId) {
+  return requisitar("POST", `${rotaPassos(tarefaId)}/gerar`);
+}
+
+// H2.3: sem minutos, o backend usa 10.
+export function adicionarPasso(tarefaId, texto, minutosEstimados = null) {
+  return requisitar("POST", rotaPassos(tarefaId), {
+    texto,
+    minutos_estimados: minutosEstimados,
+  });
+}
+
+export function editarPasso(tarefaId, passoId, texto, minutosEstimados) {
+  return requisitar("PUT", `${rotaPassos(tarefaId)}/${passoId}`, {
+    texto,
+    minutos_estimados: minutosEstimados,
+  });
+}
+
+export function reordenarPassos(tarefaId, ids) {
+  return requisitar("PUT", `${rotaPassos(tarefaId)}/ordem`, { ids });
+}
+
+export function excluirPasso(tarefaId, passoId) {
+  return requisitar("DELETE", `${rotaPassos(tarefaId)}/${passoId}`);
 }

@@ -58,11 +58,11 @@ Cada sprint entrega una etapa del ciclo funcionando de punta a punta: endpoint, 
 - [x] Guardar en la Bandeja, una tarea por línea
 - [x] Listar la Bandeja
 
-**Sprint 2 · Desmenuzar**
+**Sprint 2 · Desmenuzar** ✅ 12 de noviembre de 2026
 
-- [ ] Ajustar el prompt de la IA para que estime minutos por paso
-- [ ] Pantalla de pasos: editar, borrar, agregar y reordenar
-- [ ] Escribir pasos a mano si la IA falla
+- [x] Ajustar el prompt de la IA para que estime minutos por paso
+- [x] Pantalla de pasos: editar, borrar, agregar y reordenar
+- [x] Escribir pasos a mano si la IA falla
 
 **Sprint 3 · Planear hoy**
 
