@@ -52,6 +52,8 @@ class Settings:
     cors_origins: List[str] = field(
         default_factory=lambda: _lista(os.getenv("CORS_ORIGINS", ORIGENS_PADRAO))
     )
+    # Opcional, só para testar no celular na rede de casa: um padrão (regex) de origens.
+    cors_origem_regex: Optional[str] = os.getenv("CORS_ORIGIN_REGEX") or None
 
 
 settings = Settings()
