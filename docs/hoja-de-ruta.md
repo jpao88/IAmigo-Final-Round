@@ -94,7 +94,7 @@ Comprueba que la app funciona en la vida diaria de las personas, no solo en una 
 - [ ] Corregir los problemas más graves
 - [ ] Revisar los siete principios de diseño pantalla por pantalla
 - [x] Proteger las rutas de tareas y pasos para que nadie vea datos ajenos (revisado el 12 de noviembre de 2026)
-- [ ] Publicar la app en un hosting accesible desde el celular
+- [x] Publicar la app en un hosting accesible desde el celular (DigitalOcean, 12 de noviembre de 2026)
 
 **Punto de control:** se cumple el criterio de éxito del recorrido con personas que no participaron en el desarrollo.
 

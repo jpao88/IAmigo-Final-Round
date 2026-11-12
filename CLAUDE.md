@@ -71,7 +71,10 @@ Actualizar esta sección al terminar cada tarea.
 **Fase 3 · Prueba real y lanzamiento** (orden acordado: proteger rutas → publicar → siete principios → prueba de varios días):
 - **Proteger las rutas, revisado el 12 de noviembre de 2026.** Dos barreras: la ruta exige ser el dueño del `{usuario_id}` (`exigir_dono`; solo login y crear cuenta son públicas) y cada service confirma que la tarea o el paso pertenece a esa persona (404 si no). `tests/test_dados_alheios.py` prueba todos los métodos con ids ajenos sin escribir nada; `test_toda_rota_esta_na_matriz` falla si una ruta nueva no está en la matriz de permisos.
 
-**Siguiente tarea: publicar la app** (backend cerca de Aiven, front estático, HTTPS, claves en el hosting, Gemini fuera del plan gratuito).
+- **Publicada el 12 de noviembre de 2026 en https://iamigo-lzdqn.ondigitalocean.app** (DigitalOcean App Platform, SFO3, al lado del MySQL de Aiven, que está en DigitalOcean Santa Clara). Una app con `web` (front estático, `/`) y `api` (backend, `/api`, 5 USD/mes); configuración en `.do/deploy.template.yaml` (el repo es privado: la app se creó desde el panel con GitHub conectado). Cada `git push` a `main` vuelve a publicar. Variables secretas en el panel: `DB_*`, `DB_SSL_CA_PEM` (contenido del `ca.pem`), `JWT_SECRET` propio, `GEMINI_API_KEY`; `DOCS_ABERTOS=nao`. Login limitado a 5 fallos en 15 min por correo (`core/limite_login.py`, 429), sesión de 30 días. Publicada, Hoy responde en ~0,5 s (antes ~3 s desde la laptop).
+- Botón 🌙/☀️ en el encabezado (`js/tema.js`, clave `iamigo-tema`, que no se borra al salir).
+
+**Siguiente tarea:** antes de que la usen otras personas, sacar Gemini del plan gratuito (plan pago de Google o Kimi) y revisar los respaldos de Aiven en el plan Free. Después, revisar los siete principios pantalla por pantalla y la prueba de varios días.
 
 **Pendientes para recordar:**
 - Al publicar: limitar intentos de login (hoy no hay límite), dejar `CORS_ORIGIN_REGEX` vacío y decidir si `/docs` queda abierto. El token dura 60 min (`JWT_EXPIRA_MINUTOS`): para una app de uso diario conviene más tiempo o renovarlo.
