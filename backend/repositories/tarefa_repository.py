@@ -65,6 +65,76 @@ class TarefaRepository:
 
             return tarefas
 
+    # ---- Hoje (Épica 3) ----
+
+    def listar_do_dia(self, usuario_id, data):
+        """As tarefas planejadas para `data`, na ordem do dia, com os passos (para os minutos)."""
+        with SessionLocal() as session:
+            comando = (
+                select(Tarefa)
+                .where(Tarefa.usuario_id == usuario_id, Tarefa.data_planejada == data)
+                .options(selectinload(Tarefa.passos))
+                .order_by(Tarefa.ordem_dia, Tarefa.id)
+            )
+            return list(session.scalars(comando))
+
+    def listar_por_ids(self, usuario_id, ids):
+        with SessionLocal() as session:
+            comando = select(Tarefa).where(
+                Tarefa.usuario_id == usuario_id, Tarefa.id.in_(ids)
+            )
+            return list(session.scalars(comando))
+
+    def contar_pendentes_do_dia(self, usuario_id, data):
+        with SessionLocal() as session:
+            comando = select(func.count()).where(
+                Tarefa.usuario_id == usuario_id,
+                Tarefa.data_planejada == data,
+                Tarefa.concluida.is_(False),
+            )
+            return session.scalar(comando)
+
+    def planejar(self, usuario_id, ids_em_ordem, data):
+        """Põe as tarefas em `data`, depois das que já estão lá, na ordem recebida."""
+        with SessionLocal() as session:
+            ultima = session.scalar(
+                select(func.max(Tarefa.ordem_dia)).where(
+                    Tarefa.usuario_id == usuario_id, Tarefa.data_planejada == data
+                )
+            ) or 0
+            por_id = {
+                tarefa.id: tarefa
+                for tarefa in session.scalars(select(Tarefa).where(Tarefa.id.in_(ids_em_ordem)))
+            }
+
+            for ordem, tarefa_id in enumerate(ids_em_ordem, start=ultima + 1):
+                por_id[tarefa_id].data_planejada = data
+                por_id[tarefa_id].ordem_dia = ordem
+
+            session.commit()
+            return [por_id[tarefa_id] for tarefa_id in ids_em_ordem]
+
+    def reordenar_dia(self, ids_em_ordem):
+        with SessionLocal() as session:
+            por_id = {
+                tarefa.id: tarefa
+                for tarefa in session.scalars(select(Tarefa).where(Tarefa.id.in_(ids_em_ordem)))
+            }
+
+            for ordem, tarefa_id in enumerate(ids_em_ordem, start=1):
+                por_id[tarefa_id].ordem_dia = ordem
+
+            session.commit()
+
+    def tirar_do_dia(self, tarefa_id):
+        """Volta para a Bandeja: sem data e sem posição."""
+        with SessionLocal() as session:
+            tarefa = session.get(Tarefa, tarefa_id)
+            tarefa.data_planejada = None
+            tarefa.ordem_dia = None
+            session.commit()
+            return tarefa
+
     def criar(self, usuario_id, titulo):
         with SessionLocal() as session:
             tarefa = Tarefa(

@@ -50,6 +50,16 @@ class DadosPasso(BaseModel):
     minutos_estimados: Optional[int] = None
 
 
+class TarefasDoDia(BaseModel):
+    # Para "+ Hoy" (uma) e "Elegir tareas para hoy" (várias), e para a ordem nova.
+    ids: List[int]
+    data: Optional[date] = None  # data local da pessoa; vazia = hoje do servidor
+
+
+class NovoLimiteHoje(BaseModel):
+    limite_hoje: int
+
+
 class OrdemPassos(BaseModel):
     # Todos os passos visíveis da tarefa, na ordem nova.
     ids: List[int]
@@ -99,3 +109,8 @@ class Sessao(BaseModel):
     token_type: str
     expires_in: int
     usuario: UsuarioPublico
+
+
+class TarefaDoDia(TarefaSaida):
+    # Passos visíveis ainda não concluídos; sem passos, 10 (H3.3: tempo total do dia).
+    minutos_restantes: int

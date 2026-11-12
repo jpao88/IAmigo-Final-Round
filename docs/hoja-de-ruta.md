@@ -64,11 +64,11 @@ Cada sprint entrega una etapa del ciclo funcionando de punta a punta: endpoint, 
 - [x] Pantalla de pasos: editar, borrar, agregar y reordenar
 - [x] Escribir pasos a mano si la IA falla
 
-**Sprint 3 · Planear hoy**
+**Sprint 3 · Planear hoy** ✅ 12 de noviembre de 2026
 
-- [ ] Pantalla Hoy con Ahora y Después, con límite de tareas configurable (3 por defecto)
-- [ ] Elegir y ordenar tareas desde la Bandeja
-- [ ] Mostrar el tiempo total estimado del día
+- [x] Pantalla Hoy con Ahora y Después, con límite de tareas configurable (3 por defecto)
+- [x] Elegir y ordenar tareas desde la Bandeja
+- [x] Mostrar el tiempo total estimado del día
 
 **Sprint 4 · Hacer (modo foco)**
 

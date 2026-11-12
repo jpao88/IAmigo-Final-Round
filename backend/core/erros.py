@@ -22,3 +22,7 @@ class CredenciaisInvalidas(ValueError):
 
 class FalhaIA(RuntimeError):
     """O serviço de IA não está configurado ou não respondeu."""
+
+
+class LimiteHojeAtingido(DadosInvalidos):
+    """Hoje já tem tantas tarefas pendentes quanto o limite da pessoa."""

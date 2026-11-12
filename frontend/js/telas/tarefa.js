@@ -9,28 +9,16 @@ import {
   listarPassos, obterTarefa, reordenarPassos,
 } from "../api.js";
 import { criarElemento } from "../html.js";
-import { navegar } from "../roteador.js";
-import { tituloEmCache } from "./bandeja.js";
+import { tituloEmCache } from "../lista-bandeja.js";
+import { navegar, TELA_INICIAL } from "../roteador.js";
+import { desenharBarraTempo, formatarTempoTotal } from "../tempo.js";
 
 const MINUTOS_PADRAO = 10;
-
-// "Unos 45 minutos", "Más o menos 1 hora y 20 minutos".
-export function formatarTempoTotal(minutos) {
-  if (minutos < 60) return `Unos ${minutos} minutos`;
-
-  const horas = Math.floor(minutos / 60);
-  const resto = minutos % 60;
-  const textoHoras = horas === 1 ? "1 hora" : `${horas} horas`;
-
-  return resto === 0
-    ? `Más o menos ${textoHoras}`
-    : `Más o menos ${textoHoras} y ${resto} minutos`;
-}
 
 export function telaTarefa(raiz, { id: tarefaId }) {
   raiz.append(criarElemento(`
     <header class="cabecalho">
-      <a class="botao-texto" href="#/bandeja">← Bandeja</a>
+      <button class="botao-texto" type="button" data-acao="voltar">← Volver</button>
     </header>
 
     <h1 class="titulo-tarefa"></h1>
@@ -93,13 +81,7 @@ export function telaTarefa(raiz, { id: tarefaId }) {
   function desenharTempo() {
     const total = passos.reduce((soma, passo) => soma + passo.minutos_estimados, 0);
     tempoTexto.textContent = formatarTempoTotal(total);
-
-    // Princípio "O tempo se vê": cada passo ocupa na barra o tamanho dos seus minutos.
-    barraTempo.replaceChildren(...passos.map((passo) => {
-      const pedaco = document.createElement("span");
-      pedaco.style.flexGrow = passo.minutos_estimados;
-      return pedaco;
-    }));
+    desenharBarraTempo(barraTempo, passos.map((passo) => passo.minutos_estimados));
   }
 
   function itemDoPasso(passo, indice) {
@@ -342,7 +324,14 @@ export function telaTarefa(raiz, { id: tarefaId }) {
 
   raiz.querySelector('[data-acao="dividir"]').addEventListener("click", dividirComIA);
   raiz.querySelector('[data-acao="manual"]').addEventListener("click", abrirModoManual);
-  botaoListo.addEventListener("click", () => navegar("/bandeja"));
+  // Volta para onde a pessoa estava (Hoy ou Bandeja).
+  function voltar() {
+    if (history.length > 1) history.back();
+    else navegar(TELA_INICIAL);
+  }
+
+  raiz.querySelector('[data-acao="voltar"]').addEventListener("click", voltar);
+  botaoListo.addEventListener("click", voltar);
 
   carregar();
 }

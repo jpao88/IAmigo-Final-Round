@@ -4,12 +4,16 @@ import { quandoPerderSessao } from "./api.js";
 import { iniciarRoteador, navegar, registrarRota } from "./roteador.js";
 import { telaBandeja } from "./telas/bandeja.js";
 import { telaCadastro } from "./telas/cadastro.js";
+import { telaElegir } from "./telas/elegir.js";
+import { telaHoje } from "./telas/hoje.js";
 import { telaLogin } from "./telas/login.js";
 import { telaTarefa } from "./telas/tarefa.js";
 
 registrarRota("/login", telaLogin, { publica: true });
 registrarRota("/cadastro", telaCadastro, { publica: true });
+registrarRota("/hoje", telaHoje);
 registrarRota("/bandeja", telaBandeja);
+registrarRota("/elegir", telaElegir);
 registrarRota("/tarefa/:id", telaTarefa);
 
 // Token vencido ou recusado: volta ao login sem mensagens de erro.

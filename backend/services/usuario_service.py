@@ -59,6 +59,15 @@ class UsuarioService:
 
         return self.repository.atualizar(usuario_id, nome)
 
+    def alterar_limite_hoje(self, usuario_id, limite_hoje):
+        """H3.5: quantas tarefas cabem em Hoje, de 1 a 5."""
+        self.buscar_usuario(usuario_id)
+
+        if not 1 <= limite_hoje <= 5:
+            raise DadosInvalidos("O limite precisa estar entre 1 e 5.")
+
+        return self.repository.atualizar_limite_hoje(usuario_id, limite_hoje)
+
     def excluir_usuario(self, usuario_id):
         usuario = self.repository.buscar_por_id(usuario_id)
 

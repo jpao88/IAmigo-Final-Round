@@ -47,6 +47,20 @@ export function obterUsuario() {
   return obterSessao()?.usuario || null;
 }
 
+// Depois de mudar algo do perfil (ex.: limite de Hoy), guarda a versão nova.
+export function atualizarUsuario(usuario) {
+  const sessao = obterSessao();
+  if (!sessao) return;
+
+  sessaoEmMemoria = { ...sessao, usuario };
+
+  try {
+    localStorage.setItem(CHAVE, JSON.stringify(sessaoEmMemoria));
+  } catch {
+    // A cópia em memória basta até fechar a aba.
+  }
+}
+
 // H0.3: ao sair, apaga o token e as cópias locais (ex.: a Bandeja),
 // para ninguém ver as tarefas de outra pessoa neste celular.
 export function encerrarSessao() {

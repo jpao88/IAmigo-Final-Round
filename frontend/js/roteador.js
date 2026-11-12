@@ -2,8 +2,8 @@
 
 import { obterSessao } from "./sessao.js";
 
-// Tela aberta depois do login. No Sprint 3 passa a ser Hoy.
-export const TELA_INICIAL = "/bandeja";
+// Tela aberta depois do login.
+export const TELA_INICIAL = "/hoje";
 
 const rotas = [];
 let raiz = null;
@@ -66,6 +66,8 @@ function renderizar() {
     return;
   }
 
+  // Cada tela começa limpa (ex.: sem o modo "Ordenar" de Hoy).
+  raiz.className = "tela";
   raiz.replaceChildren();
   rota.montarTela(raiz, parametros);
   window.scrollTo(0, 0);

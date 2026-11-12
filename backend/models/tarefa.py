@@ -33,3 +33,16 @@ class Tarefa(Base):
         passive_deletes=True,
         order_by="Passo.ordem",
     )
+
+    # Sem passos, a tarefa vale um único passo de 10 minutos (recorrido).
+    MINUTOS_SEM_PASSOS = 10
+
+    @property
+    def minutos_restantes(self):
+        """Soma dos passos visíveis ainda não concluídos. Exige tarefa.passos carregado."""
+        visiveis = [passo for passo in self.passos if not passo.substituido]
+
+        if not visiveis:
+            return 0 if self.concluida else self.MINUTOS_SEM_PASSOS
+
+        return sum(passo.minutos_estimados for passo in visiveis if not passo.concluido)

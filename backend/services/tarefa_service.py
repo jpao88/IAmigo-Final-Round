@@ -3,7 +3,7 @@ from datetime import date
 from repositories.tarefa_repository import TarefaRepository
 from repositories.usuario_repository import UsuarioRepository
 from repositories.passo_repository import PassoRepository
-from core.erros import DadosInvalidos, NaoEncontrado
+from core.erros import DadosInvalidos, LimiteHojeAtingido, NaoEncontrado
 from core.ia_service import gerar_passos_tarefa
 
 # Mesmo tamanho da coluna tarefas.titulo.
@@ -116,6 +116,67 @@ class TarefaService:
         self._obter_tarefa_do_usuario(usuario_id, tarefa_id)
 
         self.tarefa_repository.excluir(tarefa_id)
+
+    # ---- Hoje (Épica 3 · Planear hoy) ----
+    # `data` é a data local da pessoa, enviada pelo front (como na Bandeja).
+
+    def listar_hoje(self, usuario_id, data=None):
+        """H3.3: as tarefas do dia, na ordem; a primeira pendente é "Ahora"."""
+        self._garantir_usuario(usuario_id)
+
+        return self.tarefa_repository.listar_do_dia(usuario_id, data or date.today())
+
+    def planejar_para_hoje(self, usuario_id, ids, data=None):
+        """H3.1 e H3.2: põe uma ou várias tarefas da Bandeja em Hoje, no fim.
+
+        Só contam para o limite as tarefas de hoje ainda não concluídas:
+        terminar rápido nunca impede de planejar mais. Entram todas ou nenhuma.
+        """
+        data = data or date.today()
+        usuario = self.usuario_repository.buscar_por_id(usuario_id)
+
+        if usuario is None:
+            raise NaoEncontrado("Usuário não encontrado.")
+
+        if not ids or len(ids) != len(set(ids)):
+            raise DadosInvalidos("Escolha as tarefas, uma vez cada.")
+
+        tarefas = self.tarefa_repository.listar_por_ids(usuario_id, ids)
+
+        if len(tarefas) != len(ids):
+            raise NaoEncontrado("Tarefa não encontrada.")
+
+        if any(tarefa.concluida or tarefa.data_planejada == data for tarefa in tarefas):
+            raise DadosInvalidos("Essa tarefa já está em Hoje ou foi concluída.")
+
+        pendentes = self.tarefa_repository.contar_pendentes_do_dia(usuario_id, data)
+
+        if pendentes + len(ids) > usuario.limite_hoje:
+            raise LimiteHojeAtingido("Hoje já está cheio.")
+
+        return self.tarefa_repository.planejar(usuario_id, ids, data)
+
+    def reordenar_hoje(self, usuario_id, ids_em_ordem, data=None):
+        """H3.4: recebe as tarefas pendentes do dia na ordem nova; a primeira vira "Ahora"."""
+        self._garantir_usuario(usuario_id)
+        data = data or date.today()
+
+        ids_pendentes = {
+            tarefa.id
+            for tarefa in self.tarefa_repository.listar_do_dia(usuario_id, data)
+            if not tarefa.concluida
+        }
+
+        if len(ids_em_ordem) != len(set(ids_em_ordem)) or set(ids_em_ordem) != ids_pendentes:
+            raise DadosInvalidos("A nova ordem precisa ter todas as tarefas de hoje, uma vez cada.")
+
+        self.tarefa_repository.reordenar_dia(ids_em_ordem)
+
+    def tirar_de_hoje(self, usuario_id, tarefa_id):
+        """Devolve a tarefa à Bandeja, sem data (desfaz um "+ Hoy")."""
+        self._obter_tarefa_do_usuario(usuario_id, tarefa_id)
+
+        return self.tarefa_repository.tirar_do_dia(tarefa_id)
 
     def listar_passos(self, usuario_id, tarefa_id):
         self._obter_tarefa_do_usuario(usuario_id, tarefa_id)

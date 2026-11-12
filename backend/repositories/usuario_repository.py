@@ -41,6 +41,13 @@ class UsuarioRepository:
             session.refresh(usuario)
             return usuario
 
+    def atualizar_limite_hoje(self, usuario_id, limite_hoje):
+        with SessionLocal() as session:
+            usuario = session.get(Usuario, usuario_id)
+            usuario.limite_hoje = limite_hoje
+            session.commit()
+            return usuario
+
     def excluir(self, usuario_id):
         with SessionLocal() as session:
             comando = select(Usuario).where(Usuario.id == usuario_id)

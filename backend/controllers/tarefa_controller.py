@@ -32,6 +32,18 @@ class TarefaController:
     def excluir_tarefa(self, usuario_id, tarefa_id):
         self.service.excluir_tarefa(usuario_id, tarefa_id)
 
+    def listar_hoje(self, usuario_id, data=None):
+        return self.service.listar_hoje(usuario_id, data)
+
+    def planejar_para_hoje(self, usuario_id, ids, data=None):
+        return self.service.planejar_para_hoje(usuario_id, ids, data)
+
+    def reordenar_hoje(self, usuario_id, ids_em_ordem, data=None):
+        self.service.reordenar_hoje(usuario_id, ids_em_ordem, data)
+
+    def tirar_de_hoje(self, usuario_id, tarefa_id):
+        return self.service.tirar_de_hoje(usuario_id, tarefa_id)
+
     def listar_passos(self, usuario_id, tarefa_id):
         return self.service.listar_passos(usuario_id, tarefa_id)
 

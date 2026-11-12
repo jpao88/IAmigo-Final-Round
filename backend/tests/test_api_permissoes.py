@@ -38,13 +38,15 @@ class ServiceFake:
         def metodo(*args, **kwargs):
             if nome == "listar_usuarios":
                 return [USUARIO]
-            if nome in ("listar_tarefas", "listar_bandeja", "criar_varias"):
+            if nome == "listar_hoje":
+                return [SimpleNamespace(**vars(TAREFA), minutos_restantes=25)]
+            if nome in ("listar_tarefas", "listar_bandeja", "criar_varias", "planejar_para_hoje"):
                 return [TAREFA]
             if nome in ("listar_passos", "gerar_passos", "reordenar_passos"):
                 return [PASSO]
             if "passo" in nome:
                 return PASSO
-            if "usuario" in nome:
+            if "usuario" in nome or "limite" in nome:
                 return USUARIO
             return TAREFA
         return metodo
@@ -96,6 +98,16 @@ class TestMatrizDePermissoes(BaseApi):
          {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
         ("delete", "/usuarios/1/tarefas/10/passos/100", None,
          {"DONO": 204, "OUTRO": 403, "ADMIN": 403}),
+        ("get", "/usuarios/1/tarefas/hoje?data=2026-11-12", None,
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("post", "/usuarios/1/tarefas/hoje", {"ids": [10], "data": "2026-11-12"},
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("put", "/usuarios/1/tarefas/hoje/ordem", {"ids": [10]},
+         {"DONO": 204, "OUTRO": 403, "ADMIN": 403}),
+        ("delete", "/usuarios/1/tarefas/10/hoje", None,
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("put", "/usuarios/1/limite-hoje", {"limite_hoje": 4},
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
     ]
 
     def test_matriz(self):

@@ -2,8 +2,8 @@ from typing import List
 
 from fastapi import APIRouter, Depends, status
 
-from api.dependencias import exigir_admin, exigir_dono_ou_admin
-from api.schemas import AtualizarUsuario, NovoUsuario, Resposta, UsuarioPublico
+from api.dependencias import exigir_admin, exigir_dono, exigir_dono_ou_admin
+from api.schemas import AtualizarUsuario, NovoLimiteHoje, NovoUsuario, Resposta, UsuarioPublico
 from controllers.usuario_controller import UsuarioController
 
 router = APIRouter(
@@ -69,3 +69,15 @@ def atualizar_usuario(usuario_id: int, dados: AtualizarUsuario):
 )
 def excluir_usuario(usuario_id: int):
     controller.excluir_perfil(usuario_id)
+
+
+# H3.5: só a própria pessoa muda o seu limite de Hoje.
+@router.put(
+    "/{usuario_id}/limite-hoje",
+    response_model=Resposta[UsuarioPublico],
+    dependencies=[Depends(exigir_dono)]
+)
+def alterar_limite_hoje(usuario_id: int, dados: NovoLimiteHoje):
+    return {
+        "dados": controller.alterar_limite_hoje(usuario_id, dados.limite_hoje)
+    }

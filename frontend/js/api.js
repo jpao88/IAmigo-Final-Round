@@ -19,6 +19,10 @@ const MENSAGENS = {
   "O texto do passo não pode ficar vazio.": "Escribe el paso primero.",
   "O passo pode ter no máximo 255 caracteres.": "Ese paso es muy largo. Acórtalo un poco.",
   "Os minutos precisam estar entre 1 e 120.": "Usa entre 1 y 120 minutos.",
+  "Hoje já está cheio.": "Hoy ya está completo. Puedes cambiar el límite.",
+  "Essa tarefa já está em Hoje ou foi concluída.": "Esa tarea ya está en Hoy.",
+  "Escolha as tarefas, uma vez cada.": "Elige al menos una tarea.",
+  "O limite precisa estar entre 1 e 5.": "Elige entre 1 y 5.",
 };
 
 const MENSAGEM_GENERICA = "Algo salió mal. Intenta otra vez.";
@@ -132,6 +136,32 @@ export function criarTarefas(titulos) {
 
 export function obterTarefa(tarefaId) {
   return requisitar("GET", `${rotaTarefas()}/${tarefaId}`);
+}
+
+// ---- Hoje (Épica 3 · Planear hoy) ----
+
+// H3.3: tarefas do dia na ordem, cada uma com minutos_restantes.
+export function listarHoje() {
+  return requisitar("GET", `${rotaTarefas()}/hoje?data=${dataLocal()}`);
+}
+
+// H3.1 ("+ Hoy", uma) e H3.2 (várias): entram no fim do dia, respeitando o limite.
+export function planejarHoje(ids) {
+  return requisitar("POST", `${rotaTarefas()}/hoje`, { ids, data: dataLocal() });
+}
+
+// H3.4: todas as pendentes de hoje, na ordem nova.
+export function reordenarHoje(ids) {
+  return requisitar("PUT", `${rotaTarefas()}/hoje/ordem`, { ids, data: dataLocal() });
+}
+
+export function tirarDeHoje(tarefaId) {
+  return requisitar("DELETE", `${rotaTarefas()}/${tarefaId}/hoje`);
+}
+
+// H3.5: de 1 a 5.
+export function alterarLimiteHoje(limite) {
+  return requisitar("PUT", `/usuarios/${obterUsuario().id}/limite-hoje`, { limite_hoje: limite });
 }
 
 // ---- Passos (Épica 2 · Desmenuzar) ----

@@ -24,6 +24,9 @@ class UsuarioController:
     def atualizar_perfil(self, usuario_id, nome):
         return self.service.atualizar_usuario(usuario_id, nome)
 
+    def alterar_limite_hoje(self, usuario_id, limite_hoje):
+        return self.service.alterar_limite_hoje(usuario_id, limite_hoje)
+
     def excluir_perfil(self, usuario_id):
         self.service.excluir_usuario(usuario_id)
 

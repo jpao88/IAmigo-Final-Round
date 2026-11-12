@@ -5,7 +5,8 @@ from fastapi import APIRouter, Depends, status
 
 from api.dependencias import exigir_dono
 from api.schemas import (
-    DadosPasso, NovaTarefa, NovasTarefas, OrdemPassos, PassoSaida, Resposta, TarefaSaida,
+    DadosPasso, NovaTarefa, NovasTarefas, OrdemPassos, PassoSaida, Resposta,
+    TarefaDoDia, TarefasDoDia, TarefaSaida,
 )
 from controllers.tarefa_controller import TarefaController
 
@@ -25,12 +26,31 @@ def listar_tarefas(usuario_id: int):
     }
 
 
-# Rotas fixas (/bandeja, /lote) antes de /{tarefa_id}, para não serem lidas como um id.
+# Rotas fixas (/bandeja, /hoje, /lote) antes de /{tarefa_id}, para não serem lidas como um id.
 @router.get("/bandeja", response_model=Resposta[List[TarefaSaida]])
 def listar_bandeja(usuario_id: int, hoje: Optional[date] = None):
     return {
         "dados": controller.listar_bandeja(usuario_id, hoje)
     }
+
+
+@router.get("/hoje", response_model=Resposta[List[TarefaDoDia]])
+def listar_hoje(usuario_id: int, data: Optional[date] = None):
+    return {
+        "dados": controller.listar_hoje(usuario_id, data)
+    }
+
+
+@router.post("/hoje", response_model=Resposta[List[TarefaSaida]])
+def planejar_para_hoje(usuario_id: int, dados: TarefasDoDia):
+    return {
+        "dados": controller.planejar_para_hoje(usuario_id, dados.ids, dados.data)
+    }
+
+
+@router.put("/hoje/ordem", status_code=status.HTTP_204_NO_CONTENT)
+def reordenar_hoje(usuario_id: int, dados: TarefasDoDia):
+    controller.reordenar_hoje(usuario_id, dados.ids, dados.data)
 
 
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=Resposta[TarefaSaida])
@@ -64,6 +84,13 @@ def buscar_tarefa(usuario_id: int, tarefa_id: int):
 @router.delete("/{tarefa_id}", status_code=status.HTTP_204_NO_CONTENT)
 def excluir_tarefa(usuario_id: int, tarefa_id: int):
     controller.excluir_tarefa(usuario_id, tarefa_id)
+
+
+@router.delete("/{tarefa_id}/hoje", response_model=Resposta[TarefaSaida])
+def tirar_de_hoje(usuario_id: int, tarefa_id: int):
+    return {
+        "dados": controller.tirar_de_hoje(usuario_id, tarefa_id)
+    }
 
 
 @router.get("/{tarefa_id}/passos", response_model=Resposta[List[PassoSaida]])
