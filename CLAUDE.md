@@ -74,10 +74,12 @@ Actualizar esta sección al terminar cada tarea.
 - **Publicada el 12 de noviembre de 2026 en https://iamigo-lzdqn.ondigitalocean.app** (DigitalOcean App Platform, SFO3, al lado del MySQL de Aiven, que está en DigitalOcean Santa Clara). Una app con `web` (front estático, `/`) y `api` (backend, `/api`, 5 USD/mes); configuración en `.do/deploy.template.yaml` (el repo es privado: la app se creó desde el panel con GitHub conectado). Cada `git push` a `main` vuelve a publicar. Variables secretas en el panel: `DB_*`, `DB_SSL_CA_PEM` (contenido del `ca.pem`), `JWT_SECRET` propio, `GEMINI_API_KEY`; `DOCS_ABERTOS=nao`. Login limitado a 5 fallos en 15 min por correo (`core/limite_login.py`, 429), sesión de 30 días. Publicada, Hoy responde en ~0,5 s (antes ~3 s desde la laptop).
 - Botón 🌙/☀️ en el encabezado (`js/tema.js`, clave `iamigo-tema`, que no se borra al salir).
 
-**Siguiente tarea:** antes de que la usen otras personas, sacar Gemini del plan gratuito (plan pago de Google o Kimi) y revisar los respaldos de Aiven en el plan Free. Después, revisar los siete principios pantalla por pantalla y la prueba de varios días.
+- **IA:** Pablo decidió seguir con Gemini (12 de noviembre de 2026). Mientras solo la use él, plan gratuito; antes de que la usen otras personas, activar la facturación en Google AI Studio (misma clave y modelo, sin cambios de código) para que Google no use los títulos de las tareas. Kimi queda como alternativa.
+
+**Siguiente tarea:** revisar los respaldos de Aiven en el plan Free. Después, revisar los siete principios pantalla por pantalla y la prueba de varios días.
 
 **Pendientes para recordar:**
 - Al publicar: limitar intentos de login (hoy no hay límite), dejar `CORS_ORIGIN_REGEX` vacío y decidir si `/docs` queda abierto. El token dura 60 min (`JWT_EXPIRA_MINUTOS`): para una app de uso diario conviene más tiempo o renovarlo.
 - Desde la laptop cada consulta a Aiven tarda ~420 ms y un pedido hace varias (pre-ping, token, consulta, rollback): la Bandeja tarda ~3 s. El front lo disimula. Se resuelve en la Fase 3 publicando el backend en la misma región que Aiven; Pablo prefirió no quitar `pool_pre_ping`.
-- Gemini en plan gratuito: límites bajos y Google puede usar lo enviado (títulos de tareas). Antes de publicar (Fase 3), pasar a plan pago u otro proveedor; Pablo tiene una clave paga de Kimi como alternativa.
+- Gemini en plan gratuito: límites bajos y Google puede usar lo enviado (títulos de tareas). Activar la facturación antes de que la usen otras personas (ver Fase 3 · IA).
 - Para la Fase 3 (revisión de los siete principios): juntar el tiempo total con Ahora en Hoy y un retoque visual general (menos bordes, más aire).
