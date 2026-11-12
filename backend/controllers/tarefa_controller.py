@@ -14,11 +14,17 @@ class TarefaController:
     def listar_tarefas(self, usuario_id):
         return self.service.listar_tarefas(usuario_id)
 
+    def listar_bandeja(self, usuario_id, hoje=None):
+        return self.service.listar_bandeja(usuario_id, hoje)
+
     def buscar_tarefa(self, usuario_id, tarefa_id):
         return self.service.buscar_tarefa(usuario_id, tarefa_id)
 
     def criar_tarefa(self, usuario_id, titulo):
         return self.service.criar_tarefa(usuario_id, titulo)
+
+    def criar_varias(self, usuario_id, titulos):
+        return self.service.criar_varias(usuario_id, titulos)
 
     def alternar_status(self, usuario_id, tarefa_id):
         return self.service.alternar_status(usuario_id, tarefa_id)

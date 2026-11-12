@@ -1,9 +1,10 @@
-from typing import List
+from datetime import date
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, status
 
 from api.dependencias import exigir_dono
-from api.schemas import NovaTarefa, PassoSaida, Resposta, TarefaSaida
+from api.schemas import NovaTarefa, NovasTarefas, PassoSaida, Resposta, TarefaSaida
 from controllers.tarefa_controller import TarefaController
 
 router = APIRouter(
@@ -22,10 +23,25 @@ def listar_tarefas(usuario_id: int):
     }
 
 
+# Rotas fixas (/bandeja, /lote) antes de /{tarefa_id}, para não serem lidas como um id.
+@router.get("/bandeja", response_model=Resposta[List[TarefaSaida]])
+def listar_bandeja(usuario_id: int, hoje: Optional[date] = None):
+    return {
+        "dados": controller.listar_bandeja(usuario_id, hoje)
+    }
+
+
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=Resposta[TarefaSaida])
 def criar_tarefa(usuario_id: int, dados: NovaTarefa):
     return {
         "dados": controller.criar_tarefa(usuario_id, dados.titulo)
+    }
+
+
+@router.post("/lote", status_code=status.HTTP_201_CREATED, response_model=Resposta[List[TarefaSaida]])
+def criar_varias(usuario_id: int, dados: NovasTarefas):
+    return {
+        "dados": controller.criar_varias(usuario_id, dados.titulos)
     }
 
 

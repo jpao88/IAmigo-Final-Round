@@ -6,7 +6,7 @@ IAmigo es una app web de organización para adultos con TDAH. Lleva a la persona
 
 Antes de proponer o escribir código, consulta lo que corresponda en `docs/`:
 
-- `docs/hoja-de-ruta.md` — fases del proyecto y tareas pendientes. Estamos en la **Fase 1 · Base técnica**.
+- `docs/hoja-de-ruta.md` — fases del proyecto y tareas pendientes. Estamos en la **Fase 2 · Construcción de la V1**.
 - `docs/recorrido-v1.md` — recorrido del usuario pantalla por pantalla y los siete principios de diseño.
 - `docs/modelo-de-datos.md` — modelo de datos cerrado y decisiones de diseño.
 - `docs/backlog-v1.md` — épicas e historias de usuario (IDs H0.1, H1.1…) y definición de terminado.
@@ -41,15 +41,14 @@ Antes de proponer o escribir código, consulta lo que corresponda en `docs/`:
 
 Actualizar esta sección al terminar cada tarea.
 
-**Fase 1 hecha:** repositorio, base del backend copiada sin TPAC ni consola, base de datos creada desde `database/schema.sql` y login por correo (`POST /auth/login` con `email` y `senha`). El nombre del usuario no es único: solo se usa para el saludo.
+**Fase 1 cerrada el 11 de noviembre de 2026.** Backend conectado a Aiven con SSL (`DB_SSL_CA`), `.env.example` como plantilla, CORS con `CORS_ORIGINS`. Front en `frontend/` con JavaScript puro y módulos ES (`python -m http.server 5500`): `js/api.js` llama al backend y traduce sus errores al español, `js/sessao.js` guarda el token, `js/roteador.js` usa rutas por hash y cada pantalla vive en `js/telas/`. Registro, login y cerrar sesión (H0.1–H0.3) funcionan; una compañera levantó el proyecto solo con el `README.md`. Usuario de prueba: `prueba@iamigo.test` (id 1).
 
-**`.env`, CORS y tests hecho:** `backend/.env.example` como plantilla y `backend/.env` completo en la laptop. `DB_SSL_CA` conecta a Aiven con SSL (TLS 1.3) y, si la ruta no existe, avisa al arrancar. CORS se configura con `CORS_ORIGINS`. Las tablas ya están en Aiven y se probó de punta a punta: registro (`POST /usuarios`), login, 401 con contraseña mala y contraseña guardada en hash (`pbkdf2_sha256`). Quedó un usuario de prueba `prueba@iamigo.test` (id 1).
+**Sprint 1 · Capturar cerrado el 12 de noviembre de 2026** (H1.1–H1.4):
+- Backend: `POST /usuarios/{id}/tarefas/lote` (una tarea por línea, ignora vacías, todo o nada, máx. 50 por vez y 200 caracteres) y `GET /usuarios/{id}/tarefas/bandeja?hoje=AAAA-MM-DD` (sin fecha o de días pasados, sin concluir; la fecha la manda el front porque vale la hora local). Las de un mismo lote comparten `criado_em` para conservar el orden en que se escribieron.
+- Front: `#/bandeja` es la pantalla de inicio ("¿Qué tienes en la cabeza?" con la Bandeja debajo). Enter guarda, Shift+Enter baja de línea. La tarea aparece al instante y se guarda en segundo plano; si falla, el texto vuelve al campo. Al abrir muestra la copia local (`localStorage`) y actualiza en silencio; "Salir" borra esas copias.
+- Hoy (Sprint 3) será otra pantalla; cuando exista, cambiar `TELA_INICIAL` en `js/roteador.js`.
 
-**Front y README hechos:** `frontend/` en JavaScript puro con módulos ES, sin compilación (`python -m http.server 5500`). `js/api.js` traduce los errores del backend al español, `js/sessao.js` guarda el token, `js/roteador.js` usa rutas por hash (`#/login`, `#/cadastro`, `#/hoje`) y cada pantalla vive en `js/telas/`. Registro (H0.1), login (H0.2) y cerrar sesión (H0.3) probados por Pablo en el navegador. El `README.md` explica cómo levantar todo.
-
-**Fase 1 cerrada el 11 de noviembre de 2026:** una compañera del equipo clonó el repo, lo levantó solo con el README, se registró e inició sesión sin problemas. Una segunda persona está haciendo la misma prueba; si encuentra algo, ajustar el README.
-
-**Siguiente tarea: Fase 2, Sprint 1 · Capturar** (Épica 1, H1.1 a H1.4): pantalla de inicio con "¿Qué tienes en la cabeza?", guardar en la Bandeja una tarea por línea y listar la Bandeja.
+**Siguiente tarea: Sprint 2 · Desmenuzar** (Épica 2, H2.1–H2.4): prompt de la IA con minutos por paso, pantalla de pasos (editar, borrar, agregar y reordenar) y pasos a mano si la IA falla.
 
 **Pendientes para recordar:**
-- El backend responde en portugués; el front debe mostrar el error de login en español ("Correo o contraseña incorrectos", H0.2) a partir del status 401.
+- Desde la laptop cada consulta a Aiven tarda ~420 ms y un pedido hace varias (pre-ping, token, consulta, rollback): la Bandeja tarda ~3 s. El front lo disimula. Se resuelve en la Fase 3 publicando el backend en la misma región que Aiven; Pablo prefirió no quitar `pool_pre_ping`.

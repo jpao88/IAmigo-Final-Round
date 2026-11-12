@@ -2,7 +2,7 @@
 // O backend responde em português; a pessoa sempre lê frases curtas em espanhol.
 
 import { API_URL } from "./config.js";
-import { encerrarSessao, obterToken } from "./sessao.js";
+import { encerrarSessao, obterToken, obterUsuario } from "./sessao.js";
 
 const MENSAGENS = {
   "Já existe uma conta com esse e-mail.": "Ya hay una cuenta con ese correo.",
@@ -10,6 +10,9 @@ const MENSAGENS = {
   "O nome não pode ficar vazio.": "Escribe tu nombre.",
   "O nome precisa ter pelo menos 3 caracteres.": "Tu nombre necesita al menos 3 letras.",
   "Informe um e-mail válido.": "Revisa tu correo.",
+  "Escreva pelo menos uma tarefa.": "Escribe algo primero.",
+  "Envie no máximo 50 tarefas por vez.": "Son muchas a la vez. Prueba con menos de 50.",
+  "Cada tarefa pode ter no máximo 200 caracteres.": "Una línea es muy larga. Acórtala un poco.",
 };
 
 const MENSAGEM_GENERICA = "Algo salió mal. Intenta otra vez.";
@@ -91,4 +94,27 @@ export async function entrar(email, senha) {
 
 export function cadastrar(nome, email, senha) {
   return requisitar("POST", "/usuarios", { nome, email, senha }, { autenticar: false });
+}
+
+// ---- Tarefas (Épica 1 · Capturar) ----
+
+function rotaTarefas() {
+  return `/usuarios/${obterUsuario().id}/tarefas`;
+}
+
+// Data do celular da pessoa (AAAA-MM-DD), não a do servidor.
+export function dataLocal(data = new Date()) {
+  const ano = data.getFullYear();
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
+  const dia = String(data.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
+export function listarBandeja() {
+  return requisitar("GET", `${rotaTarefas()}/bandeja?hoje=${dataLocal()}`);
+}
+
+// H1.1 e H1.2: cada linha vira uma tarefa; o backend ignora as vazias.
+export function criarTarefas(titulos) {
+  return requisitar("POST", `${rotaTarefas()}/lote`, { titulos });
 }

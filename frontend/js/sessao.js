@@ -47,11 +47,15 @@ export function obterUsuario() {
   return obterSessao()?.usuario || null;
 }
 
+// H0.3: ao sair, apaga o token e as cópias locais (ex.: a Bandeja),
+// para ninguém ver as tarefas de outra pessoa neste celular.
 export function encerrarSessao() {
   sessaoEmMemoria = null;
 
   try {
-    localStorage.removeItem(CHAVE);
+    Object.keys(localStorage)
+      .filter((chave) => chave.startsWith("iamigo."))
+      .forEach((chave) => localStorage.removeItem(chave));
   } catch {
     // Nada a fazer.
   }

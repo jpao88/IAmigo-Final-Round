@@ -1,4 +1,5 @@
 import unittest
+from datetime import date
 from types import SimpleNamespace
 
 from services.tarefa_service import TarefaService
@@ -74,6 +75,81 @@ class TestTarefaServiceAdicionarPasso(unittest.TestCase):
 
         self.assertEqual(str(contexto.exception), "Tarefa não encontrada.")
         self.assertEqual(self.passos.passos, [])
+
+
+class TarefaRepositoryBandejaFake:
+    """Guarda o que o service pediu ao repositório, sem MySQL."""
+
+    def __init__(self):
+        self.criadas = []
+        self.bandeja_pedida = None
+
+    def criar_varias(self, usuario_id, titulos):
+        novas = [
+            SimpleNamespace(id=len(self.criadas) + i, usuario_id=usuario_id, titulo=titulo)
+            for i, titulo in enumerate(titulos, start=1)
+        ]
+        self.criadas.extend(novas)
+        return novas
+
+    def listar_bandeja(self, usuario_id, hoje):
+        self.bandeja_pedida = (usuario_id, hoje)
+        return []
+
+
+class TestTarefaServiceCapturar(unittest.TestCase):
+    """Épica 1 · Capturar (H1.1, H1.2, H1.3)."""
+
+    def setUp(self):
+        self.tarefas = TarefaRepositoryBandejaFake()
+        self.service = TarefaService(
+            tarefa_repository=self.tarefas,
+            usuario_repository=UsuarioRepositoryFake([1]),
+            passo_repository=PassoRepositoryFake()
+        )
+
+    def test_cada_linha_vira_uma_tarefa(self):
+        criadas = self.service.criar_varias(1, ["Pagar a luz", "Ligar pro dentista"])
+
+        self.assertEqual([t.titulo for t in criadas], ["Pagar a luz", "Ligar pro dentista"])
+        self.assertTrue(all(t.usuario_id == 1 for t in criadas))
+
+    def test_linhas_vazias_sao_ignoradas_e_espacos_removidos(self):
+        criadas = self.service.criar_varias(1, ["", "  Comprar pão  ", "   ", "Estudar"])
+
+        self.assertEqual([t.titulo for t in criadas], ["Comprar pão", "Estudar"])
+
+    def test_so_linhas_vazias_e_recusado(self):
+        with self.assertRaises(ValueError):
+            self.service.criar_varias(1, ["", "   "])
+
+        self.assertEqual(self.tarefas.criadas, [])
+
+    def test_uma_linha_longa_demais_impede_todas(self):
+        with self.assertRaises(ValueError):
+            self.service.criar_varias(1, ["Curta", "x" * 201])
+
+        self.assertEqual(self.tarefas.criadas, [])
+
+    def test_mais_de_50_linhas_e_recusado(self):
+        with self.assertRaises(ValueError):
+            self.service.criar_varias(1, [f"Tarefa {i}" for i in range(51)])
+
+        self.assertEqual(self.tarefas.criadas, [])
+
+    def test_usuario_inexistente_e_recusado(self):
+        with self.assertRaises(ValueError):
+            self.service.criar_varias(99, ["Estudar"])
+
+    def test_bandeja_usa_a_data_local_enviada(self):
+        self.service.listar_bandeja(1, date(2026, 11, 12))
+
+        self.assertEqual(self.tarefas.bandeja_pedida, (1, date(2026, 11, 12)))
+
+    def test_bandeja_sem_data_usa_hoje_do_servidor(self):
+        self.service.listar_bandeja(1)
+
+        self.assertEqual(self.tarefas.bandeja_pedida, (1, date.today()))
 
 
 if __name__ == "__main__":

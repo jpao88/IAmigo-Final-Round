@@ -38,7 +38,7 @@ class ServiceFake:
         def metodo(*args, **kwargs):
             if nome == "listar_usuarios":
                 return [USUARIO]
-            if nome == "listar_tarefas":
+            if nome in ("listar_tarefas", "listar_bandeja", "criar_varias"):
                 return [TAREFA]
             if nome == "listar_passos":
                 return [PASSO]
@@ -80,6 +80,10 @@ class TestMatrizDePermissoes(BaseApi):
         ("patch", "/usuarios/1/tarefas/10", None, {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
         ("get", "/usuarios/1/tarefas/10/passos", None,
          {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("get", "/usuarios/1/tarefas/bandeja?hoje=2026-11-12", None,
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
+        ("post", "/usuarios/1/tarefas/lote", {"titulos": ["Estudar"]},
+         {"DONO": 201, "OUTRO": 403, "ADMIN": 403}),
     ]
 
     def test_matriz(self):
@@ -125,6 +129,20 @@ class TestFormatos(BaseApi):
             "/usuarios/1/tarefas",
             json={"titulo": "x" * 201}
         )
+
+        self.assertEqual(resposta.status_code, 422)
+
+    def test_bandeja_devolve_lista_de_tarefas(self):
+        self.como(DONO)
+
+        dados = self.cliente.get("/usuarios/1/tarefas/bandeja").json()["dados"]
+
+        self.assertEqual(dados[0]["titulo"], "Lavar louça")
+
+    def test_bandeja_com_data_invalida_e_recusada(self):
+        self.como(DONO)
+
+        resposta = self.cliente.get("/usuarios/1/tarefas/bandeja?hoje=amanha")
 
         self.assertEqual(resposta.status_code, 422)
 

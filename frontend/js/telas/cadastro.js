@@ -2,7 +2,7 @@
 
 import { cadastrar, entrar } from "../api.js";
 import { comBotaoOcupado, criarElemento } from "../html.js";
-import { navegar } from "../roteador.js";
+import { navegar, TELA_INICIAL } from "../roteador.js";
 import { salvarSessao } from "../sessao.js";
 
 export function telaCadastro(raiz) {
@@ -61,7 +61,7 @@ export function telaCadastro(raiz) {
         return entrar(email, senha);
       });
       salvarSessao(sessao);
-      navegar("/hoje");
+      navegar(TELA_INICIAL);
     } catch (erro) {
       aviso.textContent = erro.message;
     }

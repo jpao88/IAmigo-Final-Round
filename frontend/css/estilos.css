@@ -126,15 +126,6 @@ input:focus-visible {
 .botao:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
 .botao:disabled { opacity: 0.6; cursor: wait; }
 
-.botao-secundario {
-  background: transparent;
-  color: var(--primaria);
-  min-height: 44px;
-  font-weight: 600;
-}
-
-.botao-secundario:hover { background: transparent; text-decoration: underline; }
-
 .link {
   color: var(--primaria);
   font-weight: 600;
@@ -151,4 +142,110 @@ input:focus-visible {
 
 .aviso:empty { display: none; }
 
-.empurrar-abaixo { margin-top: auto; }
+/* ---- Bandeja (Épica 1 · Capturar) ---- */
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.botao-texto {
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--texto-suave);
+  background: none;
+  border: none;
+  padding: 10px 4px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.botao-texto:hover { color: var(--texto); }
+.botao-texto:focus-visible { outline: 3px solid var(--foco); border-radius: 8px; }
+
+.saudacao { margin-bottom: -8px; }
+
+h1 label { font-weight: inherit; display: inline; }
+
+/* Princípio "Capturar em segundos": um campo e um toque. */
+.captura {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+textarea {
+  flex: 1;
+  font: inherit;
+  color: var(--texto);
+  background: var(--superficie);
+  border: 1.5px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 14px 16px;
+  min-height: 56px;
+  max-height: 40dvh;
+  resize: none;
+  overflow-y: auto;
+}
+
+textarea:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 1px;
+  border-color: var(--primaria);
+}
+
+.botao-mais {
+  width: 56px;
+  flex: none;
+  padding: 0;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.confirmacao {
+  margin: -6px 0 0;
+  min-height: 1.5em;
+  color: var(--primaria);
+  font-weight: 600;
+}
+
+.bandeja h2 {
+  font-size: 1.1rem;
+  margin: 8px 0 10px;
+}
+
+.lista-tarefas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tarefa {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 14px 16px;
+  overflow-wrap: anywhere;
+  transition: opacity 300ms;
+}
+
+/* Princípio "Recompensa imediata": o que acabou de entrar aparece com destaque. */
+.tarefa-nova {
+  animation: aparecer 600ms ease-out;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(-6px); border-color: var(--primaria); }
+  to   { transform: none; }
+}
+
+/* Ainda sendo guardada no servidor: um pouco mais clara, sem bloquear nada. */
+.tarefa-pendente { opacity: 0.6; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tarefa-nova { animation: none; }
+}

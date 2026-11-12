@@ -1,6 +1,9 @@
-// Roteador simples por hash (#/login, #/hoje...): troca a tela sem recarregar a página.
+// Roteador simples por hash (#/login, #/bandeja...): troca a tela sem recarregar a página.
 
 import { obterSessao } from "./sessao.js";
+
+// Tela aberta depois do login. No Sprint 3 passa a ser Hoy.
+export const TELA_INICIAL = "/bandeja";
 
 const rotas = new Map();
 let raiz = null;
@@ -24,7 +27,7 @@ function renderizar() {
   const rota = rotas.get(caminho);
 
   if (!rota) {
-    navegar(logado ? "/hoje" : "/login");
+    navegar(logado ? TELA_INICIAL : "/login");
     return;
   }
 
@@ -34,7 +37,7 @@ function renderizar() {
   }
 
   if (rota.publica && logado) {
-    navegar("/hoje");
+    navegar(TELA_INICIAL);
     return;
   }
 

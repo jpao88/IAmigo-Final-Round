@@ -2,7 +2,7 @@
 
 import { entrar } from "../api.js";
 import { comBotaoOcupado, criarElemento } from "../html.js";
-import { navegar } from "../roteador.js";
+import { navegar, TELA_INICIAL } from "../roteador.js";
 import { salvarSessao } from "../sessao.js";
 
 export function telaLogin(raiz) {
@@ -44,7 +44,7 @@ export function telaLogin(raiz) {
     try {
       const sessao = await comBotaoOcupado(botao, "Entrando…", () => entrar(email, senha));
       salvarSessao(sessao);
-      navegar("/hoje");
+      navegar(TELA_INICIAL);
     } catch (erro) {
       aviso.textContent = erro.message;
     }

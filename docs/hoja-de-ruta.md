@@ -52,11 +52,11 @@ Deja listo el terreno donde se construye la V1. Desde aquí conviene trabajar en
 
 Cada sprint entrega una etapa del ciclo funcionando de punta a punta: endpoint, pantalla y prueba. Al final de cada uno se hace una demo.
 
-**Sprint 1 · Capturar**
+**Sprint 1 · Capturar** ✅ 12 de noviembre de 2026
 
-- [ ] Pantalla de inicio con el campo "¿Qué tienes en la cabeza?"
-- [ ] Guardar en la Bandeja, una tarea por línea
-- [ ] Listar la Bandeja
+- [x] Pantalla de inicio con el campo "¿Qué tienes en la cabeza?"
+- [x] Guardar en la Bandeja, una tarea por línea
+- [x] Listar la Bandeja
 
 **Sprint 2 · Desmenuzar**
 

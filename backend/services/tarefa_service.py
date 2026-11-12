@@ -1,8 +1,15 @@
+from datetime import date
+
 from repositories.tarefa_repository import TarefaRepository
 from repositories.usuario_repository import UsuarioRepository
 from repositories.passo_repository import PassoRepository
 from core.erros import DadosInvalidos, NaoEncontrado
 from core.ia_service import gerar_passos_tarefa
+
+# Mesmo tamanho da coluna tarefas.titulo.
+TAMANHO_MAXIMO_TITULO = 200
+# Limite de linhas por envio, para um texto colado sem querer não lotar a Bandeja.
+MAXIMO_TAREFAS_POR_VEZ = 50
 
 
 class TarefaService:
@@ -48,6 +55,16 @@ class TarefaService:
 
         return self.tarefa_repository.listar_por_usuario(usuario_id)
 
+    def listar_bandeja(self, usuario_id, hoje=None):
+        """H1.3: tarefas sem data e as de dias passados que não foram concluídas.
+
+        `hoje` é a data local da pessoa, enviada pelo front: o servidor
+        pode estar em outro fuso horário.
+        """
+        self._garantir_usuario(usuario_id)
+
+        return self.tarefa_repository.listar_bandeja(usuario_id, hoje or date.today())
+
     def buscar_tarefa(self, usuario_id, tarefa_id):
         return self._obter_tarefa_do_usuario(usuario_id, tarefa_id)
 
@@ -57,6 +74,26 @@ class TarefaService:
         titulo = self._validar_titulo(titulo)
 
         return self.tarefa_repository.criar(usuario_id, titulo)
+
+    def criar_varias(self, usuario_id, titulos):
+        """H1.1 e H1.2: cada linha com texto vira uma tarefa na Bandeja; as vazias são ignoradas.
+
+        Valida tudo antes de gravar: ou entram todas, ou nenhuma.
+        """
+        self._garantir_usuario(usuario_id)
+
+        titulos = [titulo.strip() for titulo in titulos if titulo.strip()]
+
+        if not titulos:
+            raise DadosInvalidos("Escreva pelo menos uma tarefa.")
+
+        if len(titulos) > MAXIMO_TAREFAS_POR_VEZ:
+            raise DadosInvalidos(f"Envie no máximo {MAXIMO_TAREFAS_POR_VEZ} tarefas por vez.")
+
+        if any(len(titulo) > TAMANHO_MAXIMO_TITULO for titulo in titulos):
+            raise DadosInvalidos(f"Cada tarefa pode ter no máximo {TAMANHO_MAXIMO_TITULO} caracteres.")
+
+        return self.tarefa_repository.criar_varias(usuario_id, titulos)
 
     def alternar_status(self, usuario_id, tarefa_id):
         self._obter_tarefa_do_usuario(usuario_id, tarefa_id)

@@ -7,7 +7,7 @@ Os modelos de saída são a lista branca do que pode sair da API:
 campos que não estão aqui (como senha_hash e papel) nunca são enviados.
 """
 from datetime import date, datetime
-from typing import Generic, Optional, TypeVar
+from typing import Generic, List, Optional, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -37,6 +37,11 @@ class AtualizarUsuario(BaseModel):
 
 class NovaTarefa(BaseModel):
     titulo: str = Field(max_length=200)
+
+
+class NovasTarefas(BaseModel):
+    # Uma por linha do campo "¿Qué tienes en la cabeza?". O service limpa e valida cada uma.
+    titulos: List[str]
 
 
 # ---------- Saída ----------
