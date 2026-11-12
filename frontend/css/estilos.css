@@ -19,8 +19,12 @@
   --fonte: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
+/* Modo oscuro: segue o celular, a menos que a pessoa escolha no botão 🌙/☀️ (js/tema.js). */
+:root { color-scheme: light dark; }
+:root[data-tema="claro"] { color-scheme: light; }
+
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-tema="claro"]) {
     --fundo: #1c1b22;
     --superficie: #26252e;
     --texto: #f1f0f5;
@@ -33,6 +37,21 @@
     --aviso-texto: #f3dc9b;
     --foco: #5b6fd6;
   }
+}
+
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+  --fundo: #1c1b22;
+  --superficie: #26252e;
+  --texto: #f1f0f5;
+  --texto-suave: #a9a7b5;
+  --borda: #3a3945;
+  --primaria: #8197ff;
+  --primaria-texto: #14131a;
+  --primaria-hover: #9aabff;
+  --aviso-fundo: #3a3220;
+  --aviso-texto: #f3dc9b;
+  --foco: #5b6fd6;
 }
 
 * { box-sizing: border-box; }
@@ -182,6 +201,14 @@ input:focus-visible {
 .botao-texto:focus-visible { outline: 3px solid var(--foco); border-radius: 8px; }
 
 .saudacao { margin-bottom: -8px; }
+
+.cabecalho-acoes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.botao-tema { font-size: 1.15rem; line-height: 1; }
 
 h1 label { font-weight: inherit; display: inline; }
 
