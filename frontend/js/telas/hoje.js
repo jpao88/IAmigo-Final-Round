@@ -16,7 +16,8 @@ import { precisaDaGuia, tarefaDaGuia } from "../guia.js";
 import { criarListaBandeja } from "../lista-bandeja.js";
 import { navegar } from "../roteador.js";
 import { obterUsuario } from "../sessao.js";
-import { desenharBarraTempo, formatarTempoCurto, formatarTempoTotal } from "../tempo.js";
+import { criarAnel } from "../anel.js";
+import { formatarTempoCurto, formatarTempoTotal } from "../tempo.js";
 import { t } from "../i18n.js";
 import { icone, itemFeito } from "../icones.js";
 
@@ -98,7 +99,9 @@ export function telaHoje(raiz) {
       </div>
     </section>
 
-    <div class="barra-tempo barra-dia" aria-hidden="true" hidden></div>
+    <div class="progresso-dia" hidden>
+      <p class="progresso-dia-texto"></p>
+    </div>
 
     <p class="dia-vazio subtitulo" hidden>${t("hoje.diaVazio")}</p>
 
@@ -131,7 +134,11 @@ export function telaHoje(raiz) {
 
   const botaoOrdenar = raiz.querySelector('[data-acao="ordenar"]');
   const tempoDia = raiz.querySelector(".tempo-dia");
-  const barraTempo = raiz.querySelector(".barra-dia");
+  // Anel: tarefas feitas / tarefas do dia (o tempo já está junto ao título).
+  const progressoDia = raiz.querySelector(".progresso-dia");
+  const progressoTexto = raiz.querySelector(".progresso-dia-texto");
+  const anel = criarAnel();
+  progressoDia.prepend(anel.elemento);
   const diaVazio = raiz.querySelector(".dia-vazio");
   const secaoAhora = raiz.querySelector(".ahora");
   const secaoDespues = raiz.querySelector(".despues");
@@ -229,12 +236,15 @@ export function telaHoje(raiz) {
     botaoElegir.textContent = temPlano || tudoFeito ? t("hoje.elegirMais") : t("hoje.elegir");
 
     const total = lista.reduce((soma, tarefa) => soma + tarefa.minutos_restantes, 0);
-    // H3.3: o tempo do dia junto ao título, com a barra logo embaixo e Ahora em seguida.
+    // H3.3: o tempo do dia junto ao título; embaixo, o anel com o que já foi feito.
     tempoDia.hidden = !temPlano;
-    barraTempo.hidden = !temPlano;
     tempoDia.textContent = ` · ${formatarTempoCurto(total)}`;
     tempoDia.setAttribute("aria-label", t("hoje.tempoRotulo", formatarTempoTotal(total)));
-    desenharBarraTempo(barraTempo, lista.map((tarefa) => tarefa.minutos_restantes));
+
+    const doDia = lista.length + concluidas.length;
+    progressoDia.hidden = doDia === 0;
+    progressoTexto.textContent = t("hoje.progresso", concluidas.length, doDia);
+    anel.atualizar(doDia === 0 ? 0 : concluidas.length / doDia);
 
     listaHecho.replaceChildren(...concluidas.map((tarefa) => itemFeito(tarefa.titulo)));
     secaoHecho.hidden = concluidas.length === 0;

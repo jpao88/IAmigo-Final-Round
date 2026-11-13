@@ -93,6 +93,7 @@ const es = {
 
   // Hoy
   "hoje.titulo": "Hoy",
+  "hoje.progresso": (feitas, total) => `${feitas} de ${total} ${total === 1 ? "hecha" : "hechas"}`,
   "hoje.retomar": "¿Seguimos donde quedaste?",
   "hoje.agoraNao": "Ahora no",
   "hoje.diaVazio": "Elige una cosa de tu Bandeja para empezar.",
@@ -274,6 +275,7 @@ const pt = {
   "bandeja.vazia": "Sua caixa de entrada está vazia.",
 
   "hoje.titulo": "Hoje",
+  "hoje.progresso": (feitas, total) => `${feitas} de ${total} ${total === 1 ? "feita" : "feitas"}`,
   "hoje.retomar": "Vamos continuar de onde você parou?",
   "hoje.agoraNao": "Agora não",
   "hoje.diaVazio": "Escolha uma coisa da sua caixa de entrada para começar.",

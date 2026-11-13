@@ -1193,6 +1193,62 @@ button.link-secundario {
   color: var(--texto-suave);
 }
 
-.barra-dia { margin-top: -6px; }
+/* Anel de progresso do dia (js/anel.js), 64 px, ao lado do texto "1 de 3 hechas". */
+.progresso-dia {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: -4px;
+}
+
+.progresso-dia-texto { margin: 0; font-weight: 700; color: var(--texto-suave); }
+
+.anel { width: 64px; height: 64px; flex: none; }
+.anel svg { width: 100%; height: 100%; }
+.anel circle { fill: none; stroke-width: 7; }
+.anel-fundo { stroke: var(--superficie-2); }
+
+.anel-progresso {
+  stroke: var(--primaria);
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 600ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anel-progresso { transition: none; }
+}
+
+/* Um ponto de cor ao lado de Ahora, Después e Hecho (os acentos são só fundo). */
+.ahora h2::before,
+.despues h2::before,
+.hecho h2::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+  border-radius: 50%;
+  vertical-align: 0.05em;
+  background: var(--acento-1);
+}
+
+.despues h2::before { background: var(--acento-2); }
+.hecho h2::before { background: var(--acento-3); }
+
+/* Cartões com uma borda fina; Ahora ganha uma faixa na cor primária. */
+.tarefa,
+.tarefa-dia,
+.passo,
+.opcao-elegir,
+.pendente-dia,
+.retomar { border: 1px solid var(--borda); }
+
+.cartao-ahora,
+.retomar {
+  border: 1px solid var(--borda);
+  box-shadow: inset 4px 0 0 var(--primaria);
+}
 
 .tempo-total .titulo-com-acao .tempo-texto { margin: 0; }
