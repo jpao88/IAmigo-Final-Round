@@ -4,12 +4,13 @@ import { criarElemento } from "./html.js";
 import { navegar } from "./roteador.js";
 import { encerrarSessao, obterUsuario } from "./sessao.js";
 import { t, trocarIdioma } from "./i18n.js";
+import { icone } from "./icones.js";
 import { alternarTema, temaAtual } from "./tema.js";
 
-// O ícone mostra para onde o botão leva: 🌙 no claro, ☀️ no oscuro.
+// O ícone mostra para onde o botão leva: lua no claro, sol no oscuro.
 function desenharBotaoTema(botao) {
   const escuro = temaAtual() === "escuro";
-  botao.textContent = escuro ? "☀️" : "🌙";
+  botao.innerHTML = icone(escuro ? "sol" : "lua");
   botao.setAttribute("aria-label", escuro ? t("cab.modoClaro") : t("cab.modoEscuro"));
 }
 

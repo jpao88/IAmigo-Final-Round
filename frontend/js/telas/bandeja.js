@@ -9,6 +9,7 @@ import { cabecalho, navegacao } from "../componentes.js";
 import { criarElemento } from "../html.js";
 import { criarListaBandeja } from "../lista-bandeja.js";
 import { t } from "../i18n.js";
+import { icone } from "../icones.js";
 
 export function telaBandeja(raiz) {
   raiz.append(cabecalho(), criarElemento(`
@@ -17,7 +18,7 @@ export function telaBandeja(raiz) {
     <form class="captura" novalidate>
       <textarea id="captura" name="texto" rows="2" maxlength="10000"
         placeholder="${t("bandeja.placeholder")}" enterkeyhint="done" autocomplete="off"></textarea>
-      <button class="botao botao-mais" type="submit" aria-label="${t("bandeja.guardar")}">+</button>
+      <button class="botao botao-mais" type="submit" aria-label="${t("bandeja.guardar")}">${icone("mais")}</button>
     </form>
     <p class="confirmacao" role="status"></p>
     <p class="aviso" role="alert"></p>

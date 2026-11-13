@@ -288,7 +288,27 @@ input:focus-visible {
   gap: 4px;
 }
 
-.botao-tema { font-size: 1.15rem; line-height: 1; }
+/* Ícones SVG (js/icones.js): do tamanho do texto, na cor do texto. */
+.icone {
+  width: 1.25em;
+  height: 1.25em;
+  flex: none;
+  vertical-align: -0.25em;
+}
+
+.com-icone { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Botões só com ícone no cabeçalho: 44 × 44 para o dedo. */
+.botao-tema,
+.botao-som {
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.botao-tema .icone,
+.botao-som .icone { width: 1.4em; height: 1.4em; }
 
 /* ES / PT: discreto, do tamanho dos outros botões do cabeçalho. */
 .botao-idioma { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.04em; }
@@ -327,9 +347,9 @@ textarea:focus-visible {
   width: 56px;
   flex: none;
   padding: 0;
-  font-size: 1.8rem;
-  line-height: 1;
 }
+
+.botao-mais .icone { width: 28px; height: 28px; stroke-width: 2.25; }
 
 .confirmacao {
   position: fixed;
@@ -583,6 +603,9 @@ textarea:focus-visible {
   background: transparent;
   color: var(--texto-suave);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .botao-icone:hover:not(:disabled) { background: var(--fundo); color: var(--texto); }
@@ -730,7 +753,13 @@ textarea:focus-visible {
 .lista-hecho li {
   color: var(--texto-suave);
   padding: 4px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  overflow-wrap: anywhere;
 }
+
+.lista-hecho .icone { color: var(--primaria); margin-top: 0.15em; }
 
 /* ---- Elegir tareas para hoy ---- */
 
@@ -847,7 +876,6 @@ button.link-secundario {
 
 .progresso { margin: 0; font-size: 0.95rem; }
 
-.botao-som { font-size: 1.2rem; line-height: 1; }
 .botao-som[aria-pressed="true"] { opacity: 0.6; }
 
 .foco {
@@ -977,8 +1005,6 @@ button.link-secundario {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3.5rem;
-  font-weight: 800;
   background: var(--primaria);
   color: var(--primaria-texto);
   animation: celebrar 600ms cubic-bezier(0.2, 1.4, 0.4, 1);
@@ -992,6 +1018,8 @@ button.link-secundario {
 }
 
 .celebracao-detalhe { margin: 0; overflow-wrap: anywhere; }
+
+.celebracao-icone .icone { width: 56px; height: 56px; stroke-width: 2.5; }
 
 @keyframes celebrar {
   from { transform: scale(0.4); opacity: 0; }
@@ -1087,9 +1115,11 @@ button.link-secundario {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
   background: var(--superficie);
+  color: var(--primaria);
 }
+
+.etapa-icone .icone { width: 26px; height: 26px; }
 
 .guia {
   margin: 0;

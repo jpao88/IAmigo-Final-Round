@@ -10,6 +10,7 @@ import { navegar } from "../roteador.js";
 import { obterUsuario } from "../sessao.js";
 import { somTarefa } from "../som.js";
 import { localeDatas, t } from "../i18n.js";
+import { icone, itemFeito } from "../icones.js";
 
 const esperar = (ms) => new Promise((resolver) => { setTimeout(resolver, ms); });
 
@@ -69,11 +70,11 @@ export function telaCerrar(raiz, { dia } = {}) {
 
   raiz.append(criarElemento(`
     <header class="cabecalho">
-      <a class="botao-texto" href="#/hoje">${t("comum.voltarHoje")}</a>
+      <a class="botao-texto com-icone" href="#/hoje">${icone("voltar")}${t("comum.voltarHoje")}</a>
     </header>
 
     <section class="resumo-dia" aria-live="polite">
-      <div class="celebracao-icone" aria-hidden="true">✓</div>
+      <div class="celebracao-icone" aria-hidden="true">${icone("feito")}</div>
       <h1 class="resumo-frase"></h1>
     </section>
 
@@ -91,7 +92,7 @@ export function telaCerrar(raiz, { dia } = {}) {
     <button class="botao" type="button" data-acao="fechar" hidden></button>
 
     <div class="celebracao" role="status" hidden>
-      <div class="celebracao-icone" aria-hidden="true">🌙</div>
+      <div class="celebracao-icone" aria-hidden="true">${icone("lua")}</div>
       <p class="celebracao-texto">${t("cerrar.diaFechado")}</p>
       <p class="celebracao-detalhe subtitulo">${t("cerrar.descansa")}</p>
     </div>
@@ -136,11 +137,7 @@ export function telaCerrar(raiz, { dia } = {}) {
   function desenhar(resumo) {
     frase.textContent = fraseDoResumo(nomeDoDia(data), resumo.passos_concluidos, resumo.tarefas_concluidas);
 
-    listaHecho.replaceChildren(...resumo.concluidas.map((tarefa) => {
-      const item = document.createElement("li");
-      item.textContent = `✓ ${tarefa.titulo}`;
-      return item;
-    }));
+    listaHecho.replaceChildren(...resumo.concluidas.map((tarefa) => itemFeito(tarefa.titulo)));
 
     pendentes = resumo.pendentes;
     fechado = resumo.fechado;

@@ -18,6 +18,7 @@ import { navegar } from "../roteador.js";
 import { obterUsuario } from "../sessao.js";
 import { desenharBarraTempo, formatarTempoCurto, formatarTempoTotal } from "../tempo.js";
 import { t } from "../i18n.js";
+import { icone, itemFeito } from "../icones.js";
 
 // ---- Cópia local do dia ----
 
@@ -168,8 +169,8 @@ export function telaHoje(raiz) {
       <a class="tarefa-link"></a>
       <p class="minutos-dia"></p>
       <div class="passo-acoes acoes-ordenar">
-        <button class="botao-icone" type="button" data-acao="subir">↑</button>
-        <button class="botao-icone" type="button" data-acao="descer">↓</button>
+        <button class="botao-icone" type="button" data-acao="subir">${icone("subir")}</button>
+        <button class="botao-icone" type="button" data-acao="descer">${icone("descer")}</button>
         <button class="botao-texto" type="button" data-acao="quitar">${t("hoje.quitar")}</button>
       </div>
     `));
@@ -235,11 +236,7 @@ export function telaHoje(raiz) {
     tempoDia.setAttribute("aria-label", t("hoje.tempoRotulo", formatarTempoTotal(total)));
     desenharBarraTempo(barraTempo, lista.map((tarefa) => tarefa.minutos_restantes));
 
-    listaHecho.replaceChildren(...concluidas.map((tarefa) => {
-      const item = document.createElement("li");
-      item.textContent = `✓ ${tarefa.titulo}`;
-      return item;
-    }));
+    listaHecho.replaceChildren(...concluidas.map((tarefa) => itemFeito(tarefa.titulo)));
     secaoHecho.hidden = concluidas.length === 0;
   }
 

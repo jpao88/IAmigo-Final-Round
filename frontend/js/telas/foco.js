@@ -16,6 +16,7 @@ import { navegar } from "../roteador.js";
 import { alternarSom, somLigado, somPasso, somTarefa } from "../som.js";
 import { lerCacheHoje } from "./hoje.js";
 import { t } from "../i18n.js";
+import { icone } from "../icones.js";
 
 const MINUTO = 60 * 1000;
 const MINUTOS_SEM_PASSOS = 10;
@@ -37,7 +38,7 @@ export function telaFoco(raiz, { id: tarefaId }) {
   raiz.classList.add("tela-foco");
   raiz.append(criarElemento(`
     <header class="cabecalho">
-      <a class="botao-texto" href="#/hoje">${t("comum.voltarHoje")}</a>
+      <a class="botao-texto com-icone" href="#/hoje">${icone("voltar")}${t("comum.voltarHoje")}</a>
       <p class="progresso subtitulo"></p>
       <button class="botao-texto botao-som" type="button"></button>
     </header>
@@ -72,7 +73,7 @@ export function telaFoco(raiz, { id: tarefaId }) {
     </div>
 
     <div class="celebracao" role="status" hidden>
-      <div class="celebracao-icone" aria-hidden="true">✓</div>
+      <div class="celebracao-icone" aria-hidden="true">${icone("feito")}</div>
       <p class="celebracao-texto"></p>
       <p class="celebracao-detalhe subtitulo"></p>
       <button class="botao celebracao-seguir" type="button" hidden>${t("comum.seguir")}</button>
@@ -109,7 +110,7 @@ export function telaFoco(raiz, { id: tarefaId }) {
 
   function desenharBotaoSom() {
     const ligado = somLigado();
-    botaoSom.textContent = ligado ? "🔔" : "🔕";
+    botaoSom.innerHTML = icone(ligado ? "sino" : "sino-mudo");
     botaoSom.setAttribute("aria-label", ligado ? t("foco.silenciar") : t("foco.ativarSom"));
     botaoSom.setAttribute("aria-pressed", String(!ligado));
   }

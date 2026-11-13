@@ -6,13 +6,14 @@ import { criarElemento } from "../html.js";
 import { navegar, TELA_INICIAL } from "../roteador.js";
 import { obterUsuario } from "../sessao.js";
 import { t } from "../i18n.js";
+import { icone } from "../icones.js";
 
 const ETAPAS = [
-  ["✏️", "bienvenida.anota"],
-  ["✂️", "bienvenida.divide"],
-  ["📌", "bienvenida.elige"],
-  ["▶️", "bienvenida.hazlo"],
-  ["🎉", "bienvenida.celebra"],
+  ["lapis", "bienvenida.anota"],
+  ["tesoura", "bienvenida.divide"],
+  ["alfinete", "bienvenida.elige"],
+  ["play", "bienvenida.hazlo"],
+  ["festa", "bienvenida.celebra"],
 ];
 
 export function telaBienvenida(raiz) {
@@ -29,10 +30,10 @@ export function telaBienvenida(raiz) {
 
   raiz.querySelector(".saudacao-bienvenida").textContent = t("cab.ola", obterUsuario().nome);
 
-  raiz.querySelector(".etapas").replaceChildren(...ETAPAS.map(([icone, nome]) => {
+  raiz.querySelector(".etapas").replaceChildren(...ETAPAS.map(([nomeIcone, nome]) => {
     const item = document.createElement("li");
     item.append(criarElemento(`<span class="etapa-icone" aria-hidden="true"></span><span></span>`));
-    item.firstElementChild.textContent = icone;
+    item.firstElementChild.innerHTML = icone(nomeIcone);
     item.lastElementChild.textContent = t(nome);
     return item;
   }));

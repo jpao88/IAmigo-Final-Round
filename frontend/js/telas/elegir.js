@@ -7,11 +7,12 @@ import { comBotaoOcupado, criarElemento } from "../html.js";
 import { navegar } from "../roteador.js";
 import { atualizarUsuario, obterUsuario } from "../sessao.js";
 import { t } from "../i18n.js";
+import { icone } from "../icones.js";
 
 export function telaElegir(raiz) {
   raiz.append(criarElemento(`
     <header class="cabecalho">
-      <a class="botao-texto" href="#/hoje">${t("comum.voltarHoje")}</a>
+      <a class="botao-texto com-icone" href="#/hoje">${icone("voltar")}${t("comum.voltarHoje")}</a>
     </header>
 
     <h1>${t("hoje.elegir")}</h1>

@@ -6,11 +6,12 @@ import { iniciarGuia } from "../guia.js";
 import { comBotaoOcupado, criarElemento } from "../html.js";
 import { navegar } from "../roteador.js";
 import { t } from "../i18n.js";
+import { icone } from "../icones.js";
 
 export function telaPrimeiraTarefa(raiz) {
   raiz.append(criarElemento(`
     <header class="cabecalho">
-      <a class="botao-texto" href="#/bienvenida">${t("comum.voltar")}</a>
+      <a class="botao-texto com-icone" href="#/bienvenida">${icone("voltar")}${t("comum.voltar")}</a>
       <p class="subtitulo guia-etapa">1 de 3</p>
     </header>
 

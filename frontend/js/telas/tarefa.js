@@ -16,13 +16,14 @@ import { tituloEmCache } from "../lista-bandeja.js";
 import { navegar, TELA_INICIAL } from "../roteador.js";
 import { desenharBarraTempo, formatarTempoTotal } from "../tempo.js";
 import { t } from "../i18n.js";
+import { icone } from "../icones.js";
 
 const MINUTOS_PADRAO = 10;
 
 export function telaTarefa(raiz, { id: tarefaId }) {
   raiz.append(criarElemento(`
     <header class="cabecalho">
-      <button class="botao-texto" type="button" data-acao="voltar">${t("comum.voltar")}</button>
+      <button class="botao-texto com-icone" type="button" data-acao="voltar">${icone("voltar")}${t("comum.voltar")}</button>
       <p class="subtitulo guia-etapa" hidden></p>
     </header>
 
@@ -62,7 +63,7 @@ export function telaTarefa(raiz, { id: tarefaId }) {
           placeholder="${MINUTOS_PADRAO}" aria-label="${t("tarefa.minutosNovo")}">
         <span>min</span>
       </label>
-      <button class="botao botao-mais" type="submit" aria-label="${t("tarefa.adicionar")}">+</button>
+      <button class="botao botao-mais" type="submit" aria-label="${t("tarefa.adicionar")}">${icone("mais")}</button>
     </form>
 
     <button class="botao" type="button" data-acao="listo" hidden>${t("comum.listo")}</button>
@@ -131,9 +132,9 @@ export function telaTarefa(raiz, { id: tarefaId }) {
         </label>
       </div>
       <div class="passo-acoes acoes-ordenar">
-        <button class="botao-icone" type="button" data-acao="subir">↑</button>
-        <button class="botao-icone" type="button" data-acao="descer">↓</button>
-        <button class="botao-icone" type="button" data-acao="apagar">✕</button>
+        <button class="botao-icone" type="button" data-acao="subir">${icone("subir")}</button>
+        <button class="botao-icone" type="button" data-acao="descer">${icone("descer")}</button>
+        <button class="botao-icone" type="button" data-acao="apagar">${icone("fechar")}</button>
       </div>
     `));
 
