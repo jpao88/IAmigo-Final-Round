@@ -5,7 +5,7 @@
 // index.html aplica o modo salvo antes de desenhar, para a tela não piscar.
 
 const CHAVE = "iamigo-tema";
-const COR_BARRA = { claro: "#f6f4ef", escuro: "#1c1b22" };
+const COR_BARRA = { claro: "#f7f4ff", escuro: "#140b26" };
 
 const celularEscuro = () => window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
 

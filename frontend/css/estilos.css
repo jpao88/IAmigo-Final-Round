@@ -1,57 +1,83 @@
 /* IAmigo V1 · Estilos base, pensados primero para celular.
    Princípio "Sem culpa": nenhum vermelho na interface, nem nos erros. */
 
+/* Tema claro: lavanda (docs/diseno/GUIA-VISUAL-IAmigo.md, seção 2).
+   Texto ≥ 4,5:1 (WCAG AA); bordas de campos e foco ≥ 3:1. */
 :root {
-  --fundo: #f6f4ef;
+  --fundo: #f7f4ff;
   --superficie: #ffffff;
-  --texto: #2b2a33;
-  --texto-suave: #6b6977;
-  --borda: #dedad2;
-  --primaria: #4f6df5;
+  --superficie-2: #efe9fd;     /* cartões secundários, chips */
+  --texto: #241a3a;
+  --texto-suave: #6a6380;
+  --borda: #e5def5;            /* separadores e cartões (decorativo) */
+  --borda-campo: #8e86a6;      /* onde se escreve: 3,4:1 */
+  --primaria: #6b45d9;
   --primaria-texto: #ffffff;
-  --primaria-hover: #3f5be0;
+  --primaria-hover: #5f3dc4;
+  --primaria-suave: #e7c6ff;   /* só fundos */
+  --foco: #6b45d9;
+  /* Acentos: sempre como fundo, com --texto em cima; nunca como cor de texto. */
+  --acento-1: #c8b6ff;         /* Ahora */
+  --acento-2: #b8c0ff;         /* Después */
+  --acento-3: #cee5ff;         /* Hecho */
   --aviso-fundo: #fff4d6;
   --aviso-texto: #6b5210;
-  --foco: #9fb0ff;
+  --brilho: radial-gradient(60% 40% at 50% 0%, #e7c6ff66, transparent 70%);
 
-  --raio: 14px;
+  --raio: 16px;
+  --raio-chip: 999px;
   --espaco: 16px;
   --fonte: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Modo oscuro: segue o celular, a menos que a pessoa escolha no botão 🌙/☀️ (js/tema.js). */
+/* Modo oscuro: violeta profundo, segue o celular a menos que a pessoa escolha
+   no botão do cabeçalho (js/tema.js). Os dois blocos têm os mesmos valores. */
 :root { color-scheme: light dark; }
 :root[data-tema="claro"] { color-scheme: light; }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-tema="claro"]) {
-    --fundo: #1c1b22;
-    --superficie: #26252e;
-    --texto: #f1f0f5;
-    --texto-suave: #a9a7b5;
-    --borda: #3a3945;
-    --primaria: #8197ff;
-    --primaria-texto: #14131a;
-    --primaria-hover: #9aabff;
+    --fundo: #140b26;
+    --superficie: #221838;
+    --superficie-2: #2c2046;
+    --texto: #f4f1fb;
+    --texto-suave: #b3a9c9;
+    --borda: #3a2d57;
+    --borda-campo: #6e6290;
+    --primaria: #c98bff;
+    --primaria-texto: #140b26;
+    --primaria-hover: #d6a6ff;
+    --primaria-suave: #3a2560;
+    --foco: #c98bff;
+    --acento-1: #4a3480;
+    --acento-2: #2f3a7a;
+    --acento-3: #1f3d5c;
     --aviso-fundo: #3a3220;
     --aviso-texto: #f3dc9b;
-    --foco: #5b6fd6;
+    --brilho: radial-gradient(70% 45% at 50% 0%, #6b3fb04d, transparent 70%);
   }
 }
 
 :root[data-tema="escuro"] {
   color-scheme: dark;
-  --fundo: #1c1b22;
-  --superficie: #26252e;
-  --texto: #f1f0f5;
-  --texto-suave: #a9a7b5;
-  --borda: #3a3945;
-  --primaria: #8197ff;
-  --primaria-texto: #14131a;
-  --primaria-hover: #9aabff;
+  --fundo: #140b26;
+  --superficie: #221838;
+  --superficie-2: #2c2046;
+  --texto: #f4f1fb;
+  --texto-suave: #b3a9c9;
+  --borda: #3a2d57;
+  --borda-campo: #6e6290;
+  --primaria: #c98bff;
+  --primaria-texto: #140b26;
+  --primaria-hover: #d6a6ff;
+  --primaria-suave: #3a2560;
+  --foco: #c98bff;
+  --acento-1: #4a3480;
+  --acento-2: #2f3a7a;
+  --acento-3: #1f3d5c;
   --aviso-fundo: #3a3220;
   --aviso-texto: #f3dc9b;
-  --foco: #5b6fd6;
+  --brilho: radial-gradient(70% 45% at 50% 0%, #6b3fb04d, transparent 70%);
 }
 
 * { box-sizing: border-box; }
@@ -63,7 +89,9 @@ html, body { margin: 0; }
 
 body {
   min-height: 100dvh;
-  background: var(--fundo);
+  /* Um brilho suave no alto, como no logo. */
+  background: var(--brilho), var(--fundo);
+  background-attachment: fixed;
   color: var(--texto);
   font-family: var(--fonte);
   font-size: 17px;
@@ -118,7 +146,7 @@ input {
   font-weight: 400;
   color: var(--texto);
   background: var(--superficie);
-  border: 1.5px solid var(--borda);
+  border: 1.5px solid var(--borda-campo);
   border-radius: var(--raio);
   padding: 14px 16px;
   min-height: 52px;
@@ -228,7 +256,7 @@ textarea {
   font: inherit;
   color: var(--texto);
   background: var(--superficie);
-  border: 1.5px solid var(--borda);
+  border: 1.5px solid var(--borda-campo);
   border-radius: var(--raio);
   padding: 14px 16px;
   min-height: 56px;
@@ -467,7 +495,7 @@ textarea:focus-visible {
   flex: none;
   min-height: 44px;
   padding: 0 12px 0 4px;
-  border: 1px solid var(--borda);
+  border: 1px solid var(--borda-campo);
   border-radius: 999px;
   background: var(--superficie);
 }
