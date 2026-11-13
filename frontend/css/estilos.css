@@ -27,7 +27,9 @@
   --raio: 16px;
   --raio-chip: 999px;
   --espaco: 16px;
-  --fonte: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Nunito em tudo; Fraunces só nos h1 (títulos das telas). */
+  --fonte: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --fonte-titulo: "Fraunces", Georgia, serif;
 }
 
 /* Modo oscuro: violeta profundo, segue o celular a menos que a pessoa escolha
@@ -94,7 +96,8 @@ body {
   background-attachment: fixed;
   color: var(--texto);
   font-family: var(--fonte);
-  font-size: 17px;
+  /* Nunito parece um pouco menor que a fonte do sistema. */
+  font-size: 18px;
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
 }
@@ -110,17 +113,66 @@ body {
   min-height: 100dvh;
 }
 
+/* Logo: "IA" na cor primária, "migo" na cor do texto e um ponto com brilho
+   no lugar do pingo do i (o i é "ı", sem pingo). Ver js/componentes.js. */
 .marca {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--primaria);
+  font-family: var(--fonte);
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--texto);
   margin: 0;
 }
 
+.marca-ia { color: var(--primaria); }
+.marca-i { position: relative; display: inline-block; }
+
+.marca-i::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0.2em;
+  transform: translateX(-50%);
+  width: 0.15em;
+  height: 0.15em;
+  border-radius: 50%;
+  background: var(--primaria);
+  box-shadow: 0 0 0.25em 0.06em var(--primaria);
+}
+
+/* Login, cadastro e bienvenida: o logo grande, com o subtítulo. */
+.marca-grande {
+  font-size: 2.6rem;
+  text-align: center;
+  margin: 8px 0 12px;
+}
+
+.marca-subtitulo {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  /* O espaçamento também fica depois da última letra: compensa para centralizar. */
+  margin-right: -0.42em;
+  color: var(--texto-suave);
+}
+
 h1 {
-  font-size: 1.75rem;
+  font-family: var(--fonte-titulo);
+  font-weight: 600;
+  font-variation-settings: "SOFT" 100, "WONK" 0;
+  letter-spacing: -0.01em;
+  font-size: 1.85rem;
   line-height: 1.2;
   margin: 0;
+}
+
+/* Frases de celebração: também em Fraunces, como os títulos. */
+.celebracao-texto {
+  font-family: var(--fonte-titulo);
+  font-weight: 600;
+  font-variation-settings: "SOFT" 100, "WONK" 0;
 }
 
 .subtitulo {
@@ -1052,6 +1104,8 @@ button.link-secundario {
 /* ---- Hoy: tempo junto ao título (revisão dos princípios) ---- */
 
 .tempo-dia {
+  font-family: var(--fonte);
+  letter-spacing: normal;
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--texto-suave);

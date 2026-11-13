@@ -13,11 +13,23 @@ function desenharBotaoTema(botao) {
   botao.setAttribute("aria-label", escuro ? t("cab.modoClaro") : t("cab.modoEscuro"));
 }
 
+// O logo em texto (Nunito 800). O leitor de tela lê só "IAmigo";
+// o desenho (com o "ı" sem pingo e o ponto com brilho) fica escondido dele.
+// grande: login, cadastro e bienvenida, com "ASISTENTE INTELIGENTE" embaixo.
+export function marca({ grande = false } = {}) {
+  return `
+    <p class="marca${grande ? " marca-grande" : ""}">
+      <span class="rotulo-oculto">IAmigo</span>
+      <span aria-hidden="true"><span class="marca-ia">IA</span>m<span class="marca-i">ı</span>go</span>
+      ${grande ? `<span class="marca-subtitulo" aria-hidden="true">${t("marca.subtitulo")}</span>` : ""}
+    </p>`;
+}
+
 // Marca, modo claro/oscuro, "Salir" discreto e a saudação com o nome.
 export function cabecalho() {
   const fragmento = criarElemento(`
     <header class="cabecalho">
-      <p class="marca">IAmigo</p>
+      ${marca()}
       <div class="cabecalho-acoes">
         <button class="botao-texto botao-idioma" type="button" lang="${t("cab.outroIdioma") === "PT" ? "pt-BR" : "es"}"
           aria-label="${t("cab.trocarIdioma")}">${t("cab.outroIdioma")}</button>

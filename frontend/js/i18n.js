@@ -28,6 +28,7 @@ const es = {
   "comum.listaParaHoje": "Lista para hoy.",
 
   // Encabeçado e abas
+  "marca.subtitulo": "ASISTENTE INTELIGENTE",
   "cab.sair": "Salir",
   "cab.ola": (nome) => `Hola, ${nome}`,
   "cab.modoClaro": "Cambiar a modo claro",
@@ -210,6 +211,7 @@ const pt = {
   "comum.min": "min",
   "comum.listaParaHoje": "Pronta para hoje.",
 
+  "marca.subtitulo": "ASSISTENTE INTELIGENTE",
   "cab.sair": "Sair",
   "cab.ola": (nome) => `Olá, ${nome}`,
   "cab.modoClaro": "Mudar para o modo claro",

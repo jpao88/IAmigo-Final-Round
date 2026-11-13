@@ -1,7 +1,7 @@
 // H0.2 · Iniciar sesión con correo y contraseña.
 
 import { entrar } from "../api.js";
-import { linkIdioma } from "../componentes.js";
+import { linkIdioma, marca } from "../componentes.js";
 import { comBotaoOcupado, criarElemento } from "../html.js";
 import { navegar, TELA_INICIAL } from "../roteador.js";
 import { salvarSessao } from "../sessao.js";
@@ -9,7 +9,7 @@ import { t } from "../i18n.js";
 
 export function telaLogin(raiz) {
   raiz.append(criarElemento(`
-    <p class="marca">IAmigo</p>
+    ${marca({ grande: true })}
     <h1>${t("login.titulo")}</h1>
     <p class="subtitulo">${t("login.subtitulo")}</p>
 

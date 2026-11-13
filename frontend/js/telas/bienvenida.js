@@ -1,6 +1,6 @@
 // H6.1 · Bienvenida: uma tela só, com as cinco etapas do ciclo em ícones.
 
-import { linkIdioma } from "../componentes.js";
+import { linkIdioma, marca } from "../componentes.js";
 import { terminarGuia } from "../guia.js";
 import { criarElemento } from "../html.js";
 import { navegar, TELA_INICIAL } from "../roteador.js";
@@ -17,7 +17,7 @@ const ETAPAS = [
 
 export function telaBienvenida(raiz) {
   raiz.append(criarElemento(`
-    <p class="marca">IAmigo</p>
+    ${marca({ grande: true })}
     <h1 class="saudacao-bienvenida"></h1>
     <p class="subtitulo">${t("bienvenida.frase")}</p>
 
