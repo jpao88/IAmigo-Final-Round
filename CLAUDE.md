@@ -66,7 +66,7 @@ Actualizar esta sección al terminar cada tarea.
 - Front: `#/cerrar` y `#/cerrar/AAAAMMDD` (`js/telas/cerrar.js`; el roteador solo acepta números). Hoy muestra "Terminar el día" y, con todo hecho, "¡Completaste todo lo de hoy!"; el modo foco va al resumen si era la última tarea (mira la copia local de Hoy). Hoy pregunta una vez por día por el día pendiente (`iamigo.dia-verificado.<uid>`). `ErroApi.detalhe` guarda la frase original del backend.
 - Primer uso: el registro lleva a `#/bienvenida` (cinco etapas en íconos, "Ya sé cómo funciona" para saltarla) y `#/primera-tarea`; `js/guia.js` recuerda la tarea guiada (`iamigo.guia.<uid>`) y la pantalla de la tarea y el modo foco muestran pistas "2 de 3" / "3 de 3". El primer "Hecho" muestra "¡Así funciona cada día!" y cierra la guía. Hoy manda a la bienvenida a quien tiene `onboarding_concluido = false` y no está en la guía.
 
-**Punto de control de la Fase 2: pendiente de Pablo.** Una persona nueva completa el ciclo desde el celular, sin ayuda; la guía está en `docs/prueba-celular.md` (red local con `CORS_ORIGIN_REGEX` y `--host 0.0.0.0`; el front busca el backend en `location.hostname:8000`). Los resultados van a `docs/guion-validacion.md`.
+**Fase 2 cerrada el 12 de noviembre de 2026.** Punto de control cumplido: una compañera completó el ciclo entero, sola, en la app publicada (anotado en `docs/guion-validacion.md`). La guía para probar en la red local sigue en `docs/prueba-celular.md`.
 
 **Fase 3 · Prueba real y lanzamiento** (orden acordado: proteger rutas → publicar → siete principios → prueba de varios días):
 - **Proteger las rutas, revisado el 12 de noviembre de 2026.** Dos barreras: la ruta exige ser el dueño del `{usuario_id}` (`exigir_dono`; solo login y crear cuenta son públicas) y cada service confirma que la tarea o el paso pertenece a esa persona (404 si no). `tests/test_dados_alheios.py` prueba todos los métodos con ids ajenos sin escribir nada; `test_toda_rota_esta_na_matriz` falla si una ruta nueva no está en la matriz de permisos.
@@ -80,7 +80,9 @@ Actualizar esta sección al terminar cada tarea.
 
 - **Siete principios, revisados el 12 de noviembre de 2026** con capturas a 390 px de las 10 pantallas. Cambios: el texto del paso es un `textarea` que crece (antes se cortaba); en la tarea, ↑ ↓ ✕ solo en modo "Ordenar" (como en Hoy); minutos en una pastilla "10 min"; "Me atasqué" con estilo de enlace (`button.link-secundario`); en Hoy el tiempo va junto al título ("Hoy · unos 55 min", `formatarTempoCurto`) con la barra debajo; tarjetas sin borde (solo Ahora lo tiene; Elegir marca con `box-shadow`); `.confirmacao` es un aviso flotante sobre las pestañas y no ocupa espacio.
 
-**Siguiente tarea:** la prueba de varios días con 3 a 5 personas de la validación (antes: activar la facturación de Gemini) y, si no se hizo, el punto de control de la Fase 2 (`docs/prueba-celular.md`; ahora puede hacerse con la URL publicada).
+- **Prueba de varios días** (`docs/prueba-varios-dias.md`): piloto con 2 personas (Pablo y una compañera) desde el 13 de noviembre de 2026, con Gemini gratuito (decisión de Pablo: son solo 2 personas). `backend/scripts/resumo_uso.py [desde]` muestra por persona tareas creadas, pasos y tareas hechas, días con plan, días cerrados y último día activo, sin el texto de las tareas. La segunda ronda (3 a 5 personas de la validación) cumple el punto de control de la Fase 3; antes de ella, activar la facturación de Gemini.
+
+**Siguiente tarea:** acompañar el piloto (resumen diario, anotar comentarios en la tabla de resultados) y, al terminar, juntar lo aprendido y corregir lo más grave antes de la segunda ronda.
 
 **Pendientes para recordar:**
 - Desde la laptop cada consulta a Aiven tarda ~420 ms (la Bandeja local ~3 s); publicada responde en ~0,5 s. Pablo prefirió no quitar `pool_pre_ping`.

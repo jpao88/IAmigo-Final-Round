@@ -41,5 +41,39 @@ class TestExportarDados(unittest.TestCase):
         json.dumps(dados, ensure_ascii=False)
 
 
+
+class TestResumoUso(unittest.TestCase):
+    def test_conta_por_pessoa_e_desde_uma_data(self):
+        from types import SimpleNamespace as N
+        from scripts.resumo_uso import resumir
+
+        usuarios = [N(id=1, nome="Ana"), N(id=2, nome="Bia")]
+        tarefas = [
+            N(id=10, usuario_id=1, criado_em=datetime(2026, 11, 12, 9), concluida=True,
+              concluida_em=datetime(2026, 11, 13, 10), data_planejada=date(2026, 11, 13)),
+            N(id=11, usuario_id=1, criado_em=datetime(2026, 11, 10, 9), concluida=False,
+              concluida_em=None, data_planejada=None),
+            N(id=20, usuario_id=2, criado_em=datetime(2026, 11, 13, 9), concluida=False,
+              concluida_em=None, data_planejada=date(2026, 11, 13)),
+        ]
+        passos = [
+            N(tarefa_id=10, concluido=True, concluido_em=datetime(2026, 11, 13, 9, 30)),
+            N(tarefa_id=10, concluido=True, concluido_em=datetime(2026, 11, 13, 9, 50)),
+            N(tarefa_id=20, concluido=False, concluido_em=None),
+        ]
+        fechamentos = [N(usuario_id=1, data=date(2026, 11, 13))]
+
+        ana, bia = resumir(usuarios, tarefas, passos, fechamentos)
+        self.assertEqual(
+            (ana["tarefas_criadas"], ana["passos_concluidos"], ana["tarefas_concluidas"],
+             ana["dias_com_plano"], ana["dias_fechados"], ana["ultimo_dia_ativo"]),
+            (2, 2, 1, 1, 1, date(2026, 11, 13)),
+        )
+        self.assertEqual((bia["passos_concluidos"], bia["dias_fechados"]), (0, 0))
+
+        ana_desde = resumir(usuarios, tarefas, passos, fechamentos, desde=date(2026, 11, 12))[0]
+        self.assertEqual(ana_desde["tarefas_criadas"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()

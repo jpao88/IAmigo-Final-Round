@@ -83,7 +83,7 @@ Cada sprint entrega una etapa del ciclo funcionando de punta a punta: endpoint, 
 - [x] Resumen al abrir la app si el día anterior no se cerró
 - [x] Registro, bienvenida y primera tarea guiada
 
-**Punto de control:** una persona nueva completa el ciclo entero con una tarea real, sin ayuda.
+**Punto de control:** una persona nueva completa el ciclo entero con una tarea real, sin ayuda. ✅ Cumplido el 12 de noviembre de 2026: una compañera recorrió el ciclo completo en la app publicada, sola.
 
 ## Fase 3 · Prueba real y lanzamiento
 

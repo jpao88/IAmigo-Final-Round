@@ -84,3 +84,7 @@ Lo que se repite en varias personas cambia el recorrido; lo que aparece una sola
 * [ ] Agrupar los hallazgos por pantalla después de la última sesión
 * [ ] Actualizar el documento del recorrido con los cambios decididos
 * [ ] Tildar "Hacer las sesiones" y "Ajustar el recorrido" en la hoja de ruta
+
+## Punto de control de la Fase 2 (app real)
+
+12 de noviembre de 2026. Una compañera que no participó en el desarrollo usó la app publicada en su celular: creó la cuenta, recorrió la primera tarea guiada y completó el ciclo entero **sin ayuda**. Le gustó cómo funciona. Guía usada: `docs/prueba-celular.md`.
