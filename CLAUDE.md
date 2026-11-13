@@ -86,6 +86,18 @@ Actualizar esta sección al terminar cada tarea.
 
 - **Editar el título y borrar tareas (12 de noviembre de 2026, pedido del piloto: las tareas en español no se podían pasar a portugués).** `PUT /usuarios/{id}/tarefas/{id}` con `{titulo}` (`renomear_tarefa`: no vacío, máx. 200). En `#/tarefa/:id` el título es un `textarea.titulo-campo` que parece un título; Enter o salir del campo guarda. "Borrar tarea" al final, gris (sin rojo), con `confirm()`; vuelve a Hoy y limpia el modo foco si era esa tarea. Lo ya escrito no se traduce solo: son palabras de la persona.
 
+- **Rediseño visual (13 de noviembre de 2026, rama `rediseno-visual`)** según `docs/diseno/GUIA-VISUAL-IAmigo.md` y `docs/diseno/AUDITORIA-UI-IAmigo.md`:
+  - **Colores:** paleta lavanda (claro) y violeta profundo (oscuro), con contraste AA medido. `--borda-campo` para los campos (≥ 3:1) y brillo radial de fondo.
+  - **Tipografía:** Fraunces solo en los `h1` y la frase de celebración; Nunito en todo lo demás (Google Fonts, base 18 px).
+  - **Logo:** `marca()` en `js/componentes.js` (Nunito 800, punto con brillo sobre la "ı"); en grande con "ASISTENTE INTELIGENTE" en login, registro y bienvenida.
+  - **Íconos:** SVG de Lucide en `js/icones.js`, sin emojis. Las flechas ya no van dentro de los textos traducidos.
+  - **Bandeja:** chips con comienzos de tarea ("Llamar a…") que escriben en el campo sin guardar, y campo de 3 líneas con el "+" adentro.
+  - **Hoy:** anillo de progreso (`js/anel.js`, tareas hechas / del día) en lugar de la barra; puntos de color en Ahora, Después y Hecho; tarjetas con borde fino y franja violeta en Ahora.
+  - **Borrar con "Deshacer"** (`js/apagar-depois.js`): sin `confirm()`; el aviso dura 6 s y recién entonces se borra; si se cierra la app antes, no se borra.
+  - **Campos editables:** subrayado punteado en el título y los pasos.
+  - **Elegir:** con tareas marcadas, el botón dice "Añadir N tareas a Hoy".
+  - Quedan para después M3, M5, M6 y B1–B5 de la auditoría.
+
 **Siguiente tarea:** acompañar el piloto (resumen diario, anotar comentarios en la tabla de resultados) y, al terminar, juntar lo aprendido y corregir lo más grave antes de la segunda ronda.
 
 **Pendientes para recordar:**
