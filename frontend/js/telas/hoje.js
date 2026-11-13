@@ -17,6 +17,7 @@ import { criarListaBandeja } from "../lista-bandeja.js";
 import { navegar } from "../roteador.js";
 import { obterUsuario } from "../sessao.js";
 import { desenharBarraTempo, formatarTempoCurto, formatarTempoTotal } from "../tempo.js";
+import { t } from "../i18n.js";
 
 // ---- Cópia local do dia ----
 
@@ -83,30 +84,30 @@ export function telaHoje(raiz) {
 
   raiz.append(cabecalho(), criarElemento(`
     <div class="titulo-com-acao">
-      <h1>Hoy<span class="tempo-dia" hidden></span></h1>
-      <button class="botao-texto" type="button" data-acao="ordenar" aria-pressed="false" hidden>Ordenar</button>
+      <h1>${t("hoje.titulo")}<span class="tempo-dia" hidden></span></h1>
+      <button class="botao-texto" type="button" data-acao="ordenar" aria-pressed="false" hidden>${t("comum.ordenar")}</button>
     </div>
 
     <section class="retomar" aria-labelledby="titulo-retomar" hidden>
-      <h2 id="titulo-retomar">¿Seguimos donde quedaste?</h2>
+      <h2 id="titulo-retomar">${t("hoje.retomar")}</h2>
       <p class="retomar-passo"></p>
       <div class="retomar-acoes">
-        <a class="botao" data-acao="seguir">Seguir</a>
-        <button class="botao-texto" type="button" data-acao="ahora-no">Ahora no</button>
+        <a class="botao" data-acao="seguir">${t("comum.seguir")}</a>
+        <button class="botao-texto" type="button" data-acao="ahora-no">${t("hoje.agoraNao")}</button>
       </div>
     </section>
 
     <div class="barra-tempo barra-dia" aria-hidden="true" hidden></div>
 
-    <p class="dia-vazio subtitulo" hidden>Elige una cosa de tu Bandeja para empezar.</p>
+    <p class="dia-vazio subtitulo" hidden>${t("hoje.diaVazio")}</p>
 
     <section class="ahora" aria-labelledby="titulo-ahora" hidden>
-      <h2 id="titulo-ahora">Ahora</h2>
+      <h2 id="titulo-ahora">${t("hoje.ahora")}</h2>
       <ol class="lista-dia"></ol>
     </section>
 
     <section class="despues" aria-labelledby="titulo-despues" hidden>
-      <h2 id="titulo-despues">Después</h2>
+      <h2 id="titulo-despues">${t("hoje.despues")}</h2>
       <ol class="lista-dia"></ol>
     </section>
 
@@ -114,15 +115,15 @@ export function telaHoje(raiz) {
     <p class="aviso" role="alert"></p>
 
     <section class="dia-completo" hidden>
-      <h2>¡Completaste todo lo de hoy!</h2>
-      <a class="botao" href="#/cerrar">Terminar el día</a>
+      <h2>${t("hoje.completo")}</h2>
+      <a class="botao" href="#/cerrar">${t("hoje.terminarDia")}</a>
     </section>
 
-    <a class="botao" href="#/elegir" data-acao="elegir">Elegir tareas para hoy</a>
-    <a class="link-secundario" href="#/cerrar" data-acao="cerrar" hidden>Terminar el día</a>
+    <a class="botao" href="#/elegir" data-acao="elegir">${t("hoje.elegir")}</a>
+    <a class="link-secundario" href="#/cerrar" data-acao="cerrar" hidden>${t("hoje.terminarDia")}</a>
 
     <section class="hecho" aria-labelledby="titulo-hecho" hidden>
-      <h2 id="titulo-hecho">Ya hiciste hoy</h2>
+      <h2 id="titulo-hecho">${t("hoje.jaFez")}</h2>
       <ul class="lista-hecho"></ul>
     </section>
   `));
@@ -169,7 +170,7 @@ export function telaHoje(raiz) {
       <div class="passo-acoes acoes-ordenar">
         <button class="botao-icone" type="button" data-acao="subir">↑</button>
         <button class="botao-icone" type="button" data-acao="descer">↓</button>
-        <button class="botao-texto" type="button" data-acao="quitar">Quitar</button>
+        <button class="botao-texto" type="button" data-acao="quitar">${t("hoje.quitar")}</button>
       </div>
     `));
 
@@ -183,8 +184,8 @@ export function telaHoje(raiz) {
       const empezar = document.createElement("a");
       empezar.className = "botao botao-empezar";
       empezar.href = `#/foco/${tarefa.id}`;
-      empezar.textContent = "Empezar";
-      empezar.setAttribute("aria-label", `Empezar: ${tarefa.titulo}`);
+      empezar.textContent = t("comum.empezar");
+      empezar.setAttribute("aria-label", t("hoje.empezarRotulo", tarefa.titulo));
       item.querySelector(".passo-acoes").before(empezar);
     }
 
@@ -192,9 +193,9 @@ export function telaHoje(raiz) {
     const descer = item.querySelector('[data-acao="descer"]');
     subir.disabled = indice === 0;
     descer.disabled = indice === total - 1;
-    subir.setAttribute("aria-label", `Subir: ${tarefa.titulo}`);
-    descer.setAttribute("aria-label", `Bajar: ${tarefa.titulo}`);
-    item.querySelector('[data-acao="quitar"]').setAttribute("aria-label", `Quitar de Hoy: ${tarefa.titulo}`);
+    subir.setAttribute("aria-label", t("comum.subir", tarefa.titulo));
+    descer.setAttribute("aria-label", t("comum.descer", tarefa.titulo));
+    item.querySelector('[data-acao="quitar"]').setAttribute("aria-label", t("hoje.quitarRotulo", tarefa.titulo));
 
     return item;
   }
@@ -212,7 +213,7 @@ export function telaHoje(raiz) {
     // Modo "Ordenar": só aparece com tarefas, e sai sozinho se o dia ficar vazio.
     if (!temPlano) ordenando = false;
     botaoOrdenar.hidden = !temPlano;
-    botaoOrdenar.textContent = ordenando ? "Listo" : "Ordenar";
+    botaoOrdenar.textContent = ordenando ? t("comum.listo") : t("comum.ordenar");
     botaoOrdenar.setAttribute("aria-pressed", String(ordenando));
     raiz.classList.toggle("ordenando", ordenando);
 
@@ -224,14 +225,14 @@ export function telaHoje(raiz) {
     diaCompleto.hidden = !tudoFeito;
     linkCerrar.hidden = !temPlano;
     botaoElegir.className = temPlano || tudoFeito ? "link-secundario" : "botao";
-    botaoElegir.textContent = temPlano || tudoFeito ? "Elegir más tareas" : "Elegir tareas para hoy";
+    botaoElegir.textContent = temPlano || tudoFeito ? t("hoje.elegirMais") : t("hoje.elegir");
 
     const total = lista.reduce((soma, tarefa) => soma + tarefa.minutos_restantes, 0);
     // H3.3: o tempo do dia junto ao título, com a barra logo embaixo e Ahora em seguida.
     tempoDia.hidden = !temPlano;
     barraTempo.hidden = !temPlano;
     tempoDia.textContent = ` · ${formatarTempoCurto(total)}`;
-    tempoDia.setAttribute("aria-label", `${formatarTempoTotal(total)} en total`);
+    tempoDia.setAttribute("aria-label", t("hoje.tempoRotulo", formatarTempoTotal(total)));
     desenharBarraTempo(barraTempo, lista.map((tarefa) => tarefa.minutos_restantes));
 
     listaHecho.replaceChildren(...concluidas.map((tarefa) => {
@@ -325,7 +326,7 @@ export function telaHoje(raiz) {
     try {
       await tirarDeHoje(tarefaId);
       salvarCache(tarefas);
-      confirmar("Volvió a tu Bandeja.");
+      confirmar(t("hoje.voltouBandeja"));
       bandeja.carregar();
     } catch (erro) {
       tarefas = anteriores;
@@ -349,9 +350,9 @@ export function telaHoje(raiz) {
   const bandeja = criarListaBandeja({
     aviso,
     maximo: 3,
-    textoVazia: "Tu Bandeja está vacía.",
+    textoVazia: t("bandeja.vazia"),
     aoPlanejar: () => {
-      confirmar("Lista para hoy.");
+      confirmar(t("comum.listaParaHoje"));
       carregar();
     },
   });

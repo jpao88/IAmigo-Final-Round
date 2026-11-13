@@ -9,6 +9,7 @@ import { criarElemento } from "../html.js";
 import { navegar } from "../roteador.js";
 import { obterUsuario } from "../sessao.js";
 import { somTarefa } from "../som.js";
+import { localeDatas, t } from "../i18n.js";
 
 const esperar = (ms) => new Promise((resolver) => { setTimeout(resolver, ms); });
 
@@ -29,26 +30,23 @@ function somarDias(data, dias) {
   return dataLocal(resultado);
 }
 
-// "Hoy", "Ayer" ou "El martes 11".
+// "Hoy", "Ayer" ou "El martes 11" (em português: "Hoje", "Ontem", "No dia 11").
 function nomeDoDia(data) {
-  if (data === dataLocal()) return "Hoy";
-  if (data === somarDias(dataLocal(), -1)) return "Ayer";
-  const texto = paraDate(data).toLocaleDateString("es", { weekday: "long", day: "numeric" });
-  return `El ${texto.replace(",", "")}`;
-}
-
-function plural(quantidade, singular, pluralTexto) {
-  return `${quantidade} ${quantidade === 1 ? singular : pluralTexto}`;
+  if (data === dataLocal()) return t("cerrar.hoje");
+  if (data === somarDias(dataLocal(), -1)) return t("cerrar.ontem");
+  const dia = paraDate(data);
+  const texto = dia.toLocaleDateString(localeDatas(), { weekday: "long", day: "numeric" });
+  return t("cerrar.diaDaSemana", texto.replace(",", ""), dia);
 }
 
 // H5.1: "Hoy completaste 9 pasos y 2 tareas." Sem nada feito, sem reproche.
 function fraseDoResumo(quando, passos, tarefas) {
   const partes = [];
-  if (passos > 0) partes.push(plural(passos, "paso", "pasos"));
-  if (tarefas > 0) partes.push(plural(tarefas, "tarea", "tareas"));
+  if (passos > 0) partes.push(t("cerrar.passos", passos));
+  if (tarefas > 0) partes.push(t("cerrar.tarefas", tarefas));
 
-  if (partes.length === 0) return `${quando} fue un día tranquilo. Cerrarlo también cuenta.`;
-  return `${quando} completaste ${partes.join(" y ")}.`;
+  if (partes.length === 0) return t("cerrar.tranquilo", quando);
+  return t("cerrar.frase", quando, partes.join(t("cerrar.e")));
 }
 
 // As cópias locais de Hoy e da Bandeja ficaram velhas: as telas buscam de novo.
@@ -67,11 +65,11 @@ export function telaCerrar(raiz, { dia } = {}) {
   const ehHoje = data === dataLocal();
   // Para um dia que já passou, "mañana" é hoje.
   const dataSeguinte = ehHoje ? somarDias(data, 1) : dataLocal();
-  const textoAdiar = ehHoje ? "Hacerla mañana" : "Hacerla hoy";
+  const textoAdiar = ehHoje ? t("cerrar.amanha") : t("cerrar.hojeTambem");
 
   raiz.append(criarElemento(`
     <header class="cabecalho">
-      <a class="botao-texto" href="#/hoje">← Hoy</a>
+      <a class="botao-texto" href="#/hoje">${t("comum.voltarHoje")}</a>
     </header>
 
     <section class="resumo-dia" aria-live="polite">
@@ -82,8 +80,8 @@ export function telaCerrar(raiz, { dia } = {}) {
     <ul class="lista-hecho"></ul>
 
     <section class="pendentes-dia" aria-labelledby="titulo-pendentes" hidden>
-      <h2 id="titulo-pendentes">¿Qué hacemos con estas?</h2>
-      <p class="subtitulo">Lo que no decidas vuelve a tu Bandeja.</p>
+      <h2 id="titulo-pendentes">${t("cerrar.pergunta")}</h2>
+      <p class="subtitulo">${t("cerrar.semDecidir")}</p>
       <ul class="lista-pendentes"></ul>
     </section>
 
@@ -94,8 +92,8 @@ export function telaCerrar(raiz, { dia } = {}) {
 
     <div class="celebracao" role="status" hidden>
       <div class="celebracao-icone" aria-hidden="true">🌙</div>
-      <p class="celebracao-texto">Día cerrado</p>
-      <p class="celebracao-detalhe subtitulo">Descansa, te lo ganaste.</p>
+      <p class="celebracao-texto">${t("cerrar.diaFechado")}</p>
+      <p class="celebracao-detalhe subtitulo">${t("cerrar.descansa")}</p>
     </div>
   `));
 
@@ -122,14 +120,14 @@ export function telaCerrar(raiz, { dia } = {}) {
         <p class="pendente-titulo"></p>
         <div class="pendente-acoes">
           <button class="botao botao-contorno" type="button" data-acao="adiar"></button>
-          <button class="botao-texto" type="button" data-acao="guardar">Guardarla sin fecha</button>
+          <button class="botao-texto" type="button" data-acao="guardar">${t("cerrar.guardar")}</button>
         </div>
       `));
       item.querySelector(".pendente-titulo").textContent = tarefa.titulo;
       const adiar = item.querySelector('[data-acao="adiar"]');
       adiar.textContent = textoAdiar;
-      adiar.setAttribute("aria-label", `${textoAdiar}: ${tarefa.titulo}`);
-      item.querySelector('[data-acao="guardar"]').setAttribute("aria-label", `Guardarla sin fecha: ${tarefa.titulo}`);
+      adiar.setAttribute("aria-label", t("cerrar.rotulo", textoAdiar, tarefa.titulo));
+      item.querySelector('[data-acao="guardar"]').setAttribute("aria-label", t("cerrar.rotulo", t("cerrar.guardar"), tarefa.titulo));
       return item;
     }));
     secaoPendentes.hidden = pendentes.length === 0;
@@ -149,7 +147,7 @@ export function telaCerrar(raiz, { dia } = {}) {
     desenharPendentes();
 
     botaoFechar.hidden = false;
-    botaoFechar.textContent = fechado ? "Volver a Hoy" : ehHoje ? "Terminar el día" : "Listo";
+    botaoFechar.textContent = fechado ? t("comum.voltarAHoje") : ehHoje ? t("hoje.terminarDia") : t("comum.listo");
   }
 
   async function carregar() {
@@ -164,7 +162,7 @@ export function telaCerrar(raiz, { dia } = {}) {
 
   function mensagemDeErro(erro) {
     if (erro.detalhe === "Hoje já está cheio.") {
-      return `${ehHoje ? "Mañana" : "Hoy"} ya está completo. Guárdala sin fecha o cambia el límite en Elegir.`;
+      return t("cerrar.cheio", ehHoje);
     }
     return erro.message;
   }
@@ -180,8 +178,8 @@ export function telaCerrar(raiz, { dia } = {}) {
       else await tirarDeHoje(tarefaId);
       esquecerCopias();
       confirmacao.textContent = acao === "adiar"
-        ? (ehHoje ? "Lista para mañana." : "Lista para hoy.")
-        : "Guardada en tu Bandeja.";
+        ? (ehHoje ? t("cerrar.prontaAmanha") : t("comum.listaParaHoje"))
+        : t("cerrar.guardada");
     } catch (erro) {
       pendentes = anteriores;
       desenharPendentes();

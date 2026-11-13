@@ -7,6 +7,7 @@
 import { listarBandeja, planejarHoje } from "./api.js";
 import { criarElemento } from "./html.js";
 import { obterUsuario } from "./sessao.js";
+import { t } from "./i18n.js";
 
 // ---- Cópia local (só para abrir rápido; o servidor é quem manda) ----
 
@@ -49,10 +50,10 @@ export function tituloEmCache(tarefaId) {
 export function criarListaBandeja({ aviso, aoPlanejar = () => {}, textoVazia, maximo = null }) {
   const secao = criarElemento(`
     <section class="bandeja" aria-labelledby="titulo-bandeja">
-      <h2 id="titulo-bandeja">Tu Bandeja</h2>
+      <h2 id="titulo-bandeja">${t("bandeja.titulo")}</h2>
       <p class="vazia subtitulo" hidden></p>
       <ul class="lista-tarefas"></ul>
-      <a class="link-secundario ver-tudo" href="#/bandeja" hidden>Ver toda tu Bandeja</a>
+      <a class="link-secundario ver-tudo" href="#/bandeja" hidden>${t("bandeja.verTudo")}</a>
     </section>
   `).firstElementChild;
 
@@ -91,8 +92,8 @@ export function criarListaBandeja({ aviso, aoPlanejar = () => {}, textoVazia, ma
     const botaoHoje = document.createElement("button");
     botaoHoje.className = "botao-hoy";
     botaoHoje.type = "button";
-    botaoHoje.textContent = "+ Hoy";
-    botaoHoje.setAttribute("aria-label", `Agregar a Hoy: ${item.dataset.titulo}`);
+    botaoHoje.textContent = t("bandeja.maisHoje");
+    botaoHoje.setAttribute("aria-label", t("bandeja.maisHojeRotulo", item.dataset.titulo));
 
     item.replaceChildren(link, botaoHoje);
   }

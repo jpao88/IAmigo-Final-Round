@@ -75,7 +75,7 @@ class BaseHoje(unittest.TestCase):
             tarefa_repository=self.tarefas,
             usuario_repository=UsuarioRepositoryFake(limite_hoje),
             passo_repository=object(),
-            gerador_de_passos=lambda titulo: [],
+            gerador_de_passos=lambda titulo, idioma="es": [],
         )
 
     def ordem_de_hoje(self):

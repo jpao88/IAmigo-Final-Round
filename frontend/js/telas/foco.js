@@ -15,37 +15,38 @@ import { tituloEmCache } from "../lista-bandeja.js";
 import { navegar } from "../roteador.js";
 import { alternarSom, somLigado, somPasso, somTarefa } from "../som.js";
 import { lerCacheHoje } from "./hoje.js";
+import { t } from "../i18n.js";
 
 const MINUTO = 60 * 1000;
 const MINUTOS_SEM_PASSOS = 10;
 const RAIO = 88;
 const CIRCUNFERENCIA = 2 * Math.PI * RAIO;
 
-const FRASES_PASSO = ["¡Bien hecho!", "¡Un paso menos!", "¡Así se hace!", "¡Vas muy bien!", "¡Eso es!"];
+const FRASES_PASSO = t("foco.frases");
 
 const esperar = (ms) => new Promise((resolver) => { setTimeout(resolver, ms); });
 
 // "12 min", "Menos de 1 min": minutos, não segundos, para não pressionar.
 function textoRestante(ms) {
-  if (ms <= 0) return "Tómate tu tiempo";
+  if (ms <= 0) return t("foco.semPressa");
   const minutos = Math.ceil(ms / MINUTO);
-  return minutos <= 1 ? "Menos de 1 min" : `${minutos} min`;
+  return minutos <= 1 ? t("foco.menosDe1") : t("foco.minutos", minutos);
 }
 
 export function telaFoco(raiz, { id: tarefaId }) {
   raiz.classList.add("tela-foco");
   raiz.append(criarElemento(`
     <header class="cabecalho">
-      <a class="botao-texto" href="#/hoje">← Hoy</a>
+      <a class="botao-texto" href="#/hoje">${t("comum.voltarHoje")}</a>
       <p class="progresso subtitulo"></p>
       <button class="botao-texto botao-som" type="button"></button>
     </header>
 
     <p class="titulo-foco subtitulo"></p>
-    <p class="guia" role="status" hidden>3 de 3 · Haz solo este paso y toca «Hecho» al terminar.</p>
+    <p class="guia" role="status" hidden>${t("foco.guia")}</p>
 
     <section class="foco" aria-live="polite">
-      <p class="rotulo-foco">Tu paso ahora</p>
+      <p class="rotulo-foco">${t("foco.seuPasso")}</p>
       <p class="passo-foco"></p>
 
       <div class="relogio" role="timer">
@@ -58,28 +59,28 @@ export function telaFoco(raiz, { id: tarefaId }) {
       </div>
     </section>
 
-    <p class="pensando" role="status" hidden>IAmigo está pensando…</p>
+    <p class="pensando" role="status" hidden>${t("comum.pensando")}</p>
     <p class="aviso" role="alert"></p>
 
     <div class="acoes-foco">
-      <button class="botao botao-hecho" type="button" data-acao="hecho">Hecho</button>
+      <button class="botao botao-hecho" type="button" data-acao="hecho">${t("foco.hecho")}</button>
       <div class="acoes-foco-linha">
-        <button class="botao botao-contorno" type="button" data-acao="mais5">+5 minutos</button>
-        <button class="botao botao-contorno" type="button" data-acao="pausar">Pausar</button>
+        <button class="botao botao-contorno" type="button" data-acao="mais5">${t("foco.mais5")}</button>
+        <button class="botao botao-contorno" type="button" data-acao="pausar">${t("foco.pausar")}</button>
       </div>
-      <button class="link-secundario" type="button" data-acao="atasquei">Me atasqué</button>
+      <button class="link-secundario" type="button" data-acao="atasquei">${t("foco.atasquei")}</button>
     </div>
 
     <div class="celebracao" role="status" hidden>
       <div class="celebracao-icone" aria-hidden="true">✓</div>
       <p class="celebracao-texto"></p>
       <p class="celebracao-detalhe subtitulo"></p>
-      <button class="botao celebracao-seguir" type="button" hidden>Seguir</button>
+      <button class="botao celebracao-seguir" type="button" hidden>${t("comum.seguir")}</button>
     </div>
 
     <section class="foco-fim" hidden>
-      <p>Esta tarea ya está terminada.</p>
-      <a class="botao" href="#/hoje">Volver a Hoy</a>
+      <p>${t("foco.jaTerminada")}</p>
+      <a class="botao" href="#/hoje">${t("comum.voltarAHoje")}</a>
     </section>
   `));
 
@@ -109,7 +110,7 @@ export function telaFoco(raiz, { id: tarefaId }) {
   function desenharBotaoSom() {
     const ligado = somLigado();
     botaoSom.textContent = ligado ? "🔔" : "🔕";
-    botaoSom.setAttribute("aria-label", ligado ? "Silenciar sonidos" : "Activar sonidos");
+    botaoSom.setAttribute("aria-label", ligado ? t("foco.silenciar") : t("foco.ativarSom"));
     botaoSom.setAttribute("aria-pressed", String(!ligado));
   }
   desenharBotaoSom();
@@ -161,10 +162,10 @@ export function telaFoco(raiz, { id: tarefaId }) {
     relogioTempo.setAttribute("stroke-dashoffset", String(CIRCUNFERENCIA * (1 - fracao)));
     relogio.classList.toggle("relogio-acabou", acabou);
     relogio.classList.toggle("relogio-pausado", pausado);
-    relogioTexto.textContent = pausado && !acabou ? `En pausa · ${textoRestante(restante)}` : textoRestante(restante);
+    relogioTexto.textContent = pausado && !acabou ? t("foco.emPausa", textoRestante(restante)) : textoRestante(restante);
     acoes.classList.toggle("tempo-acabou", acabou);
 
-    botaoPausar.textContent = pausado ? "Seguir" : "Pausar";
+    botaoPausar.textContent = pausado ? t("comum.seguir") : t("foco.pausar");
     botaoPausar.disabled = acabou;
   }
 
@@ -220,7 +221,7 @@ export function telaFoco(raiz, { id: tarefaId }) {
 
     passoFoco.textContent = atual.texto;
     const feitos = passos.length - lista.length;
-    progresso.textContent = passos.length > 1 ? `Paso ${feitos + 1} de ${passos.length}` : "";
+    progresso.textContent = passos.length > 1 ? t("foco.progresso", feitos + 1, passos.length) : "";
 
     iniciarRelogio(atual.minutos_estimados, salvo);
   }
@@ -305,14 +306,14 @@ export function telaFoco(raiz, { id: tarefaId }) {
         emGuia = false;
         guia.hidden = true;
         terminarGuia();
-        await celebrar("¡Así funciona cada día!", "Anota, divide, elige y hazlo, un paso a la vez.", 0);
+        await celebrar(t("foco.assimFunciona"), t("foco.ciclo"), 0);
         await esperarToque();
       }
 
       if (resultado.tarefa_concluida) {
         limparFoco();
         somTarefa();
-        await celebrar("¡Terminaste!", titulo, 2200);
+        await celebrar(t("foco.terminaste"), titulo, 2200);
         navegar(destinoDepoisDaTarefa());
         return;
       }
@@ -361,7 +362,7 @@ export function telaFoco(raiz, { id: tarefaId }) {
 
     if (atual.id === null) {
       // Tarefa sem passos: primeiro é preciso dividir a tarefa, na tela dela.
-      aviso.textContent = "Divide la tarea en pasos primero.";
+      aviso.textContent = t("foco.semPassos");
       return;
     }
 

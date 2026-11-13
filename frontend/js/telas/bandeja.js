@@ -8,15 +8,16 @@ import { criarTarefas } from "../api.js";
 import { cabecalho, navegacao } from "../componentes.js";
 import { criarElemento } from "../html.js";
 import { criarListaBandeja } from "../lista-bandeja.js";
+import { t } from "../i18n.js";
 
 export function telaBandeja(raiz) {
   raiz.append(cabecalho(), criarElemento(`
-    <h1><label for="captura">¿Qué tienes en la cabeza?</label></h1>
+    <h1><label for="captura">${t("bandeja.pergunta")}</label></h1>
 
     <form class="captura" novalidate>
       <textarea id="captura" name="texto" rows="2" maxlength="10000"
-        placeholder="Una idea por línea" enterkeyhint="done" autocomplete="off"></textarea>
-      <button class="botao botao-mais" type="submit" aria-label="Guardar">+</button>
+        placeholder="${t("bandeja.placeholder")}" enterkeyhint="done" autocomplete="off"></textarea>
+      <button class="botao botao-mais" type="submit" aria-label="${t("bandeja.guardar")}">+</button>
     </form>
     <p class="confirmacao" role="status"></p>
     <p class="aviso" role="alert"></p>
@@ -37,8 +38,8 @@ export function telaBandeja(raiz) {
 
   const bandeja = criarListaBandeja({
     aviso,
-    textoVazia: "Aquí aparecerá lo que anotes.",
-    aoPlanejar: () => confirmar("Lista para hoy."),
+    textoVazia: t("bandeja.vaziaCaptura"),
+    aoPlanejar: () => confirmar(t("comum.listaParaHoje")),
   });
 
   raiz.append(bandeja.elemento, navegacao("bandeja"));
@@ -77,7 +78,7 @@ export function telaBandeja(raiz) {
     try {
       const criadas = await criarTarefas(linhas);
       bandeja.confirmarProvisorias(itens, criadas);
-      confirmar(criadas.length === 1 ? "Guardado en tu Bandeja." : `Guardé ${criadas.length} cosas.`);
+      confirmar(criadas.length === 1 ? t("bandeja.guardadaUma") : t("bandeja.guardadas", criadas.length));
     } catch (erro) {
       // Não guardou: tira da lista e devolve o texto, para nada se perder.
       bandeja.descartarProvisorias(itens);

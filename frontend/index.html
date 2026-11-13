@@ -11,6 +11,12 @@
       var tema = localStorage.getItem("iamigo-tema");
       if (tema === "claro" || tema === "escuro") document.documentElement.dataset.tema = tema;
     } catch (erro) {}
+    // Idioma (ver js/i18n.js): o salvo ou o do celular.
+    try {
+      var lingua = localStorage.getItem("iamigo-idioma");
+      if (lingua !== "es" && lingua !== "pt") lingua = (navigator.language || "").toLowerCase().indexOf("pt") === 0 ? "pt" : "es";
+      document.documentElement.lang = lingua === "pt" ? "pt-BR" : "es";
+    } catch (erro) {}
   </script>
   <link rel="stylesheet" href="css/estilos.css">
 </head>

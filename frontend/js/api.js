@@ -1,35 +1,46 @@
-// Cliente da API: envia o token, lê a resposta e traduz os erros para espanhol.
-// O backend responde em português; a pessoa sempre lê frases curtas em espanhol.
+// Cliente da API: envia o token, lê a resposta e traduz os erros.
+// O backend responde em português técnico; a pessoa lê frases curtas e amáveis
+// no idioma da interface (espanhol ou português, ver i18n.js).
 
 import { API_URL } from "./config.js";
+import { idioma, t } from "./i18n.js";
 import { encerrarSessao, obterToken, obterUsuario } from "./sessao.js";
 
+// Frase do backend → { es, pt } para a pessoa.
 const MENSAGENS = {
-  "Já existe uma conta com esse e-mail.": "Ya hay una cuenta con ese correo.",
-  "A senha precisa ter pelo menos 6 caracteres.": "Usa al menos 6 caracteres en la contraseña.",
-  "O nome não pode ficar vazio.": "Escribe tu nombre.",
-  "O nome precisa ter pelo menos 3 caracteres.": "Tu nombre necesita al menos 3 letras.",
-  "Informe um e-mail válido.": "Revisa tu correo.",
-  "Escreva pelo menos uma tarefa.": "Escribe algo primero.",
-  "Envie no máximo 50 tarefas por vez.": "Son muchas a la vez. Prueba con menos de 50.",
-  "Cada tarefa pode ter no máximo 200 caracteres.": "Una línea es muy larga. Acórtala un poco.",
-  "Tarefa não encontrada.": "No encontramos esta tarea.",
-  "Passo não encontrado.": "Ese paso ya no está.",
-  "A tarefa já tem passos.": "Esta tarea ya tiene pasos.",
-  "O texto do passo não pode ficar vazio.": "Escribe el paso primero.",
-  "O passo pode ter no máximo 255 caracteres.": "Ese paso es muy largo. Acórtalo un poco.",
-  "Os minutos precisam estar entre 1 e 120.": "Usa entre 1 y 120 minutos.",
-  "Hoje já está cheio.": "Hoy ya está completo. Puedes cambiar el límite.",
-  "Essa tarefa já está em Hoje ou foi concluída.": "Esa tarea ya está en Hoy.",
-  "Escolha as tarefas, uma vez cada.": "Elige al menos una tarea.",
-  "O limite precisa estar entre 1 e 5.": "Elige entre 1 y 5.",
-  "Esse passo foi dividido.": "Ese paso cambió. Sigamos con el siguiente.",
-  "Esse passo não pode ser dividido.": "Ese paso ya no se puede dividir.",
-  "Muitas tentativas. Tente de novo em alguns minutos.": "Muchos intentos seguidos. Espera unos minutos y vuelve a probar.",
+  "Já existe uma conta com esse e-mail.": {
+    es: "Ya hay una cuenta con ese correo.", pt: "Já existe uma conta com esse e-mail." },
+  "A senha precisa ter pelo menos 6 caracteres.": {
+    es: "Usa al menos 6 caracteres en la contraseña.", pt: "Use pelo menos 6 caracteres na senha." },
+  "O nome não pode ficar vazio.": { es: "Escribe tu nombre.", pt: "Escreva seu nome." },
+  "O nome precisa ter pelo menos 3 caracteres.": {
+    es: "Tu nombre necesita al menos 3 letras.", pt: "Seu nome precisa de pelo menos 3 letras." },
+  "Informe um e-mail válido.": { es: "Revisa tu correo.", pt: "Confira seu e-mail." },
+  "Escreva pelo menos uma tarefa.": { es: "Escribe algo primero.", pt: "Escreva algo primeiro." },
+  "Envie no máximo 50 tarefas por vez.": {
+    es: "Son muchas a la vez. Prueba con menos de 50.", pt: "São muitas de uma vez. Tente com menos de 50." },
+  "Cada tarefa pode ter no máximo 200 caracteres.": {
+    es: "Una línea es muy larga. Acórtala un poco.", pt: "Uma linha está muito longa. Encurte um pouco." },
+  "Tarefa não encontrada.": { es: "No encontramos esta tarea.", pt: "Não encontramos esta tarefa." },
+  "Passo não encontrado.": { es: "Ese paso ya no está.", pt: "Esse passo não existe mais." },
+  "A tarefa já tem passos.": { es: "Esta tarea ya tiene pasos.", pt: "Esta tarefa já tem passos." },
+  "O texto do passo não pode ficar vazio.": { es: "Escribe el paso primero.", pt: "Escreva o passo primeiro." },
+  "O passo pode ter no máximo 255 caracteres.": {
+    es: "Ese paso es muy largo. Acórtalo un poco.", pt: "Esse passo está muito longo. Encurte um pouco." },
+  "Os minutos precisam estar entre 1 e 120.": { es: "Usa entre 1 y 120 minutos.", pt: "Use entre 1 e 120 minutos." },
+  "Hoje já está cheio.": {
+    es: "Hoy ya está completo. Puedes cambiar el límite.", pt: "Hoje já está completo. Você pode mudar o limite." },
+  "Essa tarefa já está em Hoje ou foi concluída.": { es: "Esa tarea ya está en Hoy.", pt: "Essa tarefa já está em Hoje." },
+  "Escolha as tarefas, uma vez cada.": { es: "Elige al menos una tarea.", pt: "Escolha pelo menos uma tarefa." },
+  "O limite precisa estar entre 1 e 5.": { es: "Elige entre 1 y 5.", pt: "Escolha entre 1 e 5." },
+  "Esse passo foi dividido.": {
+    es: "Ese paso cambió. Sigamos con el siguiente.", pt: "Esse passo mudou. Vamos para o próximo." },
+  "Esse passo não pode ser dividido.": {
+    es: "Ese paso ya no se puede dividir.", pt: "Esse passo não pode mais ser dividido." },
+  "Muitas tentativas. Tente de novo em alguns minutos.": {
+    es: "Muchos intentos seguidos. Espera unos minutos y vuelve a probar.",
+    pt: "Muitas tentativas seguidas. Espere alguns minutos e tente de novo." },
 };
-
-const MENSAGEM_GENERICA = "Algo salió mal. Intenta otra vez.";
-const MENSAGEM_SEM_CONEXAO = "No pudimos conectar. Intenta otra vez.";
 
 export class ErroApi extends Error {
   // detalhe: a frase original do backend, para a tela reconhecer o erro.
@@ -42,19 +53,19 @@ export class ErroApi extends Error {
 
 function traduzir(status, detalhe) {
   if (typeof detalhe === "string" && MENSAGENS[detalhe]) {
-    return MENSAGENS[detalhe];
+    return MENSAGENS[detalhe][idioma()];
   }
 
   if (status === 422) {
-    return "Revisa los datos e intenta otra vez.";
+    return t("erro.dados");
   }
 
   // H2.4: a IA falhou ou não está configurada.
   if (status === 503) {
-    return "IAmigo no pudo ahora. Puedes escribirlos tú.";
+    return t("erro.ia");
   }
 
-  return MENSAGEM_GENERICA;
+  return t("erro.generico");
 }
 
 // Chamado quando o token expira ou é recusado; app.js decide para onde ir.
@@ -81,7 +92,7 @@ export async function requisitar(metodo, caminho, corpo, { autenticar = true } =
       body: corpo === undefined ? undefined : JSON.stringify(corpo),
     });
   } catch {
-    throw new ErroApi(0, MENSAGEM_SEM_CONEXAO);
+    throw new ErroApi(0, t("erro.semConexao"));
   }
 
   const conteudo = await resposta.json().catch(() => null);
@@ -93,7 +104,7 @@ export async function requisitar(metodo, caminho, corpo, { autenticar = true } =
   // Erro sem JSON: não veio da API, e sim do caminho até ela (ex.: o hosting
   // trocando de versão). Para a pessoa é como uma falha de conexão.
   if (resposta.status >= 500 && conteudo === null) {
-    throw new ErroApi(resposta.status, MENSAGEM_SEM_CONEXAO);
+    throw new ErroApi(resposta.status, t("erro.semConexao"));
   }
 
   if (resposta.status === 401 && autenticar) {
@@ -112,7 +123,7 @@ export async function entrar(email, senha) {
   } catch (erro) {
     // H0.2: mesma frase para correo inexistente e senha errada.
     if (erro.status === 401) {
-      throw new ErroApi(401, "Correo o contraseña incorrectos.");
+      throw new ErroApi(401, t("login.incorretos"));
     }
     throw erro;
   }
@@ -193,7 +204,8 @@ export function listarPassos(tarefaId) {
 
 // H2.1: a IA sugere de 3 a 7 passos com minutos.
 export function gerarPassos(tarefaId) {
-  return requisitar("POST", `${rotaPassos(tarefaId)}/gerar`);
+  // A IA escreve os passos no idioma da interface.
+  return requisitar("POST", `${rotaPassos(tarefaId)}/gerar?idioma=${idioma()}`);
 }
 
 // H2.3: sem minutos, o backend usa 10.
@@ -234,10 +246,10 @@ export function concluirTarefa(tarefaId) {
 // H4.4 "Me atasqué": 2 ou 3 passos menores no lugar do travado.
 export async function dividirPasso(tarefaId, passoId) {
   try {
-    return await requisitar("POST", `${rotaPassos(tarefaId)}/${passoId}/dividir`);
+    return await requisitar("POST", `${rotaPassos(tarefaId)}/${passoId}/dividir?idioma=${idioma()}`);
   } catch (erro) {
     if (erro.status === 503) {
-      throw new ErroApi(503, "IAmigo no pudo dividirlo ahora. Prueba en un rato.");
+      throw new ErroApi(503, t("erro.iaDividir"));
     }
     throw erro;
   }

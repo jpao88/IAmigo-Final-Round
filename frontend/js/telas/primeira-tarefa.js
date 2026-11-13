@@ -5,23 +5,24 @@ import { criarTarefas } from "../api.js";
 import { iniciarGuia } from "../guia.js";
 import { comBotaoOcupado, criarElemento } from "../html.js";
 import { navegar } from "../roteador.js";
+import { t } from "../i18n.js";
 
 export function telaPrimeiraTarefa(raiz) {
   raiz.append(criarElemento(`
     <header class="cabecalho">
-      <a class="botao-texto" href="#/bienvenida">← Volver</a>
+      <a class="botao-texto" href="#/bienvenida">${t("comum.voltar")}</a>
       <p class="subtitulo guia-etapa">1 de 3</p>
     </header>
 
-    <h1>Escribe una cosa que tengas pendiente</h1>
-    <p class="subtitulo">Algo real, aunque sea pequeño. Lo hacemos juntos.</p>
+    <h1>${t("primeira.titulo")}</h1>
+    <p class="subtitulo">${t("primeira.subtitulo")}</p>
 
     <form novalidate>
-      <label class="rotulo-oculto" for="primeira-tarefa">Tu tarea</label>
+      <label class="rotulo-oculto" for="primeira-tarefa">${t("primeira.rotulo")}</label>
       <input id="primeira-tarefa" name="titulo" type="text" maxlength="200"
-        placeholder="Por ejemplo: ordenar el escritorio" autocomplete="off" enterkeyhint="go">
+        placeholder="${t("primeira.exemplo")}" autocomplete="off" enterkeyhint="go">
       <p class="aviso" role="alert"></p>
-      <button class="botao" type="submit">Seguir</button>
+      <button class="botao" type="submit">${t("comum.seguir")}</button>
     </form>
   `));
 
@@ -35,12 +36,12 @@ export function telaPrimeiraTarefa(raiz) {
 
     const titulo = formulario.titulo.value.trim();
     if (!titulo) {
-      aviso.textContent = "Escribe algo primero.";
+      aviso.textContent = t("primeira.vazia");
       return;
     }
 
     try {
-      const [tarefa] = await comBotaoOcupado(botao, "Guardando…", () => criarTarefas([titulo]));
+      const [tarefa] = await comBotaoOcupado(botao, t("comum.guardando"), () => criarTarefas([titulo]));
       iniciarGuia(tarefa.id);
       navegar(`/tarefa/${tarefa.id}`);
     } catch (erro) {

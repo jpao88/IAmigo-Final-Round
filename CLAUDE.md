@@ -24,7 +24,7 @@ Antes de proponer o escribir código, consulta lo que corresponda en `docs/`:
 
 - **Nombres de código y base de datos en portugués** (tablas, columnas, clases, funciones, variables, endpoints): `tarefas`, `passos`, `data_planejada`, `concluido`…
 - **Explicaciones para Pablo en español**: respuestas, resúmenes, planes y mensajes de commit.
-- Textos de la interfaz en español, cortos y amables, siguiendo los principios de diseño del recorrido.
+- Textos de la interfaz en español y portugués de Brasil, cortos y amables, siguiendo los principios de diseño del recorrido. Nunca se escriben en las pantallas: van en `frontend/js/i18n.js` (las dos lenguas con las mismas claves; `tests/test_traducoes.py` lo controla) y se usan con `t("clave")`.
 - Trabajar una tarea de la hoja de ruta a la vez y pedir confirmación antes de pasar a la siguiente.
 
 ## Entorno
@@ -81,6 +81,8 @@ Actualizar esta sección al terminar cada tarea.
 - **Siete principios, revisados el 12 de noviembre de 2026** con capturas a 390 px de las 10 pantallas. Cambios: el texto del paso es un `textarea` que crece (antes se cortaba); en la tarea, ↑ ↓ ✕ solo en modo "Ordenar" (como en Hoy); minutos en una pastilla "10 min"; "Me atasqué" con estilo de enlace (`button.link-secundario`); en Hoy el tiempo va junto al título ("Hoy · unos 55 min", `formatarTempoCurto`) con la barra debajo; tarjetas sin borde (solo Ahora lo tiene; Elegir marca con `box-shadow`); `.confirmacao` es un aviso flotante sobre las pestañas y no ocupa espacio.
 
 - **Prueba de varios días** (`docs/prueba-varios-dias.md`): piloto con 2 personas (Pablo y una compañera) desde el 13 de noviembre de 2026, con Gemini gratuito (decisión de Pablo: son solo 2 personas). `backend/scripts/resumo_uso.py [desde]` muestra por persona tareas creadas, pasos y tareas hechas, días con plan, días cerrados y último día activo, sin el texto de las tareas. La segunda ronda (3 a 5 personas de la validación) cumple el punto de control de la Fase 3; antes de ella, activar la facturación de Gemini.
+
+- **Español y portugués de Brasil (12 de noviembre de 2026).** `js/i18n.js` con los diccionarios `es` y `pt` y `t("clave", ...args)` (algunos textos son funciones para números y plurales). Sin elección sigue el idioma del celular; botón ES/PT en el encabezado y enlace "Português"/"Español" en login, registro y bienvenida; se guarda en `iamigo-idioma` (no se borra al salir) y cambiar recarga la página. En portugués: Hoje, Caixa de entrada, Travei, Feito. Los errores del backend se traducen en `api.js` (pares `{es, pt}`). La IA escribe en el idioma de la persona: `POST .../passos/gerar?idioma=pt` y `.../dividir?idioma=pt` (`Literal["es","pt"]`, por defecto `es`); los prompts están en `TEXTOS` de `core/ia_service.py`.
 
 **Siguiente tarea:** acompañar el piloto (resumen diario, anotar comentarios en la tabla de resultados) y, al terminar, juntar lo aprendido y corregir lo más grave antes de la segunda ronda.
 

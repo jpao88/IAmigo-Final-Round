@@ -209,7 +209,7 @@ class TarefaService:
             if not passo.substituido
         ]
 
-    def gerar_passos(self, usuario_id, tarefa_id):
+    def gerar_passos(self, usuario_id, tarefa_id, idioma="es"):
         """H2.1: a IA sugere os passos. Só para tarefas ainda sem passos,
         para um toque duplo no botão não duplicar a lista."""
         tarefa = self._obter_tarefa_do_usuario(usuario_id, tarefa_id)
@@ -217,7 +217,7 @@ class TarefaService:
         if self._passos_ativos(tarefa_id):
             raise DadosInvalidos("A tarefa já tem passos.")
 
-        passos = self.gerador_de_passos(tarefa.titulo)
+        passos = self.gerador_de_passos(tarefa.titulo, idioma)
 
         return self.passo_repository.criar_varios(tarefa_id, passos, gerado_por_ia=True)
 
@@ -278,7 +278,7 @@ class TarefaService:
 
         return self.tarefa_repository.concluir(tarefa_id)
 
-    def dividir_passo(self, usuario_id, tarefa_id, passo_id):
+    def dividir_passo(self, usuario_id, tarefa_id, passo_id, idioma="es"):
         """H4.4 "Me atasqué": a IA divide o passo em 2 ou 3 menores, no lugar dele."""
         passo = self._obter_passo_da_tarefa(usuario_id, tarefa_id, passo_id)
 
@@ -286,7 +286,7 @@ class TarefaService:
             raise DadosInvalidos("Esse passo não pode ser dividido.")
 
         tarefa = self.tarefa_repository.buscar_por_id(tarefa_id)
-        novos = self.divisor_de_passo(tarefa.titulo, passo.texto, passo.minutos_estimados)
+        novos = self.divisor_de_passo(tarefa.titulo, passo.texto, passo.minutos_estimados, idioma)
 
         return self.passo_repository.dividir(passo_id, novos)
 

@@ -13,13 +13,14 @@ import { criarElemento } from "../html.js";
 import { tituloEmCache } from "../lista-bandeja.js";
 import { navegar, TELA_INICIAL } from "../roteador.js";
 import { desenharBarraTempo, formatarTempoTotal } from "../tempo.js";
+import { t } from "../i18n.js";
 
 const MINUTOS_PADRAO = 10;
 
 export function telaTarefa(raiz, { id: tarefaId }) {
   raiz.append(criarElemento(`
     <header class="cabecalho">
-      <button class="botao-texto" type="button" data-acao="voltar">← Volver</button>
+      <button class="botao-texto" type="button" data-acao="voltar">${t("comum.voltar")}</button>
       <p class="subtitulo guia-etapa" hidden></p>
     </header>
 
@@ -28,19 +29,19 @@ export function telaTarefa(raiz, { id: tarefaId }) {
     <h1 class="titulo-tarefa"></h1>
 
     <section class="sem-passos" hidden>
-      <p class="subtitulo">IAmigo te sugiere los pasos y tú los ajustas.</p>
-      <button class="botao" type="button" data-acao="dividir">Que IAmigo lo divida</button>
-      <button class="botao-texto centro" type="button" data-acao="manual">Prefiero escribirlos yo</button>
+      <p class="subtitulo">${t("tarefa.sugere")}</p>
+      <button class="botao" type="button" data-acao="dividir">${t("tarefa.dividir")}</button>
+      <button class="botao-texto centro" type="button" data-acao="manual">${t("tarefa.manual")}</button>
     </section>
 
-    <p class="pensando" role="status" hidden>IAmigo está pensando…</p>
+    <p class="pensando" role="status" hidden>${t("comum.pensando")}</p>
     <p class="aviso" role="alert"></p>
 
     <section class="com-passos" hidden>
       <div class="tempo-total">
         <div class="titulo-com-acao">
           <p class="tempo-texto"></p>
-          <button class="botao-texto" type="button" data-acao="ordenar" aria-pressed="false">Ordenar</button>
+          <button class="botao-texto" type="button" data-acao="ordenar" aria-pressed="false">${t("comum.ordenar")}</button>
         </div>
         <div class="barra-tempo" aria-hidden="true"></div>
       </div>
@@ -48,19 +49,19 @@ export function telaTarefa(raiz, { id: tarefaId }) {
     </section>
 
     <form class="novo-passo" novalidate hidden>
-      <label class="rotulo-oculto" for="novo-passo-texto">Nuevo paso</label>
+      <label class="rotulo-oculto" for="novo-passo-texto">${t("tarefa.novoPasso")}</label>
       <input id="novo-passo-texto" name="texto" type="text" maxlength="255"
-        placeholder="Agrega un paso" autocomplete="off" enterkeyhint="done">
+        placeholder="${t("tarefa.adicionePasso")}" autocomplete="off" enterkeyhint="done">
       <label class="minutos">
         <input name="minutos" type="number" inputmode="numeric" min="1" max="120"
-          placeholder="${MINUTOS_PADRAO}" aria-label="Minutos del nuevo paso">
+          placeholder="${MINUTOS_PADRAO}" aria-label="${t("tarefa.minutosNovo")}">
         <span>min</span>
       </label>
-      <button class="botao botao-mais" type="submit" aria-label="Agregar paso">+</button>
+      <button class="botao botao-mais" type="submit" aria-label="${t("tarefa.adicionar")}">+</button>
     </form>
 
-    <button class="botao" type="button" data-acao="listo" hidden>Listo</button>
-    <button class="botao" type="button" data-acao="guia-empezar" hidden>Ponerla en Hoy y empezar</button>
+    <button class="botao" type="button" data-acao="listo" hidden>${t("comum.listo")}</button>
+    <button class="botao" type="button" data-acao="guia-empezar" hidden>${t("tarefa.guiaEmpezar")}</button>
   `));
 
   const titulo = raiz.querySelector(".titulo-tarefa");
@@ -111,7 +112,7 @@ export function telaTarefa(raiz, { id: tarefaId }) {
         <textarea class="passo-texto" rows="1" maxlength="255" autocomplete="off" enterkeyhint="done"></textarea>
         <label class="minutos">
           <input class="passo-minutos" type="number" inputmode="numeric" min="1" max="120">
-          <span>min</span>
+          <span>${t("comum.min")}</span>
         </label>
       </div>
       <div class="passo-acoes acoes-ordenar">
@@ -127,11 +128,11 @@ export function telaTarefa(raiz, { id: tarefaId }) {
     minutos.value = passo.minutos_estimados;
 
     const numero = indice + 1;
-    texto.setAttribute("aria-label", `Paso ${numero}`);
-    minutos.setAttribute("aria-label", `Minutos del paso ${numero}`);
-    item.querySelector('[data-acao="subir"]').setAttribute("aria-label", `Subir el paso ${numero}`);
-    item.querySelector('[data-acao="descer"]').setAttribute("aria-label", `Bajar el paso ${numero}`);
-    item.querySelector('[data-acao="apagar"]').setAttribute("aria-label", `Borrar el paso ${numero}`);
+    texto.setAttribute("aria-label", t("tarefa.passo", numero));
+    minutos.setAttribute("aria-label", t("tarefa.minutosPasso", numero));
+    item.querySelector('[data-acao="subir"]').setAttribute("aria-label", t("tarefa.subirPasso", numero));
+    item.querySelector('[data-acao="descer"]').setAttribute("aria-label", t("tarefa.descerPasso", numero));
+    item.querySelector('[data-acao="apagar"]').setAttribute("aria-label", t("tarefa.apagarPasso", numero));
 
     item.querySelector('[data-acao="subir"]').disabled = indice === 0;
     item.querySelector('[data-acao="descer"]').disabled = indice === passos.length - 1;
@@ -154,7 +155,7 @@ export function telaTarefa(raiz, { id: tarefaId }) {
     botaoListo.hidden = !temPassos;
 
     if (!temPassos) ordenando = false;
-    botaoOrdenar.textContent = ordenando ? "Listo" : "Ordenar";
+    botaoOrdenar.textContent = ordenando ? t("comum.listo") : t("comum.ordenar");
     botaoOrdenar.setAttribute("aria-pressed", String(ordenando));
     raiz.classList.toggle("ordenando", ordenando);
 
@@ -173,8 +174,8 @@ export function telaTarefa(raiz, { id: tarefaId }) {
     guia.hidden = false;
     guiaEtapa.textContent = "2 de 3";
     guia.textContent = temPassos
-      ? "¡Listo! Ajusta los pasos si quieres. Después, ponla en Hoy y haz el primero."
-      : "Ahora toca «Que IAmigo lo divida»: la parte en pasos pequeños.";
+      ? t("tarefa.guiaComPassos")
+      : t("tarefa.guiaSemPassos");
     botaoListo.hidden = true;
     botaoGuia.hidden = !temPassos;
   }
@@ -304,7 +305,7 @@ export function telaTarefa(raiz, { id: tarefaId }) {
       // Texto apagado: volta ao anterior. Para tirar o passo, existe o ✕.
       item.querySelector(".passo-texto").value = passo.texto;
       ajustarAltura(item.querySelector(".passo-texto"));
-      avisar("Para quitar un paso, toca Ordenar y luego ✕.");
+      avisar(t("tarefa.comoTirar"));
       return;
     }
 

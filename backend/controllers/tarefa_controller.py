@@ -47,8 +47,8 @@ class TarefaController:
     def listar_passos(self, usuario_id, tarefa_id):
         return self.service.listar_passos(usuario_id, tarefa_id)
 
-    def gerar_passos(self, usuario_id, tarefa_id):
-        return self.service.gerar_passos(usuario_id, tarefa_id)
+    def gerar_passos(self, usuario_id, tarefa_id, idioma="es"):
+        return self.service.gerar_passos(usuario_id, tarefa_id, idioma)
 
     def adicionar_passo(self, usuario_id, tarefa_id, texto, minutos_estimados=None):
         return self.service.adicionar_passo(usuario_id, tarefa_id, texto, minutos_estimados)
@@ -65,8 +65,8 @@ class TarefaController:
     def concluir_tarefa(self, usuario_id, tarefa_id):
         return self.service.concluir_tarefa(usuario_id, tarefa_id)
 
-    def dividir_passo(self, usuario_id, tarefa_id, passo_id):
-        return self.service.dividir_passo(usuario_id, tarefa_id, passo_id)
+    def dividir_passo(self, usuario_id, tarefa_id, passo_id, idioma="es"):
+        return self.service.dividir_passo(usuario_id, tarefa_id, passo_id, idioma)
 
     def alternar_status_passo(self, usuario_id, tarefa_id, passo_id):
         return self.service.alternar_status_passo(usuario_id, tarefa_id, passo_id)

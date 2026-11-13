@@ -78,7 +78,7 @@ class BaseFoco(unittest.TestCase):
         self.passos = PassoRepositoryFake(passos)
         self.chamadas_divisor = []
 
-        def divisor_falso(titulo, texto, minutos):
+        def divisor_falso(titulo, texto, minutos, idioma="es"):
             self.chamadas_divisor.append((titulo, texto, minutos))
             return [
                 {"texto": "Abrir o arquivo", "minutos_estimados": 2},
@@ -89,7 +89,7 @@ class BaseFoco(unittest.TestCase):
             tarefa_repository=self.tarefas,
             usuario_repository=UsuarioRepositoryFake(),
             passo_repository=self.passos,
-            gerador_de_passos=lambda titulo: [],
+            gerador_de_passos=lambda titulo, idioma="es": [],
             divisor_de_passo=divisor or divisor_falso,
         )
 
@@ -182,7 +182,7 @@ class TestMeAtasque(BaseFoco):
         self.assertEqual(self.chamadas_divisor, [])
 
     def test_falha_da_ia_deixa_o_passo_como_estava(self):
-        def divisor_quebrado(titulo, texto, minutos):
+        def divisor_quebrado(titulo, texto, minutos, idioma="es"):
             raise FalhaIA("Não foi possível dividir o passo agora.")
 
         self.montar([passo(1, texto="Escrever")], divisor=divisor_quebrado)

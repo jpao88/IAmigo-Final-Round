@@ -122,8 +122,9 @@ class TestTarefaServiceDesmenuzar(unittest.TestCase):
         self.passos = PassoRepositoryFake()
         self.chamadas_ia = []
 
-        def ia_falsa(titulo):
+        def ia_falsa(titulo, idioma="es"):
             self.chamadas_ia.append(titulo)
+            self.idioma_pedido = idioma
             return [dict(p) for p in self.PASSOS_DA_IA]
 
         self.service = TarefaService(
@@ -156,7 +157,7 @@ class TestTarefaServiceDesmenuzar(unittest.TestCase):
     def test_falha_da_ia_chega_como_falha_ia(self):
         from core.erros import FalhaIA
 
-        def ia_quebrada(titulo):
+        def ia_quebrada(titulo, idioma="es"):
             raise FalhaIA("Não foi possível gerar os passos agora.")
 
         self.service.gerador_de_passos = ia_quebrada

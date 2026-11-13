@@ -127,5 +127,5 @@ El archivo queda en `RESPALDOS_DIR` del `.env` o, si no está, en `~/IAmigo-resp
 ## Convenciones
 
 - El código y la base de datos usan nombres en portugués: `tarefas`, `passos`, `data_planejada`…
-- Los textos de la interfaz van en español, cortos y amables, siguiendo los siete principios de [`docs/recorrido-v1.md`](docs/recorrido-v1.md).
+- Los textos de la interfaz van en español y portugués de Brasil, cortos y amables, siguiendo los siete principios de [`docs/recorrido-v1.md`](docs/recorrido-v1.md). Están en `frontend/js/i18n.js` y las pantallas los usan con `t("clave")`; una clave nueva va en los dos idiomas.
 - El backend responde en portugués y el front traduce los mensajes que ve la persona.

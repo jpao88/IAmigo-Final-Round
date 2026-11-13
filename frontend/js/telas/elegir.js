@@ -6,28 +6,29 @@ import { alterarLimiteHoje, listarBandeja, listarHoje, planejarHoje } from "../a
 import { comBotaoOcupado, criarElemento } from "../html.js";
 import { navegar } from "../roteador.js";
 import { atualizarUsuario, obterUsuario } from "../sessao.js";
+import { t } from "../i18n.js";
 
 export function telaElegir(raiz) {
   raiz.append(criarElemento(`
     <header class="cabecalho">
-      <a class="botao-texto" href="#/hoje">← Hoy</a>
+      <a class="botao-texto" href="#/hoje">${t("comum.voltarHoje")}</a>
     </header>
 
-    <h1>Elegir tareas para hoy</h1>
+    <h1>${t("hoje.elegir")}</h1>
     <p class="contador" role="status"></p>
 
     <div class="limite">
       <p class="limite-texto"></p>
-      <button class="botao-texto" type="button" data-acao="cambiar-limite" aria-expanded="false">Cambiar límite</button>
+      <button class="botao-texto" type="button" data-acao="cambiar-limite" aria-expanded="false">${t("elegir.mudarLimite")}</button>
     </div>
-    <div class="seletor-limite" role="group" aria-label="Tareas por día" hidden></div>
+    <div class="seletor-limite" role="group" aria-label="${t("elegir.porDia")}" hidden></div>
 
     <p class="aviso" role="alert"></p>
 
-    <p class="vazia subtitulo" hidden>Tu Bandeja está vacía. Anota algo primero.</p>
+    <p class="vazia subtitulo" hidden>${t("elegir.vazia")}</p>
     <ul class="lista-elegir"></ul>
 
-    <button class="botao" type="button" data-acao="listo">Listo</button>
+    <button class="botao" type="button" data-acao="listo">${t("comum.listo")}</button>
   `));
 
   const contador = raiz.querySelector(".contador");
@@ -50,7 +51,7 @@ export function telaElegir(raiz) {
   }
 
   function desenharLimite() {
-    limiteTexto.textContent = limite === 1 ? "Hasta 1 tarea por día." : `Hasta ${limite} tareas por día.`;
+    limiteTexto.textContent = t("elegir.limite", limite);
 
     seletorLimite.replaceChildren(...[1, 2, 3, 4, 5].map((numero) => {
       const botao = document.createElement("button");
@@ -75,17 +76,16 @@ export function telaElegir(raiz) {
 
     const restantes = vagas() - escolhidas.length;
 
-    if (vagas() === 0) contador.textContent = "Hoy ya está completo.";
-    else if (restantes === 0) contador.textContent = "Listo, tu día está completo.";
-    else if (restantes === 1) contador.textContent = "Puedes elegir 1 más.";
-    else contador.textContent = `Puedes elegir ${restantes} más.`;
+    if (vagas() === 0) contador.textContent = t("elegir.hojeCheio");
+    else if (restantes === 0) contador.textContent = t("elegir.diaCompleto");
+    else contador.textContent = t("elegir.podeMais", restantes);
 
     // No limite, as não marcadas ficam desativadas; nunca se marca além do que cabe.
     lista.querySelectorAll("input").forEach((caixa) => {
       caixa.disabled = !caixa.checked && restantes <= 0;
     });
 
-    botaoListo.textContent = escolhidas.length > 0 ? "Listo" : "Volver a Hoy";
+    botaoListo.textContent = escolhidas.length > 0 ? t("comum.listo") : t("comum.voltarAHoje");
   }
 
   function itemDaTarefa(tarefa) {
@@ -151,7 +151,7 @@ export function telaElegir(raiz) {
     aviso.textContent = "";
 
     try {
-      await comBotaoOcupado(botaoListo, "Guardando…", () => planejarHoje(escolhidas));
+      await comBotaoOcupado(botaoListo, t("comum.guardando"), () => planejarHoje(escolhidas));
       navegar("/hoje");
     } catch (erro) {
       aviso.textContent = erro.message;
@@ -160,7 +160,7 @@ export function telaElegir(raiz) {
   });
 
   async function carregar() {
-    contador.textContent = "Cargando…";
+    contador.textContent = t("comum.carregando");
 
     try {
       const [bandeja, hoje] = await Promise.all([listarBandeja(), listarHoje()]);

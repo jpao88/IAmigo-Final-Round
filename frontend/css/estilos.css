@@ -210,6 +210,10 @@ input:focus-visible {
 
 .botao-tema { font-size: 1.15rem; line-height: 1; }
 
+/* ES / PT: discreto, do tamanho dos outros botões do cabeçalho. */
+.botao-idioma { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.04em; }
+.link-idioma { margin-top: 8px; font-weight: 500; color: var(--texto-suave); }
+
 h1 label { font-weight: inherit; display: inline; }
 
 /* Princípio "Capturar em segundos": um campo e um toque. */

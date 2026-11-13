@@ -1,5 +1,5 @@
 from datetime import date
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from fastapi import APIRouter, Depends, status
 
@@ -17,6 +17,9 @@ router = APIRouter(
 )
 
 controller = TarefaController()
+
+# Idioma dos passos que a IA escreve (o mesmo da interface da pessoa).
+Idioma = Literal["es", "pt"]
 
 
 @router.get("", response_model=Resposta[List[TarefaSaida]])
@@ -107,9 +110,9 @@ def concluir_passo(usuario_id: int, tarefa_id: int, passo_id: int):
     status_code=status.HTTP_201_CREATED,
     response_model=Resposta[List[PassoSaida]]
 )
-def dividir_passo(usuario_id: int, tarefa_id: int, passo_id: int):
+def dividir_passo(usuario_id: int, tarefa_id: int, passo_id: int, idioma: Idioma = "es"):
     return {
-        "dados": controller.dividir_passo(usuario_id, tarefa_id, passo_id)
+        "dados": controller.dividir_passo(usuario_id, tarefa_id, passo_id, idioma)
     }
 
 
@@ -132,9 +135,9 @@ def listar_passos(usuario_id: int, tarefa_id: int):
     status_code=status.HTTP_201_CREATED,
     response_model=Resposta[List[PassoSaida]]
 )
-def gerar_passos(usuario_id: int, tarefa_id: int):
+def gerar_passos(usuario_id: int, tarefa_id: int, idioma: Idioma = "es"):
     return {
-        "dados": controller.gerar_passos(usuario_id, tarefa_id)
+        "dados": controller.gerar_passos(usuario_id, tarefa_id, idioma)
     }
 
 
