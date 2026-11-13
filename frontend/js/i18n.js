@@ -79,6 +79,8 @@ const es = {
   // Bandeja
   "bandeja.pergunta": "¿Qué tienes en la cabeza?",
   "bandeja.placeholder": "Una idea por línea",
+  "bandeja.chipsRotulo": "Ideas para empezar a escribir",
+  "bandeja.chips": ["Llamar a", "Comprar", "Pagar", "Responder a"],
   "bandeja.guardar": "Guardar",
   "bandeja.vaziaCaptura": "Aquí aparecerá lo que anotes.",
   "bandeja.guardadaUma": "Guardado en tu Bandeja.",
@@ -259,6 +261,8 @@ const pt = {
 
   "bandeja.pergunta": "O que está na sua cabeça?",
   "bandeja.placeholder": "Uma ideia por linha",
+  "bandeja.chipsRotulo": "Ideias para começar a escrever",
+  "bandeja.chips": ["Ligar para", "Comprar", "Pagar", "Responder"],
   "bandeja.guardar": "Salvar",
   "bandeja.vaziaCaptura": "Aqui vai aparecer o que você anotar.",
   "bandeja.guardadaUma": "Salvo na sua caixa de entrada.",

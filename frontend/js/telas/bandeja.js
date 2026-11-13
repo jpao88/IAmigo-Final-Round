@@ -15,8 +15,10 @@ export function telaBandeja(raiz) {
   raiz.append(cabecalho(), criarElemento(`
     <h1><label for="captura">${t("bandeja.pergunta")}</label></h1>
 
+    <div class="chips" role="group" aria-label="${t("bandeja.chipsRotulo")}"></div>
+
     <form class="captura" novalidate>
-      <textarea id="captura" name="texto" rows="2" maxlength="10000"
+      <textarea id="captura" name="texto" rows="3" maxlength="10000"
         placeholder="${t("bandeja.placeholder")}" enterkeyhint="done" autocomplete="off"></textarea>
       <button class="botao botao-mais" type="submit" aria-label="${t("bandeja.guardar")}">${icone("mais")}</button>
     </form>
@@ -102,6 +104,27 @@ export function telaBandeja(raiz) {
   });
 
   campo.addEventListener("input", ajustarAltura);
+
+  // ---- Chips: um começo de tarefa para quando custa começar a escrever ----
+  // Tocar escreve "Llamar a " numa linha nova; a pessoa completa e guarda.
+  // Não guarda nada sozinho.
+
+  const chips = raiz.querySelector(".chips");
+  chips.replaceChildren(...t("bandeja.chips").map((comeco) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip";
+    chip.textContent = `${comeco}…`;
+    chip.addEventListener("click", () => {
+      const atual = campo.value;
+      const separador = atual && !atual.endsWith("\n") ? "\n" : "";
+      campo.value = `${atual}${separador}${comeco} `;
+      ajustarAltura();
+      campo.focus();
+      campo.setSelectionRange(campo.value.length, campo.value.length);
+    });
+    return chip;
+  }));
 
   campo.focus();
   bandeja.carregar();

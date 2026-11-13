@@ -351,6 +351,58 @@ textarea:focus-visible {
 
 .botao-mais .icone { width: 28px; height: 28px; stroke-width: 2.25; }
 
+/* Bandeja: um campo grande (3–4 linhas) com o "+" dentro, embaixo à direita. */
+.captura {
+  position: relative;
+  display: block;
+}
+
+.captura textarea {
+  width: 100%;
+  min-height: calc(3 * 1.5em + 28px);
+  font-size: 1.15rem;
+  padding: 14px 72px 14px 16px;
+}
+
+.captura .botao-mais {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 48px;
+  min-height: 48px;
+  height: 48px;
+  border-radius: 12px;
+}
+
+/* Chips com começos de tarefa: rolam para o lado, sem barra. */
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: -4px calc(var(--espaco) * -1) 0;
+  padding: 0 var(--espaco) 2px;
+}
+
+.chips::-webkit-scrollbar { display: none; }
+
+.chip {
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  flex: none;
+  min-height: 44px;
+  padding: 0 16px;
+  border: none;
+  border-radius: var(--raio-chip);
+  background: var(--superficie-2);
+  color: var(--texto);
+  cursor: pointer;
+}
+
+.chip:hover { background: var(--primaria-suave); }
+.chip:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+
 .confirmacao {
   position: fixed;
   left: 50%;
