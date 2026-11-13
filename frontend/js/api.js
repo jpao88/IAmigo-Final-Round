@@ -90,6 +90,12 @@ export async function requisitar(metodo, caminho, corpo, { autenticar = true } =
     return conteudo?.dados ?? conteudo;
   }
 
+  // Erro sem JSON: não veio da API, e sim do caminho até ela (ex.: o hosting
+  // trocando de versão). Para a pessoa é como uma falha de conexão.
+  if (resposta.status >= 500 && conteudo === null) {
+    throw new ErroApi(resposta.status, MENSAGEM_SEM_CONEXAO);
+  }
+
   if (resposta.status === 401 && autenticar) {
     encerrarSessao();
     aoPerderSessao();

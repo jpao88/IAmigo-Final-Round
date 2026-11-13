@@ -234,6 +234,9 @@ export function telaTarefa(raiz, { id: tarefaId }) {
       if (erro.status === 400 || erro.status === 422) {
         // Já tinha passos (ex.: dividida em outra aba): mostra os que existem.
         await recarregarPassos().catch(() => {});
+      } else if (erro.detalhe === null) {
+        // Falha de conexão (não da IA): o botão volta, para tentar de novo.
+        desenhar();
       } else {
         // H2.4: a IA falhou; a pessoa segue escrevendo os passos.
         abrirModoManual();
