@@ -97,6 +97,10 @@ Actualizar esta sección al terminar cada tarea.
   - **Campos editables:** subrayado punteado en el título y los pasos.
   - **Elegir:** con tareas marcadas, el botón dice "Añadir N tareas a Hoy".
   - Quedan para después M3, M5, M6 y B1–B5 de la auditoría.
+- **Tarjeta Ahora nueva (13 de noviembre de 2026, `docs/diseno/TARJETA-AGORA.md`):**
+  - **Diseño:** en oscuro, vidrio con borde degradé "aurora"; en claro, tarjeta blanca con el mismo borde. Lleva un anillo de 64 px con el tiempo (`textoAnel` en `js/tempo.js`: "10 min", "1h 30", "2h") y el ícono play en Empezar. `.retomar` usa el mismo borde.
+  - **Sin minutos:** no hay anillo y el título ocupa las dos columnas.
+  - **Anillo de progreso del día:** solo aparece cuando ya hay al menos una tarea hecha.
 
 **Siguiente tarea:** acompañar el piloto (resumen diario, anotar comentarios en la tabla de resultados) y, al terminar, juntar lo aprendido y corregir lo más grave antes de la segunda ronda.
 

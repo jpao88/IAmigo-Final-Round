@@ -18,9 +18,9 @@ import { navegar } from "../roteador.js";
 import { obterUsuario } from "../sessao.js";
 import { criarAnel } from "../anel.js";
 import { semApagadas } from "../apagar-depois.js";
-import { formatarTempoCurto, formatarTempoTotal } from "../tempo.js";
+import { formatarTempoCurto, formatarTempoTotal, textoAnel } from "../tempo.js";
 import { t } from "../i18n.js";
-import { icone, itemFeito } from "../icones.js";
+import { icone, iconePlayCheio, itemFeito } from "../icones.js";
 
 // ---- Cópia local do dia ----
 
@@ -190,10 +190,31 @@ export function telaHoje(raiz) {
 
     // H4.1: "Empezar" abre o modo foco; é a ação principal de Hoy.
     if (indice === 0) {
+      // Tarjeta Ahora (docs/diseno/TARJETA-AGORA.md): anel com o tempo ao lado do título.
+      // Os minutos continuam no texto para o leitor de tela; o anel é só desenho.
+      const minutos = Number(tarefa.minutos_restantes) || 0;
+      item.querySelector(".minutos-dia").classList.add("rotulo-oculto");
+
+      if (minutos > 0) {
+        item.prepend(criarElemento(`
+          <div class="anel-agora" aria-hidden="true">
+            <svg viewBox="0 0 64 64" focusable="false">
+              <circle class="anel-fundo" cx="32" cy="32" r="28"></circle>
+              <circle class="anel-progresso" cx="32" cy="32" r="28"
+                stroke-dasharray="175.93" stroke-dashoffset="0"></circle>
+            </svg>
+            <span class="anel-agora-texto">${textoAnel(minutos)}</span>
+          </div>
+        `));
+      } else {
+        item.classList.add("sem-anel");
+      }
+
       const empezar = document.createElement("a");
       empezar.className = "botao botao-empezar";
       empezar.href = `#/foco/${tarefa.id}`;
-      empezar.textContent = t("comum.empezar");
+      empezar.innerHTML = iconePlayCheio();
+      empezar.append(t("comum.empezar"));
       empezar.setAttribute("aria-label", t("hoje.empezarRotulo", tarefa.titulo));
       item.querySelector(".passo-acoes").before(empezar);
     }
@@ -243,7 +264,8 @@ export function telaHoje(raiz) {
     tempoDia.setAttribute("aria-label", t("hoje.tempoRotulo", formatarTempoTotal(total)));
 
     const doDia = lista.length + concluidas.length;
-    progressoDia.hidden = doDia === 0;
+    // Só aparece quando já há algo feito: um anel vazio em cima de Ahora parecia sobrar.
+    progressoDia.hidden = concluidas.length === 0;
     progressoTexto.textContent = t("hoje.progresso", concluidas.length, doDia);
     anel.atualizar(doDia === 0 ? 0 : concluidas.length / doDia);
 

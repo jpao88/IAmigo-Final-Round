@@ -26,6 +26,12 @@ export function icone(nome) {
     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${DESENHOS[nome]}</svg>`;
 }
 
+// Play cheio, para o botão "Empezar" da tarjeta Ahora.
+export function iconePlayCheio() {
+  return `<svg class="icone" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+    focusable="false"><path d="M7 4v16l13-8z"/></svg>`;
+}
+
 // "✓ Título" das listas de feitas: o ícone e o texto (sempre como texto, nunca HTML).
 export function itemFeito(titulo) {
   const item = document.createElement("li");

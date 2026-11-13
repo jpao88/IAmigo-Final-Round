@@ -23,6 +23,17 @@ export function formatarTempoCurto(minutos) {
   return resto === 0 ? `${horas} h` : `${horas} h ${resto} min`;
 }
 
+// Texto dentro do anel da tarjeta Ahora (HTML só com números):
+// "10<small>min</small>", "1h<small>30</small>", "2h".
+export function textoAnel(minutos) {
+  const total = Math.round(Number(minutos));
+  if (total < 60) return `${total}<small>min</small>`;
+
+  const horas = Math.floor(total / 60);
+  const resto = total % 60;
+  return resto === 0 ? `${horas}h` : `${horas}h<small>${String(resto).padStart(2, "0")}</small>`;
+}
+
 // Preenche a barra: cada item ocupa o tamanho dos seus minutos.
 export function desenharBarraTempo(barra, listaDeMinutos) {
   barra.replaceChildren(...listaDeMinutos.map((minutos) => {

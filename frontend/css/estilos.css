@@ -812,17 +812,6 @@ textarea:focus-visible {
   white-space: nowrap;
 }
 
-/* Princípio "Uma coisa por vez": Ahora é claramente o maior da tela. */
-.cartao-ahora {
-  border: 2px solid var(--primaria);
-  padding-top: 8px;
-}
-
-.cartao-ahora .tarefa-link {
-  font-size: 1.3rem;
-  font-weight: 700;
-}
-
 .limite {
   display: flex;
   align-items: center;
@@ -1309,18 +1298,130 @@ button.link-secundario {
 .despues h2::before { background: var(--acento-2); }
 .hecho h2::before { background: var(--acento-3); }
 
-/* Cartões com uma borda fina; Ahora ganha uma faixa na cor primária. */
+/* Cartões com uma borda fina (Ahora e "retomar" têm a borda aurora, no fim do arquivo). */
 .tarefa,
 .tarefa-dia,
 .passo,
 .opcao-elegir,
-.pendente-dia,
-.retomar { border: 1px solid var(--borda); }
-
-.cartao-ahora,
-.retomar {
-  border: 1px solid var(--borda);
-  box-shadow: inset 4px 0 0 var(--primaria);
-}
+.pendente-dia { border: 1px solid var(--borda); }
 
 .tempo-total .titulo-com-acao .tempo-texto { margin: 0; }
+
+/* ===== Tarjeta "Agora": vidrio + borde aurora + anillo (docs/diseno/TARJETA-AGORA.md) ===== */
+
+/* Tokens (claro) */
+:root {
+  --agora-fundo:
+    radial-gradient(90% 80% at 0% 0%, #e7c6ff59, transparent 60%) padding-box,
+    linear-gradient(var(--superficie), var(--superficie)) padding-box;
+  --agora-borda: linear-gradient(135deg, #6b45d9, #8197ff 50%, #b8c0ff);
+  --agora-sombra: 0 0 24px #6b45d92e, 0 8px 24px #6b45d914;
+  --agora-reflexo: none;
+  --agora-blur: none;
+}
+
+/* Tokens (oscuro): mesmos valores nos dois blocos */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --agora-fundo:
+      linear-gradient(135deg, #ffffff0f, #ffffff05) padding-box,
+      radial-gradient(80% 90% at 0% 0%, #9b5cff40, transparent 60%) padding-box,
+      radial-gradient(70% 80% at 100% 100%, #4f6df52e, transparent 60%) padding-box,
+      linear-gradient(#1d1430d1, #1d1430d1) padding-box;
+    --agora-borda: linear-gradient(135deg, #c98bff, #7f93ff 50%, #cee5ff);
+    --agora-sombra: 0 0 28px #c98bff40, 0 10px 30px #00000059;
+    --agora-reflexo: inset 0 1px 0 #ffffff2e;
+    --agora-blur: blur(16px) saturate(150%);
+  }
+}
+
+:root[data-tema="escuro"] {
+  --agora-fundo:
+    linear-gradient(135deg, #ffffff0f, #ffffff05) padding-box,
+    radial-gradient(80% 90% at 0% 0%, #9b5cff40, transparent 60%) padding-box,
+    radial-gradient(70% 80% at 100% 100%, #4f6df52e, transparent 60%) padding-box,
+    linear-gradient(#1d1430d1, #1d1430d1) padding-box;
+  --agora-borda: linear-gradient(135deg, #c98bff, #7f93ff 50%, #cee5ff);
+  --agora-sombra: 0 0 28px #c98bff40, 0 10px 30px #00000059;
+  --agora-reflexo: inset 0 1px 0 #ffffff2e;
+  --agora-blur: blur(16px) saturate(150%);
+}
+
+/* Tarjeta: substitui a faixa lateral (box-shadow inset 4px) */
+.cartao-ahora {
+  position: relative;
+  border: 1.5px solid transparent;
+  border-radius: 24px;
+  padding: 16px;
+  background:
+    var(--agora-fundo),
+    var(--agora-borda) border-box;
+  box-shadow: var(--agora-reflexo), var(--agora-sombra);
+  -webkit-backdrop-filter: var(--agora-blur);
+  backdrop-filter: var(--agora-blur);
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  grid-template-areas:
+    "anel   titulo"
+    "botao  botao";
+  column-gap: 14px;
+  row-gap: 14px;
+  align-items: center;
+}
+
+.cartao-ahora .anel-agora { grid-area: anel; }
+.cartao-ahora .tarefa-link { grid-area: titulo; padding: 0; font-size: 1.3rem; font-weight: 800; line-height: 1.25; }
+.cartao-ahora .tarefa-link:hover { background: none; text-decoration: underline; text-decoration-color: var(--primaria); }
+.cartao-ahora .botao-empezar { grid-area: botao; margin: 0; }
+.cartao-ahora .acoes-ordenar { grid-column: 1 / -1; }
+
+/* Sem minutos: sem anel, o título ocupa as duas colunas. */
+.cartao-ahora.sem-anel .tarefa-link { grid-column: 1 / -1; }
+
+/* "Empezar" com o ícone play */
+.botao-empezar { gap: 8px; }
+.botao-empezar .icone { width: 18px; height: 18px; }
+
+/* Anel do tempo estimado */
+.anel-agora { position: relative; width: 64px; height: 64px; }
+.anel-agora svg { width: 100%; height: 100%; display: block; }
+.anel-agora circle { fill: none; stroke-width: 6; }
+.anel-agora .anel-fundo { stroke: var(--superficie-2); }
+.anel-agora .anel-progresso { stroke: var(--primaria); stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; }
+
+.anel-agora-texto {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--texto);
+}
+
+.anel-agora-texto small { font-size: 0.7rem; font-weight: 700; color: var(--texto); opacity: 0.85; margin-top: 2px; }
+
+/* "Retomar" compartilha a borda aurora, sem vidro */
+.retomar {
+  border: 1.5px solid transparent;
+  border-radius: 24px;
+  background: linear-gradient(var(--superficie), var(--superficie)) padding-box, var(--agora-borda) border-box;
+  box-shadow: none;
+}
+
+/* Acessibilidade: sem transparência se a pessoa pedir */
+@media (prefers-reduced-transparency: reduce) {
+  .cartao-ahora {
+    background: linear-gradient(var(--superficie), var(--superficie)) padding-box, var(--agora-borda) border-box;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* Modo de alto contraste do Windows */
+@media (forced-colors: active) {
+  .cartao-ahora, .retomar { border: 2px solid CanvasText; background: Canvas; }
+}
