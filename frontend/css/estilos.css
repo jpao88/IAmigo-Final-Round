@@ -1019,7 +1019,8 @@ button.link-secundario {
   margin: 8px 0;
 }
 
-.relogio svg { width: 100%; height: 100%; }
+/* overflow visível: o brilho do oscuro não fica cortado num quadrado. */
+.relogio svg { width: 100%; height: 100%; overflow: visible; }
 
 .relogio circle {
   fill: none;
@@ -1034,6 +1035,21 @@ button.link-secundario {
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
   transition: stroke-dashoffset 1s linear, stroke 600ms, opacity 300ms;
+}
+
+/* No oscuro, o anel tem um brilho suave e fixo, como o ponto do logo. */
+:root[data-tema="escuro"] .relogio-tempo {
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--primaria) 55%, transparent));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) .relogio-tempo {
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--primaria) 55%, transparent));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .relogio-tempo { filter: none !important; }
 }
 
 .relogio-pausado .relogio-tempo { opacity: 0.45; }
