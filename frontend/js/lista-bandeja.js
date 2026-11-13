@@ -5,6 +5,7 @@
 // e, se o servidor recusar, voltam como estavam com um aviso curto.
 
 import { listarBandeja, planejarHoje } from "./api.js";
+import { semApagadas } from "./apagar-depois.js";
 import { criarElemento } from "./html.js";
 import { obterUsuario } from "./sessao.js";
 import { t } from "./i18n.js";
@@ -125,11 +126,12 @@ export function criarListaBandeja({ aviso, aoPlanejar = () => {}, textoVazia, ma
     const ids = new Set(tarefas.map((tarefa) => tarefa.id));
     const visiveis = [...recentes.filter((tarefa) => !ids.has(tarefa.id)), ...tarefas]
       .filter((tarefa) => !foraDaBandeja.has(tarefa.id));
+    const semAApagar = semApagadas(visiveis);
 
     // As que ainda estão sendo guardadas continuam no topo.
     lista.replaceChildren(
       ...lista.querySelectorAll(".tarefa-pendente"),
-      ...visiveis.map((tarefa) => itemDaTarefa(tarefa.titulo, { id: tarefa.id })),
+      ...semAApagar.map((tarefa) => itemDaTarefa(tarefa.titulo, { id: tarefa.id })),
     );
     atualizarVazia();
   }

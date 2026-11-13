@@ -5,10 +5,10 @@
 // se o servidor recusar, a tela volta ao estado guardado e mostra um aviso curto.
 
 import {
-  adicionarPasso, editarPasso, excluirPasso, excluirTarefa, gerarPassos,
+  adicionarPasso, editarPasso, excluirPasso, gerarPassos,
   listarPassos, obterTarefa, planejarHoje, renomearTarefa, reordenarPassos,
 } from "../api.js";
-import { lerFoco, limparFoco } from "../foco-estado.js";
+import { apagarComDesfazer } from "../apagar-depois.js";
 import { obterUsuario } from "../sessao.js";
 import { tarefaDaGuia } from "../guia.js";
 import { criarElemento } from "../html.js";
@@ -467,24 +467,12 @@ export function telaTarefa(raiz, { id: tarefaId }) {
     }
   }
 
-  // ---- Apagar a tarefa (com confirmação) ----
+  // ---- Apagar a tarefa: sem perguntar antes; "Deshacer" por 6 s (js/apagar-depois.js) ----
 
-  raiz.querySelector('[data-acao="apagar-tarefa"]').addEventListener("click", async (evento) => {
-    if (!window.confirm(t("tarefa.confirmarApagar"))) return;
-
-    const botao = evento.currentTarget;
-    botao.disabled = true;
-    avisar("");
-
-    try {
-      await excluirTarefa(tarefaId);
-      esquecerCopias();
-      if (lerFoco()?.tarefaId === tarefaId) limparFoco();
-      navegar(TELA_INICIAL);
-    } catch (erro) {
-      botao.disabled = false;
-      avisar(erro.message);
-    }
+  raiz.querySelector('[data-acao="apagar-tarefa"]').addEventListener("click", () => {
+    esquecerCopias();
+    apagarComDesfazer(tarefaId, { aoDesfazer: () => navegar(`/tarefa/${tarefaId}`) });
+    navegar(TELA_INICIAL);
   });
 
   raiz.querySelector('[data-acao="voltar"]').addEventListener("click", voltar);

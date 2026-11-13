@@ -6,6 +6,7 @@ import { alterarLimiteHoje, listarBandeja, listarHoje, planejarHoje } from "../a
 import { comBotaoOcupado, criarElemento } from "../html.js";
 import { navegar } from "../roteador.js";
 import { atualizarUsuario, obterUsuario } from "../sessao.js";
+import { semApagadas } from "../apagar-depois.js";
 import { t } from "../i18n.js";
 import { icone } from "../icones.js";
 
@@ -29,7 +30,7 @@ export function telaElegir(raiz) {
     <p class="vazia subtitulo" hidden>${t("elegir.vazia")}</p>
     <ul class="lista-elegir"></ul>
 
-    <button class="botao" type="button" data-acao="listo">${t("comum.listo")}</button>
+    <button class="botao" type="button" data-acao="listo">${t("comum.voltarAHoje")}</button>
   `));
 
   const contador = raiz.querySelector(".contador");
@@ -86,7 +87,7 @@ export function telaElegir(raiz) {
       caixa.disabled = !caixa.checked && restantes <= 0;
     });
 
-    botaoListo.textContent = escolhidas.length > 0 ? t("comum.listo") : t("comum.voltarAHoje");
+    botaoListo.textContent = escolhidas.length > 0 ? t("elegir.adicionar", escolhidas.length) : t("comum.voltarAHoje");
   }
 
   function itemDaTarefa(tarefa) {
@@ -164,7 +165,8 @@ export function telaElegir(raiz) {
     contador.textContent = t("comum.carregando");
 
     try {
-      const [bandeja, hoje] = await Promise.all([listarBandeja(), listarHoje()]);
+      const [todasDaBandeja, hoje] = await Promise.all([listarBandeja(), listarHoje()]);
+      const bandeja = semApagadas(todasDaBandeja);
       jaEmHoje = hoje.filter((tarefa) => !tarefa.concluida).length;
       lista.replaceChildren(...bandeja.map(itemDaTarefa));
       vazia.hidden = bandeja.length > 0;

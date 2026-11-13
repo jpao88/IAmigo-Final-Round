@@ -423,6 +423,45 @@ textarea:focus-visible {
 
 .confirmacao:empty { display: none; }
 
+/* "Tarea borrada · Deshacer": como .confirmacao, mas com um botão de verdade. */
+.aviso-desfazer {
+  position: fixed;
+  left: 50%;
+  bottom: calc(88px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 6;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 4px 4px 18px;
+  border-radius: 999px;
+  background: var(--texto);
+  color: var(--fundo);
+  font-weight: 600;
+  animation: aparecer 300ms ease-out;
+}
+
+.aviso-desfazer-botao {
+  font: inherit;
+  font-weight: 800;
+  min-height: 44px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--primaria-suave);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.aviso-desfazer-botao:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .aviso-desfazer { animation: none; }
+}
+
 .bandeja h2 {
   font-size: 1.1rem;
   margin: 8px 0 10px;
@@ -517,7 +556,15 @@ textarea:focus-visible {
   box-sizing: content-box;
 }
 
+/* M1: no celular não há hover; um sublinhado pontilhado mostra que dá para editar. */
+.titulo-campo {
+  text-decoration: underline dotted var(--borda-campo);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.18em;
+}
+
 .titulo-campo:hover { border-color: var(--borda); }
+.titulo-campo:focus { text-decoration: none; }
 .titulo-campo:focus { border-color: var(--primaria); outline: none; background: var(--superficie); }
 
 /* Apagar a tarefa: discreto, no fim, sem vermelho (princípio "Sem culpa"). */
@@ -608,6 +655,15 @@ textarea:focus-visible {
 }
 
 .passo-texto:hover { border-color: var(--borda); }
+
+/* M1: o mesmo sublinhado pontilhado do título (o cartão já tem borda). */
+.passo-texto {
+  text-decoration: underline dotted var(--borda-campo);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.22em;
+}
+
+.passo-texto:focus { text-decoration: none; }
 
 /* Minutos numa pastilha só: "10 min". */
 .minutos {

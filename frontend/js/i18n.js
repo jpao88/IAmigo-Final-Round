@@ -93,6 +93,9 @@ const es = {
 
   // Hoy
   "hoje.titulo": "Hoy",
+  "apagar.apagada": "Tarea borrada",
+  "apagar.desfazer": "Deshacer",
+  "elegir.adicionar": (n) => (n === 1 ? "Añadir 1 tarea a Hoy" : `Añadir ${n} tareas a Hoy`),
   "hoje.progresso": (feitas, total) => `${feitas} de ${total} ${total === 1 ? "hecha" : "hechas"}`,
   "hoje.retomar": "¿Seguimos donde quedaste?",
   "hoje.agoraNao": "Ahora no",
@@ -139,7 +142,6 @@ const es = {
   "tarefa.tituloRotulo": "Nombre de la tarea",
   "tarefa.tituloVazio": "Escribe el nombre de la tarea.",
   "tarefa.apagar": "Borrar tarea",
-  "tarefa.confirmarApagar": "¿Borrar esta tarea y sus pasos?",
 
   // Modo foco
   "foco.frases": ["¡Bien hecho!", "¡Un paso menos!", "¡Así se hace!", "¡Vas muy bien!", "¡Eso es!"],
@@ -275,6 +277,9 @@ const pt = {
   "bandeja.vazia": "Sua caixa de entrada está vazia.",
 
   "hoje.titulo": "Hoje",
+  "apagar.apagada": "Tarefa apagada",
+  "apagar.desfazer": "Desfazer",
+  "elegir.adicionar": (n) => (n === 1 ? "Adicionar 1 tarefa a Hoje" : `Adicionar ${n} tarefas a Hoje`),
   "hoje.progresso": (feitas, total) => `${feitas} de ${total} ${total === 1 ? "feita" : "feitas"}`,
   "hoje.retomar": "Vamos continuar de onde você parou?",
   "hoje.agoraNao": "Agora não",
@@ -319,7 +324,6 @@ const pt = {
   "tarefa.tituloRotulo": "Nome da tarefa",
   "tarefa.tituloVazio": "Escreva o nome da tarefa.",
   "tarefa.apagar": "Apagar tarefa",
-  "tarefa.confirmarApagar": "Apagar esta tarefa e seus passos?",
 
   "foco.frases": ["Muito bem!", "Um passo a menos!", "É isso aí!", "Você está indo muito bem!", "Isso!"],
   "foco.semPressa": "Sem pressa",

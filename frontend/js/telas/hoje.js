@@ -17,6 +17,7 @@ import { criarListaBandeja } from "../lista-bandeja.js";
 import { navegar } from "../roteador.js";
 import { obterUsuario } from "../sessao.js";
 import { criarAnel } from "../anel.js";
+import { semApagadas } from "../apagar-depois.js";
 import { formatarTempoCurto, formatarTempoTotal } from "../tempo.js";
 import { t } from "../i18n.js";
 import { icone, itemFeito } from "../icones.js";
@@ -277,13 +278,13 @@ export function telaHoje(raiz) {
   async function carregar() {
     const copia = lerCache();
     if (copia) {
-      tarefas = copia;
+      tarefas = semApagadas(copia);
       desenhar();
     }
     desenharRetomar();
 
     try {
-      tarefas = await listarHoje();
+      tarefas = semApagadas(await listarHoje());
       salvarCache(tarefas);
       desenhar();
       desenharRetomar();
