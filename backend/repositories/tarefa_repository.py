@@ -169,6 +169,13 @@ class TarefaRepository:
                 session.commit()
             return tarefa
 
+    def renomear(self, tarefa_id, titulo):
+        with SessionLocal() as session:
+            tarefa = session.get(Tarefa, tarefa_id)
+            tarefa.titulo = titulo
+            session.commit()
+            return tarefa
+
     def alternar_concluida(self, tarefa_id):
         with SessionLocal() as session:
             comando = select(Tarefa).where(Tarefa.id == tarefa_id)

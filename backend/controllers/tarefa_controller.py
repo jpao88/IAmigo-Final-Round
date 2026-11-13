@@ -26,6 +26,9 @@ class TarefaController:
     def criar_varias(self, usuario_id, titulos):
         return self.service.criar_varias(usuario_id, titulos)
 
+    def renomear_tarefa(self, usuario_id, tarefa_id, titulo):
+        return self.service.renomear_tarefa(usuario_id, tarefa_id, titulo)
+
     def alternar_status(self, usuario_id, tarefa_id):
         return self.service.alternar_status(usuario_id, tarefa_id)
 

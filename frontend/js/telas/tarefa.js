@@ -5,9 +5,11 @@
 // se o servidor recusar, a tela volta ao estado guardado e mostra um aviso curto.
 
 import {
-  adicionarPasso, editarPasso, excluirPasso, gerarPassos,
-  listarPassos, obterTarefa, planejarHoje, reordenarPassos,
+  adicionarPasso, editarPasso, excluirPasso, excluirTarefa, gerarPassos,
+  listarPassos, obterTarefa, planejarHoje, renomearTarefa, reordenarPassos,
 } from "../api.js";
+import { lerFoco, limparFoco } from "../foco-estado.js";
+import { obterUsuario } from "../sessao.js";
 import { tarefaDaGuia } from "../guia.js";
 import { criarElemento } from "../html.js";
 import { tituloEmCache } from "../lista-bandeja.js";
@@ -26,7 +28,10 @@ export function telaTarefa(raiz, { id: tarefaId }) {
 
     <p class="guia" role="status" hidden></p>
 
-    <h1 class="titulo-tarefa"></h1>
+    <h1 class="titulo-tarefa">
+      <textarea class="titulo-campo" rows="1" maxlength="200" autocomplete="off" enterkeyhint="done"
+        aria-label="${t("tarefa.tituloRotulo")}"></textarea>
+    </h1>
 
     <section class="sem-passos" hidden>
       <p class="subtitulo">${t("tarefa.sugere")}</p>
@@ -62,9 +67,13 @@ export function telaTarefa(raiz, { id: tarefaId }) {
 
     <button class="botao" type="button" data-acao="listo" hidden>${t("comum.listo")}</button>
     <button class="botao" type="button" data-acao="guia-empezar" hidden>${t("tarefa.guiaEmpezar")}</button>
+
+    <button class="link-secundario link-apagar" type="button" data-acao="apagar-tarefa">${t("tarefa.apagar")}</button>
   `));
 
-  const titulo = raiz.querySelector(".titulo-tarefa");
+  // O título é um campo: tocar nele permite reescrevê-lo (ex.: em outro idioma).
+  const titulo = raiz.querySelector(".titulo-campo");
+  let tituloGuardado = "";
   const semPassos = raiz.querySelector(".sem-passos");
   const pensando = raiz.querySelector(".pensando");
   const aviso = raiz.querySelector(".aviso");
@@ -88,7 +97,13 @@ export function telaTarefa(raiz, { id: tarefaId }) {
   // Como em Hoy: ↑ ↓ e ✕ só aparecem no modo "Ordenar", para a lista ficar leve.
   let ordenando = false;
 
-  titulo.textContent = tituloEmCache(tarefaId) ?? "";
+  function mostrarTitulo(texto) {
+    tituloGuardado = texto;
+    titulo.value = texto;
+    ajustarAltura(titulo);
+  }
+
+  mostrarTitulo(tituloEmCache(tarefaId) ?? "");
 
   // ---- Desenho ----
 
@@ -213,7 +228,7 @@ export function telaTarefa(raiz, { id: tarefaId }) {
   async function carregar() {
     try {
       const [tarefa] = await Promise.all([obterTarefa(tarefaId), recarregarPassos()]);
-      titulo.textContent = tarefa.titulo;
+      mostrarTitulo(tarefa.titulo);
     } catch (erro) {
       avisar(erro.message);
     }
@@ -405,6 +420,71 @@ export function telaTarefa(raiz, { id: tarefaId }) {
     if (history.length > 1) history.back();
     else navegar(TELA_INICIAL);
   }
+
+  // ---- Título: editar como um passo; Enter ou sair do campo guarda ----
+
+  async function guardarTitulo() {
+    const novo = titulo.value.replace(/\s*\n\s*/g, " ").trim();
+    if (novo === tituloGuardado) return;
+
+    if (!novo) {
+      mostrarTitulo(tituloGuardado);
+      avisar(t("tarefa.tituloVazio"));
+      return;
+    }
+
+    avisar("");
+    const anterior = tituloGuardado;
+    mostrarTitulo(novo);
+    esquecerCopias();
+
+    try {
+      await renomearTarefa(tarefaId, novo);
+    } catch (erro) {
+      mostrarTitulo(anterior);
+      avisar(erro.message);
+    }
+  }
+
+  titulo.addEventListener("input", () => ajustarAltura(titulo));
+  titulo.addEventListener("change", guardarTitulo);
+  titulo.addEventListener("keydown", (evento) => {
+    if (evento.key === "Enter" && !evento.isComposing) {
+      evento.preventDefault();
+      titulo.blur();
+    }
+  });
+
+  // As cópias de Hoy e da Bandeja mostram o título antigo: as telas buscam de novo.
+  function esquecerCopias() {
+    const id = obterUsuario().id;
+    try {
+      localStorage.removeItem(`iamigo.hoje.${id}`);
+      localStorage.removeItem(`iamigo.bandeja.${id}`);
+    } catch {
+      // Nada a fazer.
+    }
+  }
+
+  // ---- Apagar a tarefa (com confirmação) ----
+
+  raiz.querySelector('[data-acao="apagar-tarefa"]').addEventListener("click", async (evento) => {
+    if (!window.confirm(t("tarefa.confirmarApagar"))) return;
+
+    const botao = evento.currentTarget;
+    botao.disabled = true;
+    avisar("");
+
+    try {
+      await excluirTarefa(tarefaId);
+      esquecerCopias();
+      if (lerFoco()?.tarefaId === tarefaId) limparFoco();
+      navegar(TELA_INICIAL);
+    } catch (erro) {
+      botao.disabled = false;
+      avisar(erro.message);
+    }
+  });
 
   raiz.querySelector('[data-acao="voltar"]').addEventListener("click", voltar);
   botaoListo.addEventListener("click", voltar);

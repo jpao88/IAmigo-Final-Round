@@ -109,6 +109,17 @@ class TarefaService:
 
         return self.tarefa_repository.criar_varias(usuario_id, titulos)
 
+    def renomear_tarefa(self, usuario_id, tarefa_id, titulo):
+        """Muda o título (ex.: reescrever em outro idioma ou corrigir um erro)."""
+        self._obter_tarefa_do_usuario(usuario_id, tarefa_id)
+
+        titulo = self._validar_titulo(titulo)
+
+        if len(titulo) > TAMANHO_MAXIMO_TITULO:
+            raise DadosInvalidos(f"Cada tarefa pode ter no máximo {TAMANHO_MAXIMO_TITULO} caracteres.")
+
+        return self.tarefa_repository.renomear(tarefa_id, titulo)
+
     def alternar_status(self, usuario_id, tarefa_id):
         self._obter_tarefa_do_usuario(usuario_id, tarefa_id)
 

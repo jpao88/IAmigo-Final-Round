@@ -349,6 +349,28 @@ textarea:focus-visible {
 
 .titulo-tarefa { overflow-wrap: anywhere; }
 
+/* O título parece um título, mas é um campo: tocar nele permite reescrever. */
+.titulo-campo {
+  width: 100%;
+  font: inherit;
+  line-height: 1.2;
+  color: inherit;
+  padding: 4px 6px;
+  margin: -4px -6px;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  resize: none;
+  overflow: hidden;
+  box-sizing: content-box;
+}
+
+.titulo-campo:hover { border-color: var(--borda); }
+.titulo-campo:focus { border-color: var(--primaria); outline: none; background: var(--superficie); }
+
+/* Apagar a tarefa: discreto, no fim, sem vermelho (princípio "Sem culpa"). */
+.tela .link-apagar { color: var(--texto-suave); margin-top: 16px; }
+
 .sem-passos {
   display: flex;
   flex-direction: column;

@@ -145,6 +145,8 @@ class TestMatrizDePermissoes(BaseApi):
          {"DONO": 201, "OUTRO": 403, "ADMIN": 403}),
         ("get", "/usuarios/1/tarefas/10", None, {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
         ("delete", "/usuarios/1/tarefas/10", None, {"DONO": 204, "OUTRO": 403, "ADMIN": 403}),
+        ("put", "/usuarios/1/tarefas/10", {"titulo": "Lavar a louça"},
+         {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
         ("patch", "/usuarios/1/tarefas/10/passos/100", None,
          {"DONO": 200, "OUTRO": 403, "ADMIN": 403}),
     ]

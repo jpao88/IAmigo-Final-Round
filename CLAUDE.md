@@ -84,6 +84,8 @@ Actualizar esta sección al terminar cada tarea.
 
 - **Español y portugués de Brasil (12 de noviembre de 2026).** `js/i18n.js` con los diccionarios `es` y `pt` y `t("clave", ...args)` (algunos textos son funciones para números y plurales). Sin elección sigue el idioma del celular; botón ES/PT en el encabezado y enlace "Português"/"Español" en login, registro y bienvenida; se guarda en `iamigo-idioma` (no se borra al salir) y cambiar recarga la página. En portugués: Hoje, Caixa de entrada, Travei, Feito. Los errores del backend se traducen en `api.js` (pares `{es, pt}`). La IA escribe en el idioma de la persona: `POST .../passos/gerar?idioma=pt` y `.../dividir?idioma=pt` (`Literal["es","pt"]`, por defecto `es`); los prompts están en `TEXTOS` de `core/ia_service.py`.
 
+- **Editar el título y borrar tareas (13 de noviembre de 2026, pedido del piloto: las tareas en español no se podían pasar a portugués).** `PUT /usuarios/{id}/tarefas/{id}` con `{titulo}` (`renomear_tarefa`: no vacío, máx. 200). En `#/tarefa/:id` el título es un `textarea.titulo-campo` que parece un título; Enter o salir del campo guarda. "Borrar tarea" al final, gris (sin rojo), con `confirm()`; vuelve a Hoy y limpia el modo foco si era esa tarea. Lo ya escrito no se traduce solo: son palabras de la persona.
+
 **Siguiente tarea:** acompañar el piloto (resumen diario, anotar comentarios en la tabla de resultados) y, al terminar, juntar lo aprendido y corregir lo más grave antes de la segunda ronda.
 
 **Pendientes para recordar:**

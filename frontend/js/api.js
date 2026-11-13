@@ -13,6 +13,7 @@ const MENSAGENS = {
   "A senha precisa ter pelo menos 6 caracteres.": {
     es: "Usa al menos 6 caracteres en la contraseña.", pt: "Use pelo menos 6 caracteres na senha." },
   "O nome não pode ficar vazio.": { es: "Escribe tu nombre.", pt: "Escreva seu nome." },
+  "O título não pode ficar vazio.": { es: "Escribe el nombre de la tarea.", pt: "Escreva o nome da tarefa." },
   "O nome precisa ter pelo menos 3 caracteres.": {
     es: "Tu nombre necesita al menos 3 letras.", pt: "Seu nome precisa de pelo menos 3 letras." },
   "Informe um e-mail válido.": { es: "Revisa tu correo.", pt: "Confira seu e-mail." },
@@ -225,6 +226,16 @@ export function editarPasso(tarefaId, passoId, texto, minutosEstimados) {
 
 export function reordenarPassos(tarefaId, ids) {
   return requisitar("PUT", `${rotaPassos(tarefaId)}/ordem`, { ids });
+}
+
+// Muda só o título (ex.: reescrever em outro idioma).
+export function renomearTarefa(tarefaId, titulo) {
+  return requisitar("PUT", `${rotaTarefas()}/${tarefaId}`, { titulo });
+}
+
+// Apaga a tarefa e os passos dela.
+export function excluirTarefa(tarefaId) {
+  return requisitar("DELETE", `${rotaTarefas()}/${tarefaId}`);
 }
 
 export function excluirPasso(tarefaId, passoId) {

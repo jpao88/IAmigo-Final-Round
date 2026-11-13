@@ -132,6 +132,10 @@ const es = {
   "tarefa.guiaComPassos": "¡Listo! Ajusta los pasos si quieres. Después, ponla en Hoy y haz el primero.",
   "tarefa.guiaSemPassos": "Ahora toca «Que IAmigo lo divida»: la parte en pasos pequeños.",
   "tarefa.comoTirar": "Para quitar un paso, toca Ordenar y luego ✕.",
+  "tarefa.tituloRotulo": "Nombre de la tarea",
+  "tarefa.tituloVazio": "Escribe el nombre de la tarea.",
+  "tarefa.apagar": "Borrar tarea",
+  "tarefa.confirmarApagar": "¿Borrar esta tarea y sus pasos?",
 
   // Modo foco
   "foco.frases": ["¡Bien hecho!", "¡Un paso menos!", "¡Así se hace!", "¡Vas muy bien!", "¡Eso es!"],
@@ -304,6 +308,10 @@ const pt = {
   "tarefa.guiaComPassos": "Pronto! Ajuste os passos se quiser. Depois, coloque em Hoje e faça o primeiro.",
   "tarefa.guiaSemPassos": "Agora toque em «Deixe o IAmigo dividir»: ele divide em passos pequenos.",
   "tarefa.comoTirar": "Para tirar um passo, toque em Ordenar e depois em ✕.",
+  "tarefa.tituloRotulo": "Nome da tarefa",
+  "tarefa.tituloVazio": "Escreva o nome da tarefa.",
+  "tarefa.apagar": "Apagar tarefa",
+  "tarefa.confirmarApagar": "Apagar esta tarefa e seus passos?",
 
   "foco.frases": ["Muito bem!", "Um passo a menos!", "É isso aí!", "Você está indo muito bem!", "Isso!"],
   "foco.semPressa": "Sem pressa",

@@ -85,6 +85,7 @@ class TestTarefasEPassosAlheios(unittest.TestCase):
     def test_pessoa_2_nao_toca_a_tarefa_da_pessoa_1(self):
         casos = {
             "buscar_tarefa": (2, 10),
+            "renomear_tarefa": (2, 10, "Intruso"),
             "alternar_status": (2, 10),
             "excluir_tarefa": (2, 10),
             "tirar_de_hoje": (2, 10),

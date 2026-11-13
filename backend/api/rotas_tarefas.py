@@ -70,6 +70,13 @@ def criar_varias(usuario_id: int, dados: NovasTarefas):
     }
 
 
+@router.put("/{tarefa_id}", response_model=Resposta[TarefaSaida])
+def renomear_tarefa(usuario_id: int, tarefa_id: int, dados: NovaTarefa):
+    return {
+        "dados": controller.renomear_tarefa(usuario_id, tarefa_id, dados.titulo)
+    }
+
+
 @router.patch("/{tarefa_id}", response_model=Resposta[TarefaSaida])
 def alternar_status(usuario_id: int, tarefa_id: int):
     return {
